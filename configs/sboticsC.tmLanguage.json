@@ -1,0 +1,166 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "sboticsC",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#template"
+		},
+		{
+			"include": "#movimentacao"
+		},
+		{
+			"include": "#sensores"
+		},
+		{
+			"include": "#variaveis"
+		},
+		{
+			"include": "#true"
+		},
+		{
+			"include": "#false"
+		},
+		{
+			"include": "#escrever"
+		},
+		{
+			"include": "#condicionais"
+		},
+		{
+			"include": "#funcoes"
+		},
+		{
+			"include": "#sinais"
+		},
+		{
+			"include": "#ledbuzzer"
+		},
+		{
+			"include": "#bool"
+		},
+		{
+			"include": "#comment"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.sboticsC",
+					"match": "\\b(if|else|while|do|for|to|switch|case|default|return|goto|foreach|in|new)\\b"
+				}
+			]
+		},
+		"template": {
+			"patterns": [
+				{
+					"name": "template.control.sboticsC",
+					"match": "\\b(Action|Func|Thread|Start|Join|Abort|IsAlive|void|Main|public|static|private|protected|class|Dictionary)\\b"
+				}
+			]
+		},
+		"movimentacao": {
+			"patterns": [
+				{
+					"name": "movimentacao.control.sboticsC",
+					"match": "\\b(Move|moveTime|forward|back|backward|left|right|move|rotate|MoveFrontal|OpenActuator|CloseActuator|ActuatorUp|ActuatorDown|TurnActuatorUp|TurnActuatorDown|MoveFrontalAngles|ActuatorSpeed|MoveFrontalRotations|MoveFrontalRight|MoveFrontalLeft|GetFrontalRightForce|GetFrontalLeftForce|TurnFanOn|TurnFanOff|RobotSpeed|MoveFrontal|OpenActuator|CloseActuator|ActuatorUp|ActuatorDown|TurnActuatorUp|TurnActuatorDown|MoveFrontalAngles|ActuatorSpeed|MoveFrontalRotations|MoveFrontalRight|MoveFrontalLeft|GetFrontalRightForce|GetFrontalLeftForce|TurnFanOn|TurnFanOff)\\b"
+				}
+			]
+		},
+		"sensores": {
+			"patterns": [
+				{
+					"name": "sensores.control.sboticsC",
+					"match": "\\b(direction|light|lightness|color|ultra|Distance|Direction|DetectDistance|ReturnColor|Lightness|ReturnGreen|ReturnBlue|ReturnRed|Touch|AngleActuator|Timer|AngleScoop|Heat|HasVictim|Inclination|Distance|Compass|Inclination|DetectDistance|ReturnColor|Lightness|Millis|ReturnGreen|ReturnBlue|ReturnRed|Touch|AngleActuator|Timer|AngleScoop|Heat|HasVictim|Fita|inclination|touch|allWhite|redEnd)\\b"
+				}
+			]
+		},
+		"condicionais": {
+			"patterns": [
+				{
+					"name": "condicionais.control.sboticsC",
+					"match": "\\b(Wait|ClearConsole|TurnLedOn|TurnLedOff|RandomLimits|ResetTimer|ClearConsoleLine|ColorSensibility|SetPrecision|PlayNote|PlaySound|ChangeWave|StopSound|ToPitch|ToHertz|PlaySoundHertz|Wait|ClearConsole|TurnLedOn|TurnLedOff|RandomLimits|ResetTimer|ClearConsoleLine|ColorSensibility|SetPrecision|PlayNote|PlaySound|ChangeWave|StopSound|ToPitch|ToHertz|PlaySoundHertz|map|millis|interval|adjustDecimals|delay|limit)\\b"
+				}
+			]
+		},
+		"variaveis": {
+			"patterns": [
+				{
+					"name": "variaveis.control.sboticsC",
+					"match": "\\b(bool|byte|sbyte|float|short|ushort|int|uint|long|ulong|double|decimal|char|string|numero|booleano|texto|boolean|const)\\b"
+				}
+			]
+		},
+		"bool": {
+			"patterns": [
+				{
+					"name": "bool.control.sboticsC",
+					"match": "\\b(true|false)\\b"
+				}
+			]
+		},
+		"false": {
+			"patterns": [
+				{
+					"name": "false.control.sboticsC",
+					"match": "\\b(break|stop|ClearConsole|StopSavingConsole|EraseConsoleFile|ClearConsoleLine|stopSound|removeNumberList|removeTextList|stopSound|turnLedOff|turnFanOff|stopPainting|clear)\\b"
+				}
+			]
+		},
+		"escrever": {
+			"patterns": [
+				{
+					"name": "escrever.control.sboticsC",
+					"match": "\\b(Print|SaveConsole|EraseConsoleFile|WriteText|WriteNumber|WriteBoolean|Draw|StopDrawing|ChangePencilColor|PrintConsole|SaveConsole|StopSavingConsole|EraseConsoleFile|WriteText|WriteNumber|WriteBoolean|register|console|console_led|printMotors)\\b"
+				}
+			]
+		},
+		"funcoes": {
+			"patterns": [
+				{
+					"name": "funcoes.control.sboticsC",
+					"match": "\\b(bc|bot|Direction|Pista|Calibrar|Centralize|Desacelerar|Acelerar|Ramp|GreenRGB|Curve90|LineFollower|FollowerGreen|Green|Obstacle|Up|Down|LevantarAtuador|AbaixarAtuador|FollowerRamp|LevantarVitima|Wall|Triangle|Rescue|Search|FollowerGyro|Dispatch|SearchTriangle|CentralizeGyro|Debug|Musica|AyrtonSenna|ChegouNaBase|DireitaBuscar|EsquerdaBuscar|VictimMid|SearchFinal|DetectVictim|GoTriangle|DebugCurve|Finish|DetectTriangle|Gyro|DispatchMid)\\b"
+				}
+			]
+		},
+		"ledbuzzer": {
+			"patterns": [
+				{
+					"name": "ledbuzzer.control.sboticsC",
+					"match": "\\b(turnLedOn|playSound|playNote|Draw|ChangePencilColor|playSoundHertz)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.sboticsC",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.sboticsC",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comment": {
+			"patterns": [
+				{
+					"name": "comment.control.sboticsC",
+					"match": "((\\//).*$)",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.comment.control.sboticsC"
+						}
+					}
+				}
+			]
+		}
+	},
+	"scopeName": "source.sboticsC"
+}
