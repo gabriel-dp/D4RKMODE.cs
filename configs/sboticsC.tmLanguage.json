@@ -61,7 +61,7 @@
 			"patterns": [
 				{
 					"name": "template.control.sboticsC",
-					"match": "\\b(Action|Func|Thread|Start|Join|Abort|IsAlive|void|Main|public|static|private|protected|class|Dictionary)\\b"
+					"match": "\\b(Action|Func|Thread|Start|Join|Abort|IsAlive|void|Main|Setup|public|static|private|protected|class|Dictionary)\\b"
 				}
 			]
 		},
