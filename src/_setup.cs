@@ -1,3 +1,3 @@
 void Setup () {
-
+	Centralize();
 }
