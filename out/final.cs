@@ -7,7 +7,6 @@ const bool console_on = true;
 
 void Setup () {
 	Centralize();
-	actuator.Up();
 	actuator.Down();
 }
 
@@ -143,6 +142,8 @@ void Setup () {
 		console(line, text, hexcolor);
 		led(ledcolor);
 	}
+	static bool open_actuator = false;
+	
 	public class Actuator {
 	
 		public void ActuatorAdjust (int ideal_actuator, int ideal_scoop) {
@@ -161,6 +162,9 @@ void Setup () {
 				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
 			} while (!(angle_scoop > ideal_scoop-2) || !(angle_scoop < ideal_scoop+2));
+	
+			if (open_actuator) bot.OpenActuator();
+			else bot.CloseActuator();
 		}
 	
 		public void Up () {

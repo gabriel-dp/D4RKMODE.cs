@@ -1,3 +1,5 @@
+static bool open_actuator = false;
+
 public class Actuator {
 
 	public void ActuatorAdjust (int ideal_actuator, int ideal_scoop) {
@@ -16,6 +18,9 @@ public class Actuator {
 			if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
 			else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
 		} while (!(angle_scoop > ideal_scoop-2) || !(angle_scoop < ideal_scoop+2));
+
+		if (open_actuator) bot.OpenActuator();
+		else bot.CloseActuator();
 	}
 
 	public void Up () {
