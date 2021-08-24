@@ -4,6 +4,8 @@ public class Maths {
 		return (int)((((number - min) * (maxTo - minTo)) / (max - min)) + minTo);
 	}
 
+	public bool interval (float val, float min, float max) => (val >= min && val <= max);
+
 }
 
 Maths maths = new Maths();

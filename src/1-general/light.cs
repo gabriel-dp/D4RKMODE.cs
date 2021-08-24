@@ -5,7 +5,7 @@ const byte low_black = 90;
 
 //Main method
 int light (int sensor) {
-	float raw = bc.Lightness(sensor - 1);
+	float raw = bot.Lightness(sensor - 1);
 	int light_data = maths.map(raw, 0, max_white, 0, 100);
 	if (light_data > 100) light_data = 100;
 	return light_data;

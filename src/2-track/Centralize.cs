@@ -12,5 +12,7 @@ void Centralize () {
 	do {
 		error = (light(2) - light(3)) * Kc;
 		left(error);
-	} while (Math.Abs(error) > Kc);
+	} while (Math.Abs(error) > Kc*2);
+
+	stop();
 }
