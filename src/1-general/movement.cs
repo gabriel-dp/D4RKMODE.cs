@@ -5,9 +5,15 @@ void back (float motor) => move (-motor, -motor);
 void right (float motor) => move (motor, -motor);
 void left (float motor) => move (-motor, motor);
 
-void stop (int time = 0) {
+void stop (int ms = 0) {
 	move(0, 0);
-	delay(time);
+	delay(ms);
+}
+
+void reverse (float motor, int ms = 999999) {
+	time.reset();
+	while (!bot.Touch(0) && time.timer() < ms) back(motor);
+	stop();
 }
 
 //Global Variables

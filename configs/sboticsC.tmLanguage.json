@@ -61,7 +61,7 @@
 			"patterns": [
 				{
 					"name": "template.control.sboticsC",
-					"match": "\\b(Action|Func|Thread|Start|Join|Abort|IsAlive|void|Main|Setup|public|static|private|protected|class|Dictionary)\\b"
+					"match": "\\b(Action|Func|Thread|Start|Join|Abort|IsAlive|void|Main|Setup|public|static|private|protected|class|Dictionary|enum)\\b"
 				}
 			]
 		},
@@ -125,7 +125,7 @@
 			"patterns": [
 				{
 					"name": "funcoes.control.sboticsC",
-					"match": "\\b(bc|bot|Direction|Pista|Calibrar|Centralize|Desacelerar|Acelerar|Ramp|GreenRGB|Curve90|LineFollower|FollowerGreen|Green|Obstacle|Up|Down|LevantarAtuador|AbaixarAtuador|FollowerRamp|LevantarVitima|Wall|Triangle|Rescue|Search|FollowerGyro|Dispatch|SearchTriangle|CentralizeGyro|Debug|Musica|AyrtonSenna|ChegouNaBase|DireitaBuscar|EsquerdaBuscar|VictimMid|SearchFinal|DetectVictim|GoTriangle|DebugCurve|Finish|DetectTriangle|Gyro|DispatchMid)\\b"
+					"match": "\\b(bc|bot|Direction|Pista|Calibrar|Centralize|Desacelerar|Acelerar|Ramp|GreenRGB|Curve90|LineFollower|FollowerGreen|Green|Obstacle|Up|Down|LevantarAtuador|AbaixarAtuador|FollowerRamp|LevantarVitima|Wall|Triangle|Rescue|Search|FollowerGyro|Dispatch|SearchTriangle|CentralizeGyro|Debug|Musica|AyrtonSenna|ChegouNaBase|DireitaBuscar|EsquerdaBuscar|VictimMid|SearchFinal|DetectVictim|GoTriangle|DebugCurve|Finish|DetectTriangle|Gyro|DispatchMid|Track|Exit|End)\\b"
 				}
 			]
 		},

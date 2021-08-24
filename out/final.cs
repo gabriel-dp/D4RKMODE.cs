@@ -5,6 +5,14 @@ Sesi Anísio Teixeira - VCA/BA
 
 const bool console_on = true;
 
+enum Local {
+	track,
+	rescue,
+	exit,
+	end
+};
+
+Local local = Local.track;
 void Setup () {
 	Centralize();
 	actuator.Down();
@@ -22,7 +30,19 @@ void Setup () {
 	}
 	
 	Maths maths = new Maths();
-	void delay (int time) => bot.Wait(time);
+	void delay (int ms) => bot.Wait(ms);
+	
+	public class Time {
+	
+		public int millis () => bot.Millis();
+	
+		public int timer () => bot.Timer();
+	
+		public void reset () => bot.ResetTimer();
+	
+	}
+	
+	Time time = new Time();
 	void move (float motor_L, float motor_R) => bot.Move(motor_L, motor_R);
 	
 	void forward (float motor) => move (motor, motor);
@@ -30,9 +50,15 @@ void Setup () {
 	void right (float motor) => move (motor, -motor);
 	void left (float motor) => move (-motor, motor);
 	
-	void stop (int time = 0) {
+	void stop (int ms = 0) {
 		move(0, 0);
-		delay(time);
+		delay(ms);
+	}
+	
+	void reverse (float motor, int ms = 999999) {
+		time.reset();
+		while (!bot.Touch(0) && time.timer() < ms) back(motor);
+		stop();
 	}
 	
 	//Global Variables
@@ -80,6 +106,36 @@ void Setup () {
 			return true;
 		}
 	//
+	public class Colors {
+		public int R (byte sensor) => (int) bot.ReturnRed(sensor-1);
+		public int G (byte sensor) => (int) bot.ReturnGreen(sensor-1);
+		public int B (byte sensor) => (int) bot.ReturnBlue(sensor-1);
+	}
+	
+	Colors colors = new Colors();
+	
+	//Default colors of simulator
+		Dictionary <string, string> colorNames = new Dictionary <string,string> () {
+			{"WHITE","BRANCO"},
+			{"BLACK","PRETO"},
+			{"GREEN","VERDE"},
+			{"MAGENTA","MAGENTA"},
+			{"BLUE","AZUL"},
+			{"CYAN","CIANO"},
+			{"YELLOW","AMARELO"},
+			{"RED","VERMELHO"},
+		};
+	
+		bool isThatColor (byte sensor, string name) => (bot.ReturnColor(sensor-1) == name || bot.ReturnColor(sensor-1) == colorNames[name]);
+	//
+	
+	//Colors identifier
+	bool isColorized (byte sensor) => (colors.R(sensor) != colors.B(sensor));
+	
+	bool isRed (byte sensor) => ((colors.R(sensor)/colors.B(sensor) > 3.5 && colors.G(sensor) < 20) && isThatColor(sensor, "RED"));
+	
+	bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.B(sensor) < 10) && isThatColor(sensor, "GREEN"));
+	
 	int direction () => (int) bot.Compass();
 	
 	byte Direction () {
@@ -233,13 +289,19 @@ void Setup () {
 		led(color["white"]);
 	
 	}
+	void RedEnd () {
+		for (byte i = 1; i<5; i++) {
+			if (isRed(i)) local = Local.end;
+		}
+	}
 //
 
 void Track () {
 	console(1, "$>--Track--<$", color["comment"]);
-	while (true) {
-		LineFollower();
+	while (local == Local.track) {
+		RedEnd();
 	}
+	led(color["red"]);
 }
 
 
