@@ -393,16 +393,32 @@ void Track () {
 }
 
 //Rescue - imported files
+	char sideToSearch = 'R';
 	bool DetectTriangleRight() {
 		if (ultra(2) > 400) return false;
 	
 		int last_frontal = (int) ultra(1);
 		int last_lateral = (int) ultra(2);
 		GoToDistance(last_frontal-10);
-		if (maths.interval(ultra(2) - last_lateral, 9, 11)) led(color["red"]);
-		return maths.interval(ultra(2) - last_lateral, 9, 11);
+	
+		if (maths.interval(ultra(2) - last_lateral, 9, 11)) {
+			CentralizeGyro(90);
+			return true;
+		}
+	
+		return false;
 	}
 	
+	byte side_sensor = 3;
+	
+	void Search () {
+		if (sideToSearch == 'R') side_sensor = 2;
+	
+		if (ultra(side_sensor) < 150) {
+			stop(9999);
+		}
+	
+	}
 //
 
 void Rescue () {
@@ -411,11 +427,12 @@ void Rescue () {
 		centerQuadrant();
 
 		moveTime(300, 400);
-		DetectTriangleRight();
+		if (DetectTriangleRight()) sideToSearch = 'L';
 	}
 
 	while (local == Local.rescue) {
-
+		forward(300);
+		Search();
 	}
 }
 
