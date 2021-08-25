@@ -227,6 +227,13 @@ void Setup () {
 	}
 	
 	bool ultraLimits(byte sensor, int min, int max) => bot.DetectDistance(sensor-1, min, max);
+	
+	void GoToDistance (int distance) {
+		do {
+			error = (int) (ultra(1) - distance);
+			forward(error*50);
+		} while (error != 0);
+	}
 	//colors
 	Dictionary <string, string> color = new Dictionary <string,string> () {
 		{"white","#FFFFFF"},
@@ -386,7 +393,16 @@ void Track () {
 }
 
 //Rescue - imported files
-
+	bool DetectTriangleRight() {
+		if (ultra(2) > 400) return false;
+	
+		int last_frontal = (int) ultra(1);
+		int last_lateral = (int) ultra(2);
+		GoToDistance(last_frontal-10);
+		if (maths.interval(ultra(2) - last_lateral, 9, 11)) led(color["red"]);
+		return maths.interval(ultra(2) - last_lateral, 9, 11);
+	}
+	
 //
 
 void Rescue () {
@@ -395,6 +411,7 @@ void Rescue () {
 		centerQuadrant();
 
 		moveTime(300, 400);
+		DetectTriangleRight();
 	}
 
 	while (local == Local.rescue) {

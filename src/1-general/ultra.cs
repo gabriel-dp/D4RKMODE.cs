@@ -5,3 +5,10 @@ float ultra (byte sensor) {
 }
 
 bool ultraLimits(byte sensor, int min, int max) => bot.DetectDistance(sensor-1, min, max);
+
+void GoToDistance (int distance) {
+	do {
+		error = (int) (ultra(1) - distance);
+		forward(error*50);
+	} while (error != 0);
+}

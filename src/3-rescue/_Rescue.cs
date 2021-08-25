@@ -1,5 +1,5 @@
 //Rescue - imported files
-
+	import("3-rescue/Triangle.cs")
 //
 
 void Rescue () {
@@ -8,6 +8,7 @@ void Rescue () {
 		centerQuadrant();
 
 		moveTime(300, 400);
+		DetectTriangleRight();
 	}
 
 	while (local == Local.rescue) {
