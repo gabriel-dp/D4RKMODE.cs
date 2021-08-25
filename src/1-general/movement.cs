@@ -5,9 +5,18 @@ void back (float motor) => move (-motor, -motor);
 void right (float motor) => move (motor, -motor);
 void left (float motor) => move (-motor, motor);
 
+void rotate (float motor, float angle) => bot.MoveFrontalAngles(motor, angle);
+
+//More methods
 void stop (int ms = 0) {
 	move(0, 0);
 	delay(ms);
+}
+
+void moveTime (float motor, int ms) {
+	time.reset();
+	while (time.timer() < ms) forward(motor);
+	stop();
 }
 
 void reverse (float motor, int ms = 999999) {

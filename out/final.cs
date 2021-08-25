@@ -50,9 +50,18 @@ void Setup () {
 	void right (float motor) => move (motor, -motor);
 	void left (float motor) => move (-motor, motor);
 	
+	void rotate (float motor, float angle) => bot.MoveFrontalAngles(motor, angle);
+	
+	//More methods
 	void stop (int ms = 0) {
 		move(0, 0);
 		delay(ms);
+	}
+	
+	void moveTime (float motor, int ms) {
+		time.reset();
+		while (time.timer() < ms) forward(motor);
+		stop();
 	}
 	
 	void reverse (float motor, int ms = 999999) {
@@ -146,11 +155,78 @@ void Setup () {
 		return quadrant;
 	}
 	
+	
 	int scaleAngle (int angle) {
 		angle = angle%90;
 		if (angle >= 45) angle -= 2*(angle-45);
 		return angle;
 	}
+	
+	//Gyro alignment
+		void changeQuadrant (string side) {
+			byte last_quadrant = Direction();
+	
+			if (side == "back") {
+				while (Direction() == last_quadrant) right(1000);
+				last_quadrant = Direction();
+			}
+	
+			if (side == "left") {
+				while (Direction() == last_quadrant) left(1000);
+			} else {
+				while (Direction() == last_quadrant) right(1000);
+			}
+	
+			stop();
+		}
+	
+		void GoToAngle (int angle) {
+			if (maths.interval(direction() - angle, 0, 140) || maths.interval(direction() - angle, -320, -210)) {
+				while (direction() != angle) left(1000);
+			} else {
+				while (direction() != angle) right(1000);
+			}
+	
+			stop();
+		}
+	
+		void centerQuadrant () {
+			int ideal_angle = Direction()*90;
+			GoToAngle(ideal_angle);
+		}
+	
+		void CentralizeGyro (int operation = 0) {
+	
+	
+			switch (operation) {
+				case 0:
+					centerQuadrant();
+					break;
+				case 90:
+					changeQuadrant("right");
+					centerQuadrant();
+					break;
+				case -90:
+					changeQuadrant("left");
+					centerQuadrant();
+					break;
+				case 180:
+					changeQuadrant("back");
+					centerQuadrant();
+					break;
+				default:
+					break;
+			}
+	
+		}
+	//
+	float ultra (byte sensor) {
+		float ultra_data = bc.Distance(sensor - 1);
+		ultra_data = ((float)((int)(ultra_data *100)))/100;
+		return ultra_data;
+	}
+	
+	bool ultraLimits(byte sensor, int min, int max) => bot.DetectDistance(sensor-1, min, max);
 	//colors
 	Dictionary <string, string> color = new Dictionary <string,string> () {
 		{"white","#FFFFFF"},
@@ -294,20 +370,42 @@ void Setup () {
 			if (isRed(i)) local = Local.end;
 		}
 	}
+	void TrackEnd () {
+		if (isWhite(new byte[] {1,2,3,4}) && (ultraLimits(1, 350, 390) || ultraLimits(1, 250, 290)) && (ultra(2) < 45 && ultra(3) < 45)) {
+			local++;
+		}
+	}
 //
 
 void Track () {
 	console(1, "$>--Track--<$", color["comment"]);
 	while (local == Local.track) {
-		RedEnd();
+		forward(200);
+		TrackEnd();
 	}
-	led(color["red"]);
 }
 
+//Rescue - imported files
+
+//
+
+void Rescue () {
+	if (local == Local.rescue) {
+		console(1, "$>--Rescue--<$", color["comment"]);
+		centerQuadrant();
+
+		moveTime(300, 400);
+	}
+
+	while (local == Local.rescue) {
+
+	}
+}
 
 void Main () {
 
 	Setup();
 	Track();
+	Rescue();
 
 }
