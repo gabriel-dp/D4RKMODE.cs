@@ -12,3 +12,5 @@ void GoToDistance (int distance) {
 		forward(error*50);
 	} while (error != 0);
 }
+
+bool DetectWall () => (ultra(1) < (Math.Pow(scaleAngle(direction()), 2) * 0.006f + 28));

@@ -58,6 +58,7 @@ void Setup () {
 		if (angleToGo < 0) angleToGo = 360 + angleToGo;
 		if (angle > 0) while (direction() != angleToGo) right(1000);
 		else while (direction() != angleToGo) left(1000);
+		stop();
 	}
 	
 	//More methods
@@ -242,6 +243,8 @@ void Setup () {
 			forward(error*50);
 		} while (error != 0);
 	}
+	
+	bool DetectWall () => (ultra(1) < (Math.Pow(scaleAngle(direction()), 2) * 0.006f + 28));
 	//colors
 	Dictionary <string, string> color = new Dictionary <string,string> () {
 		{"white","#FFFFFF"},
@@ -296,30 +299,29 @@ void Setup () {
 	
 		public void ActuatorAdjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
 			bot.ActuatorSpeed(150);
-			int start_actuator = bot.Millis();
+	
+			if (operation == "open") bot.OpenActuator();
+			else bot.CloseActuator();
 	
 			int angle_actuator = 0;
 			do {
 				angle_actuator = (int) bot.AngleActuator();
 				if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
 				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
-			} while ((!(angle_actuator > ideal_actuator-2) || !(angle_actuator < ideal_actuator+2)) && bot.Millis() - start_actuator < 500);
+			} while (!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2));
 	
 			int angle_scoop = 0;
 			do {
 				angle_scoop = (int) bot.AngleScoop();
 				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
-			} while ((!(angle_scoop > ideal_scoop-2) || !(angle_scoop < ideal_scoop+2)) && bot.Millis() - start_actuator < 1000);
-	
-			if (operation == "open") bot.OpenActuator();
-			else bot.CloseActuator();
+			} while (!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2));
 	
 			has_victim = bot.HasVictim();
 		}
 	
 		public void Up () {
-			ActuatorAdjust(87, 0);
+			ActuatorAdjust(89, 0);
 		}
 	
 		public void Down () {
@@ -422,19 +424,27 @@ void Track () {
 		return false;
 	}
 	
+	void Wall () {
+		if (DetectWall()) {
+			actuator.Up();
+			CentralizeGyro(90);
+			reverse(300, 300);
+			if (!has_victim) actuator.Down();
+		}
+	}
 	byte side_sensor = 3;
 	
 	void Search () {
 		if (sideToSearch == 'R') side_sensor = 2;
 	
-		if (ultra(side_sensor) < 150) {
+		if (ultra(side_sensor) < 150 && !has_victim) {
 	
 			stop();
 			actuator.Up();
 			if (has_victim) return;
 	
 			//align with the ball
-				float last_ultra = ultra(side_sensor);
+				float last_ultra = 0;
 				do {
 					last_ultra = ultra(side_sensor);
 					forward(150);
@@ -442,18 +452,26 @@ void Track () {
 				} while (ultra(side_sensor) <= last_ultra);
 			//
 	
-			moveTime(-300, 500);
-			int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-			int timeToMove = (int) (Math.Pow(angleToRotate,2)*0.3);
-			if (sideToSearch == 'L') angleToRotate = -angleToRotate;
+			//triangle calculation
+				moveTime(-300, 500);
+				int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
+				int timeToMove = (int) (Math.Pow(angleToRotate,2)*0.3);
+				if (sideToSearch == 'L') angleToRotate = -angleToRotate;
+			//
 	
+			//go rescue
+				rotate(500, angleToRotate);
+				actuator.Down();
+				moveTime(300, timeToMove);
+				actuator.Up();
+				stop(150);
+				moveTime(-300, timeToMove);
+				rotate(500, -angleToRotate);
+				centerQuadrant();
+			//
 	
-			rotate(500, angleToRotate);
-			moveTime(300, timeToMove);
+			if (!has_victim) actuator.Down();
 	
-			console(2, timeToMove.ToString());
-	
-			stop(9999);
 		}
 	
 	}
@@ -474,6 +492,7 @@ void Rescue () {
 	while (local == Local.rescue) {
 		forward(300);
 		Search();
+		Wall();
 	}
 }
 

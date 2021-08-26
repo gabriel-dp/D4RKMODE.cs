@@ -10,6 +10,7 @@ void rotate (float motor, int angle) {
 	if (angleToGo < 0) angleToGo = 360 + angleToGo;
 	if (angle > 0) while (direction() != angleToGo) right(1000);
 	else while (direction() != angleToGo) left(1000);
+	stop();
 }
 
 //More methods
