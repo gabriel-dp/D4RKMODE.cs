@@ -50,7 +50,12 @@ void Setup () {
 	void right (float motor) => move (motor, -motor);
 	void left (float motor) => move (-motor, motor);
 	
-	void rotate (float motor, float angle) => bot.MoveFrontalAngles(motor, angle);
+	void rotate (float motor, int angle) {
+		int angleToGo = (direction() + angle)%360;
+		if (angleToGo < 0) angleToGo = 360 + angleToGo;
+		if (angle > 0) while (direction() != angleToGo) right(1000);
+		else while (direction() != angleToGo) left(1000);
+	}
 	
 	//More methods
 	void stop (int ms = 0) {
@@ -415,6 +420,21 @@ void Track () {
 		if (sideToSearch == 'R') side_sensor = 2;
 	
 		if (ultra(side_sensor) < 150) {
+	
+			//align with the ball
+				float last_ultra = ultra(side_sensor);
+				do {
+					last_ultra = ultra(side_sensor);
+					forward(150);
+					delay(15);
+				} while (ultra(side_sensor) <= last_ultra);
+			//
+	
+			moveTime(-300, 500);
+			int angle_rotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
+			if (sideToSearch == 'L') angle_rotate = -angle_rotate;
+			rotate(500, angle_rotate);
+	
 			stop(9999);
 		}
 	

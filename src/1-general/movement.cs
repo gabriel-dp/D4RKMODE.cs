@@ -5,7 +5,12 @@ void back (float motor) => move (-motor, -motor);
 void right (float motor) => move (motor, -motor);
 void left (float motor) => move (-motor, motor);
 
-void rotate (float motor, float angle) => bot.MoveFrontalAngles(motor, angle);
+void rotate (float motor, int angle) {
+	int angleToGo = (direction() + angle)%360;
+	if (angleToGo < 0) angleToGo = 360 + angleToGo;
+	if (angle > 0) while (direction() != angleToGo) right(1000);
+	else while (direction() != angleToGo) left(1000);
+}
 
 //More methods
 void stop (int ms = 0) {
