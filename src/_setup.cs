@@ -7,6 +7,9 @@ enum Local {
 
 Local local = Local.track;
 void Setup () {
-	Centralize();
+	open_actuator = false;
+	has_victim = false;
+
 	actuator.Down();
+	Centralize();
 }

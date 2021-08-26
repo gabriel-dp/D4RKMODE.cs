@@ -5,6 +5,10 @@ void Search () {
 
 	if (ultra(side_sensor) < 150) {
 
+		stop();
+		actuator.Up();
+		if (has_victim) return;
+
 		//align with the ball
 			float last_ultra = ultra(side_sensor);
 			do {
@@ -15,9 +19,15 @@ void Search () {
 		//
 
 		moveTime(-300, 500);
-		int angle_rotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-		if (sideToSearch == 'L') angle_rotate = -angle_rotate;
-		rotate(500, angle_rotate);
+		int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
+		int timeToMove = (int) (Math.Pow(angleToRotate,2)*0.3);
+		if (sideToSearch == 'L') angleToRotate = -angleToRotate;
+
+
+		rotate(500, angleToRotate);
+		moveTime(300, timeToMove);
+
+		console(2, timeToMove.ToString());
 
 		stop(9999);
 	}

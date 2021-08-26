@@ -14,8 +14,11 @@ enum Local {
 
 Local local = Local.track;
 void Setup () {
-	Centralize();
+	open_actuator = false;
+	has_victim = false;
+
 	actuator.Down();
+	Centralize();
 }
 
 //General - imported files
@@ -287,28 +290,32 @@ void Setup () {
 		led(ledcolor);
 	}
 	static bool open_actuator = false;
+	static bool has_victim = false;
 	
 	public class Actuator {
 	
-		public void ActuatorAdjust (int ideal_actuator, int ideal_scoop) {
+		public void ActuatorAdjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
 			bot.ActuatorSpeed(150);
+			int start_actuator = bot.Millis();
 	
 			int angle_actuator = 0;
 			do {
 				angle_actuator = (int) bot.AngleActuator();
 				if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
 				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
-			} while (!(angle_actuator > ideal_actuator-2) || !(angle_actuator < ideal_actuator+2));
+			} while ((!(angle_actuator > ideal_actuator-2) || !(angle_actuator < ideal_actuator+2)) && bot.Millis() - start_actuator < 500);
 	
 			int angle_scoop = 0;
 			do {
 				angle_scoop = (int) bot.AngleScoop();
 				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
-			} while (!(angle_scoop > ideal_scoop-2) || !(angle_scoop < ideal_scoop+2));
+			} while ((!(angle_scoop > ideal_scoop-2) || !(angle_scoop < ideal_scoop+2)) && bot.Millis() - start_actuator < 1000);
 	
-			if (open_actuator) bot.OpenActuator();
+			if (operation == "open") bot.OpenActuator();
 			else bot.CloseActuator();
+	
+			has_victim = bot.HasVictim();
 		}
 	
 		public void Up () {
@@ -316,7 +323,8 @@ void Setup () {
 		}
 	
 		public void Down () {
-			ActuatorAdjust(4, 0);
+			if (open_actuator) ActuatorAdjust(1, 0, "open");
+			else ActuatorAdjust(4, 0);
 		}
 	
 	}
@@ -421,6 +429,10 @@ void Track () {
 	
 		if (ultra(side_sensor) < 150) {
 	
+			stop();
+			actuator.Up();
+			if (has_victim) return;
+	
 			//align with the ball
 				float last_ultra = ultra(side_sensor);
 				do {
@@ -431,9 +443,15 @@ void Track () {
 			//
 	
 			moveTime(-300, 500);
-			int angle_rotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-			if (sideToSearch == 'L') angle_rotate = -angle_rotate;
-			rotate(500, angle_rotate);
+			int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
+			int timeToMove = (int) (Math.Pow(angleToRotate,2)*0.3);
+			if (sideToSearch == 'L') angleToRotate = -angleToRotate;
+	
+	
+			rotate(500, angleToRotate);
+			moveTime(300, timeToMove);
+	
+			console(2, timeToMove.ToString());
 	
 			stop(9999);
 		}
@@ -445,9 +463,12 @@ void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
 		centerQuadrant();
+		open_actuator = true;
 
-		moveTime(300, 400);
+		moveTime(300, 500);
 		if (DetectTriangleRight()) sideToSearch = 'L';
+
+		actuator.Down();
 	}
 
 	while (local == Local.rescue) {

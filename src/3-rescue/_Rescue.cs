@@ -8,9 +8,12 @@ void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
 		centerQuadrant();
+		open_actuator = true;
 
-		moveTime(300, 400);
+		moveTime(300, 500);
 		if (DetectTriangleRight()) sideToSearch = 'L';
+
+		actuator.Down();
 	}
 
 	while (local == Local.rescue) {
