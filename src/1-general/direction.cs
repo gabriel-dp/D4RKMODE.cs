@@ -67,6 +67,12 @@ int scaleAngle (int angle) {
 				changeQuadrant("back");
 				centerQuadrant();
 				break;
+			case 45:
+				changeQuadrant("right");
+				break;
+			case -45:
+				changeQuadrant("left");
+				break;
 			default:
 				break;
 		}

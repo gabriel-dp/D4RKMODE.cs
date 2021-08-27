@@ -18,6 +18,8 @@ void Setup () {
 
 	actuator.Down();
 	Centralize();
+
+	Triangle();
 }
 
 //General - imported files
@@ -240,6 +242,12 @@ void Setup () {
 					changeQuadrant("back");
 					centerQuadrant();
 					break;
+				case 45:
+					changeQuadrant("right");
+					break;
+				case -45:
+					changeQuadrant("left");
+					break;
 				default:
 					break;
 			}
@@ -346,7 +354,7 @@ void Setup () {
 	
 		public void Down () {
 			if (open_actuator) ActuatorAdjust(1, 0, "open");
-			else ActuatorAdjust(4, 0);
+			else ActuatorAdjust(3, 0);
 		}
 	
 		public bool isUp () => (bot.AngleActuator() > 80);
@@ -441,7 +449,7 @@ void Track () {
 //Rescue - imported files
 	char sideToSearch = 'R';
 	bool first_check_alive = false;
-	bool DetectTriangleRight() {
+	bool DetectTriangleRight () {
 		if (ultra(2) > 400) return false;
 	
 		int last_frontal = (int) ultra(1);
@@ -454,6 +462,36 @@ void Track () {
 		}
 	
 		return false;
+	}
+	
+	const int triangle_hypotenuse = 120;
+	byte side_triangle = 3;
+	
+	void alignToTriangle (byte side) {
+		if (side == 3) {
+			CentralizeGyro(45);
+			int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
+			GoToDistance(ideal_ultra);
+			centerQuadrant();
+			int degress = -10;
+			if (ultra(1) < 280) degress = 10;
+			CentralizeGyro(45);
+			rotate(500, degress);
+		} else {
+			CentralizeGyro(-45);
+			int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
+			GoToDistance(ideal_ultra);
+			centerQuadrant();
+			int degress = 10;
+			if (ultra(1) < 280) degress = -10;
+			CentralizeGyro(-45);
+			rotate(500, degress);
+		}
+	}
+	
+	void Triangle () {
+		if (sideToSearch == 'L') side_triangle = 2;
+		alignToTriangle(3);
 	}
 	
 	void Wall () {
@@ -482,7 +520,7 @@ void Track () {
 	
 		if (ultra(side_sensor) < 150 && actuator.victim() == null) {
 			stop();
-			console_led(2, $"$>Vítima<$ detectada a $>{ultra(side_sensor)}<$ zm", color["cyan"]);
+			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(side_sensor)}<$ zm", color["cyan"]);
 	
 			actuator.Up();
 			if (actuator.victim() != null) return;

@@ -5,7 +5,7 @@ void Search () {
 
 	if (ultra(side_sensor) < 150 && actuator.victim() == null) {
 		stop();
-		console_led(2, $"$>Vítima<$ detectada a $>{ultra(side_sensor)}<$ zm", color["cyan"]);
+		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(side_sensor)}<$ zm", color["cyan"]);
 
 		actuator.Up();
 		if (actuator.victim() != null) return;

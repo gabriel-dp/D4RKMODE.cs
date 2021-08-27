@@ -30,7 +30,7 @@ public class Actuator {
 
 	public void Down () {
 		if (open_actuator) ActuatorAdjust(1, 0, "open");
-		else ActuatorAdjust(4, 0);
+		else ActuatorAdjust(3, 0);
 	}
 
 	public bool isUp () => (bot.AngleActuator() > 80);

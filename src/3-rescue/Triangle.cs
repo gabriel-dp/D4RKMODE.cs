@@ -1,4 +1,4 @@
-bool DetectTriangleRight() {
+bool DetectTriangleRight () {
 	if (ultra(2) > 400) return false;
 
 	int last_frontal = (int) ultra(1);
@@ -11,5 +11,35 @@ bool DetectTriangleRight() {
 	}
 
 	return false;
+}
+
+const int triangle_hypotenuse = 120;
+byte side_triangle = 3;
+
+void alignToTriangle (byte side) {
+	if (side == 3) {
+		CentralizeGyro(45);
+		int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
+		GoToDistance(ideal_ultra);
+		centerQuadrant();
+		int degress = -10;
+		if (ultra(1) < 280) degress = 10;
+		CentralizeGyro(45);
+		rotate(500, degress);
+	} else {
+		CentralizeGyro(-45);
+		int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
+		GoToDistance(ideal_ultra);
+		centerQuadrant();
+		int degress = 10;
+		if (ultra(1) < 280) degress = -10;
+		CentralizeGyro(-45);
+		rotate(500, degress);
+	}
+}
+
+void Triangle () {
+	if (sideToSearch == 'L') side_triangle = 2;
+	alignToTriangle(3);
 }
 
