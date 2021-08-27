@@ -3,11 +3,11 @@ byte side_sensor = 3;
 void Search () {
 	if (sideToSearch == 'R') side_sensor = 2;
 
-	if (ultra(side_sensor) < 150 && !has_victim) {
+	if (ultra(side_sensor) < 150 && actuator.victim() == null) {
 
 		stop();
 		actuator.Up();
-		if (has_victim) return;
+		if (actuator.victim() != null) return;
 
 		//align with the ball
 			float last_ultra = 0;
@@ -21,7 +21,7 @@ void Search () {
 		//triangle calculation
 			moveTime(-300, 500);
 			int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-			int zmToMove = (int) (Math.Sqrt(Math.Pow(last_ultra, 2)+Math.Pow(23,2))) + 1;
+			int zmToMove = maths.hypotenuse(last_ultra, 23) + 1;
 			if (sideToSearch == 'L') angleToRotate = -angleToRotate;
 		//
 
@@ -36,7 +36,8 @@ void Search () {
 			centerQuadrant();
 		//
 
-		if (!has_victim) actuator.Down();
+		if (actuator.victim() == null) actuator.Down();
+		else if (actuator.victim() == "alive") first_check_alive = true;
 
 	}
 

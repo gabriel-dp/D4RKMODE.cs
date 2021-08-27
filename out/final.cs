@@ -15,7 +15,6 @@ enum Local {
 Local local = Local.track;
 void Setup () {
 	open_actuator = false;
-	has_victim = false;
 
 	actuator.Down();
 	Centralize();
@@ -24,11 +23,21 @@ void Setup () {
 //General - imported files
 	public class Maths {
 	
+		const float PI = 3.14f;
+	
 		public int map (float number, float min, float max, float minTo, float maxTo) {
 			return (int)((((number - min) * (maxTo - minTo)) / (max - min)) + minTo);
 		}
 	
 		public bool interval (float val, float min, float max) => (val >= min && val <= max);
+	
+		public int hypotenuse (double leg1, double leg2) {
+			return (int) (Math.Sqrt(Math.Pow(leg1, 2)+Math.Pow(leg2,2)));
+		}
+	
+		public int ArcTan (double leg1, double leg2) {
+			return (int) ((180/PI)*(Math.Atan(leg1/leg2)));
+		}
 	
 	}
 	
@@ -294,6 +303,11 @@ void Setup () {
 		}
 	}
 	
+	void clear (int line = 2) {
+		bot.ClearConsoleLine(line - 1);
+		led("off");
+	}
+	
 	//both
 	void console_led (int line, string text, string hexcolor, string ledcolor = "") {
 		if (ledcolor == "") ledcolor = hexcolor;
@@ -301,7 +315,6 @@ void Setup () {
 		led(ledcolor);
 	}
 	static bool open_actuator = false;
-	static bool has_victim = false;
 	
 	public class Actuator {
 	
@@ -325,7 +338,6 @@ void Setup () {
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
 			} while (!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2));
 	
-			has_victim = bot.HasVictim();
 		}
 	
 		public void Up () {
@@ -335,6 +347,17 @@ void Setup () {
 		public void Down () {
 			if (open_actuator) ActuatorAdjust(1, 0, "open");
 			else ActuatorAdjust(4, 0);
+		}
+	
+		public bool isUp () => (bot.AngleActuator() > 80);
+	
+		const int temperature_alive = 36;
+		public string victim () {
+			if (bot.HasVictim() && isUp()) {
+				if (bot.Heat() > temperature_alive) return "alive";
+				else return "dead";
+			}
+			return null;
 		}
 	
 	}
@@ -417,6 +440,7 @@ void Track () {
 
 //Rescue - imported files
 	char sideToSearch = 'R';
+	bool first_check_alive = false;
 	bool DetectTriangleRight() {
 		if (ultra(2) > 400) return false;
 	
@@ -434,10 +458,21 @@ void Track () {
 	
 	void Wall () {
 		if (DetectWall()) {
-			actuator.Up();
+			stop();
+			console_led(2, "$>Parede<$ detectada", color["yellow"]);
+	
+			if (!actuator.isUp()) {
+				actuator.Up();
+				stop(150);
+				if (actuator.victim() == "alive") first_check_alive = true; led(color["green"]);
+			}
 			CentralizeGyro(90);
-			reverse(300, 300);
-			if (!has_victim) actuator.Down();
+			if (actuator.victim() == null) {
+				reverse(300, 300);
+				actuator.Down();
+			}
+	
+			clear();
 		}
 	}
 	byte side_sensor = 3;
@@ -445,11 +480,11 @@ void Track () {
 	void Search () {
 		if (sideToSearch == 'R') side_sensor = 2;
 	
-		if (ultra(side_sensor) < 150 && !has_victim) {
+		if (ultra(side_sensor) < 150 && actuator.victim() == null) {
 	
 			stop();
 			actuator.Up();
-			if (has_victim) return;
+			if (actuator.victim() != null) return;
 	
 			//align with the ball
 				float last_ultra = 0;
@@ -463,7 +498,7 @@ void Track () {
 			//triangle calculation
 				moveTime(-300, 500);
 				int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-				int zmToMove = (int) (Math.Sqrt(Math.Pow(last_ultra, 2)+Math.Pow(23,2))) + 1;
+				int zmToMove = maths.hypotenuse(last_ultra, 23) + 1;
 				if (sideToSearch == 'L') angleToRotate = -angleToRotate;
 			//
 	
@@ -478,7 +513,8 @@ void Track () {
 				centerQuadrant();
 			//
 	
-			if (!has_victim) actuator.Down();
+			if (actuator.victim() == null) actuator.Down();
+			else if (actuator.victim() == "alive") first_check_alive = true;
 	
 		}
 	

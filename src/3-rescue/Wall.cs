@@ -1,8 +1,19 @@
 void Wall () {
 	if (DetectWall()) {
-		actuator.Up();
+		stop();
+		console_led(2, "$>Parede<$ detectada", color["yellow"]);
+
+		if (!actuator.isUp()) {
+			actuator.Up();
+			stop(150);
+			if (actuator.victim() == "alive") first_check_alive = true; led(color["green"]);
+		}
 		CentralizeGyro(90);
-		reverse(300, 300);
-		if (!has_victim) actuator.Down();
+		if (actuator.victim() == null) {
+			reverse(300, 300);
+			actuator.Down();
+		}
+
+		clear();
 	}
 }

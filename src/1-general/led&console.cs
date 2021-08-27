@@ -39,6 +39,11 @@ void console (int line, string text, string hexcolor = "") {
 	}
 }
 
+void clear (int line = 2) {
+	bot.ClearConsoleLine(line - 1);
+	led("off");
+}
+
 //both
 void console_led (int line, string text, string hexcolor, string ledcolor = "") {
 	if (ledcolor == "") ledcolor = hexcolor;

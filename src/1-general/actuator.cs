@@ -1,5 +1,4 @@
 static bool open_actuator = false;
-static bool has_victim = false;
 
 public class Actuator {
 
@@ -23,7 +22,6 @@ public class Actuator {
 			else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
 		} while (!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2));
 
-		has_victim = bot.HasVictim();
 	}
 
 	public void Up () {
@@ -33,6 +31,17 @@ public class Actuator {
 	public void Down () {
 		if (open_actuator) ActuatorAdjust(1, 0, "open");
 		else ActuatorAdjust(4, 0);
+	}
+
+	public bool isUp () => (bot.AngleActuator() > 80);
+
+	const int temperature_alive = 36;
+	public string victim () {
+		if (bot.HasVictim() && isUp()) {
+			if (bot.Heat() > temperature_alive) return "alive";
+			else return "dead";
+		}
+		return null;
 	}
 
 }
