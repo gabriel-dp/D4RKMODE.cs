@@ -21,17 +21,17 @@ void Search () {
 		//triangle calculation
 			moveTime(-300, 500);
 			int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-			int timeToMove = (int) (Math.Pow(angleToRotate,2)*0.3);
+			int zmToMove = (int) (Math.Sqrt(Math.Pow(last_ultra, 2)+Math.Pow(23,2))) + 1;
 			if (sideToSearch == 'L') angleToRotate = -angleToRotate;
 		//
 
 		//go rescue
 			rotate(500, angleToRotate);
 			actuator.Down();
-			moveTime(300, timeToMove);
+			moveZm(zmToMove);
 			actuator.Up();
 			stop(150);
-			moveTime(-300, timeToMove);
+			moveZm(-zmToMove);
 			rotate(500, -angleToRotate);
 			centerQuadrant();
 		//

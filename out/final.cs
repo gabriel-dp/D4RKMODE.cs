@@ -46,6 +46,7 @@ void Setup () {
 	}
 	
 	Time time = new Time();
+	//simplified basic commands
 	void move (float motor_L, float motor_R) => bot.Move(motor_L, motor_R);
 	
 	void forward (float motor) => move (motor, motor);
@@ -53,6 +54,7 @@ void Setup () {
 	void right (float motor) => move (motor, -motor);
 	void left (float motor) => move (-motor, motor);
 	
+	//More methods
 	void rotate (float motor, int angle) {
 		int angleToGo = (direction() + angle)%360;
 		if (angleToGo < 0) angleToGo = 360 + angleToGo;
@@ -61,7 +63,6 @@ void Setup () {
 		stop();
 	}
 	
-	//More methods
 	void stop (int ms = 0) {
 		move(0, 0);
 		delay(ms);
@@ -71,6 +72,13 @@ void Setup () {
 		time.reset();
 		while (time.timer() < ms) forward(motor);
 		stop();
+	}
+	
+	const float timePerZm = 16.65f;
+	void moveZm (int zm) {
+		int timeToMove = (int)(zm*timePerZm);
+		if (zm > 0) moveTime(300, timeToMove);
+		else moveTime(-300, -timeToMove);
 	}
 	
 	void reverse (float motor, int ms = 999999) {
@@ -455,17 +463,17 @@ void Track () {
 			//triangle calculation
 				moveTime(-300, 500);
 				int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
-				int timeToMove = (int) (Math.Pow(angleToRotate,2)*0.3);
+				int zmToMove = (int) (Math.Sqrt(Math.Pow(last_ultra, 2)+Math.Pow(23,2))) + 1;
 				if (sideToSearch == 'L') angleToRotate = -angleToRotate;
 			//
 	
 			//go rescue
 				rotate(500, angleToRotate);
 				actuator.Down();
-				moveTime(300, timeToMove);
+				moveZm(zmToMove);
 				actuator.Up();
 				stop(150);
-				moveTime(-300, timeToMove);
+				moveZm(-zmToMove);
 				rotate(500, -angleToRotate);
 				centerQuadrant();
 			//
