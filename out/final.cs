@@ -481,18 +481,21 @@ void Track () {
 		if (sideToSearch == 'R') side_sensor = 2;
 	
 		if (ultra(side_sensor) < 150 && actuator.victim() == null) {
-	
 			stop();
+			console_led(2, $"$>Vítima<$ detectada a $>{ultra(side_sensor)}<$ zm", color["cyan"]);
+	
 			actuator.Up();
 			if (actuator.victim() != null) return;
 	
 			//align with the ball
 				float last_ultra = 0;
+				time.reset();
 				do {
 					last_ultra = ultra(side_sensor);
 					forward(150);
 					delay(15);
-				} while (ultra(side_sensor) <= last_ultra);
+				} while (ultra(side_sensor) <= last_ultra && time.timer() < 1500);
+				if (time.timer() > 1450);
 			//
 	
 			//triangle calculation
@@ -516,6 +519,7 @@ void Track () {
 			if (actuator.victim() == null) actuator.Down();
 			else if (actuator.victim() == "alive") first_check_alive = true;
 	
+			clear();
 		}
 	
 	}
