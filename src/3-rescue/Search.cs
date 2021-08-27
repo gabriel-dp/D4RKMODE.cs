@@ -18,7 +18,7 @@ void Search () {
 				forward(150);
 				delay(15);
 			} while (ultra(side_sensor) <= last_ultra && time.timer() < 1500);
-			if (time.timer() > 1450);
+			if (time.timer() > 1450) return;
 		//
 
 		//triangle calculation

@@ -11,6 +11,4 @@ void Setup () {
 
 	actuator.Down();
 	Centralize();
-
-	Triangle();
 }
