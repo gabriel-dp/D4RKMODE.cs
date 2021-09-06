@@ -15,6 +15,7 @@ void Rescue () {
 		if (DetectTriangleRight()) {
 			sideToSearch = 'L';
 			side_triangle = 2;
+			side_sensor = 3;
 		}
 
 		actuator.Down();

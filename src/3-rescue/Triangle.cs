@@ -39,21 +39,28 @@ void alignToTriangle (byte side) {
 }
 
 void Triangle () {
+
 	if (Math.Abs(bot.GetFrontalLeftForce()-bot.GetFrontalRightForce()) > 380 && ultra(1) < 120) {
-		time.reset();
-		float last_ultra = ultra(1);
-		do {
-			FollowerGyro();
-			if (last_ultra - 1 > ultra(1)) return;
-		} while (time.timer() < 100);
+
+		//verify if is the triangle
+			time.reset();
+			float last_ultra = ultra(1);
+			do {
+				FollowerGyro();
+				if (last_ultra - 2 > ultra(1)) return;
+			} while (time.timer() < 100);
+		//
 
 		stop();
 		actuator.Up();
-		if (actuator.victim() != null) led(color["red"]);
+		if (actuator.hasVictim()) led(color["red"]);
 
 		alignToTriangle(side_triangle);
 		reverse(1000);
 		stop(9999);
+
+
 	}
+
 }
 

@@ -419,13 +419,15 @@ void Setup () {
 	
 		public bool isUp () => (bot.AngleActuator() > 80);
 	
-		const int temperature_alive = 36;
-		public string victim () {
-			if (bot.HasVictim() && isUp()) {
-				if (bot.Heat() > temperature_alive) return "alive";
-				else return "dead";
+		public bool hasVictim () => (bot.HasVictim() && isUp());
+	
+		public bool isAlive () {
+			ActuatorAdjust(45, 0);
+			if (bot.Heat() > 35) {
+				Up();
+				return (bot.Heat() > 37);
 			}
-			return null;
+			return false;
 		}
 	
 	}
@@ -559,7 +561,6 @@ void Track () {
 
 //Rescue - imported files
 	char sideToSearch = 'R';
-	bool first_check_alive = false;
 	bool DetectTriangleRight () {
 		if (ultra(2) > 400) return false;
 	
@@ -601,36 +602,39 @@ void Track () {
 	}
 	
 	void Triangle () {
+	
 		if (Math.Abs(bot.GetFrontalLeftForce()-bot.GetFrontalRightForce()) > 380 && ultra(1) < 120) {
-			time.reset();
-			float last_ultra = ultra(1);
-			do {
-				FollowerGyro();
-				if (last_ultra - 1 > ultra(1)) return;
-			} while (time.timer() < 100);
+	
+			//verify if is the triangle
+				time.reset();
+				float last_ultra = ultra(1);
+				do {
+					FollowerGyro();
+					if (last_ultra - 2 > ultra(1)) return;
+				} while (time.timer() < 100);
+			//
 	
 			stop();
 			actuator.Up();
-			if (actuator.victim() != null) led(color["red"]);
+			if (actuator.hasVictim()) led(color["red"]);
 	
 			alignToTriangle(side_triangle);
 			reverse(1000);
 			stop(9999);
+	
+	
 		}
+	
 	}
 	
 	void Wall () {
 		if (DetectWall()) {
-			stop();
 			console_led(2, "$>Parede<$ detectada", color["yellow"]);
+			stop();
+			if (!actuator.isUp()) actuator.Up();
 	
-			if (!actuator.isUp()) {
-				actuator.Up();
-				stop(150);
-				if (actuator.victim() == "alive") first_check_alive = true; led(color["green"]);
-			}
 			CentralizeGyro(90);
-			if (actuator.victim() == null) {
+			if (!actuator.hasVictim()) {
 				reverse(300, 300);
 				actuator.Down();
 			}
@@ -638,17 +642,16 @@ void Track () {
 			clear();
 		}
 	}
-	byte side_sensor = 3;
+	byte side_sensor = 2;
 	
 	void Search () {
-		if (sideToSearch == 'R') side_sensor = 2;
 	
-		if (ultra(side_sensor) < 150 && actuator.victim() == null) {
+		if (ultra(side_sensor) < 150 && !actuator.hasVictim()) {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(side_sensor)}<$ zm", color["cyan"]);
 	
 			actuator.Up();
-			if (actuator.victim() != null) return;
+			if (actuator.hasVictim()) return;
 	
 			//align with the ball
 				float last_ultra = 0;
@@ -679,8 +682,7 @@ void Track () {
 				centerQuadrant();
 			//
 	
-			if (actuator.victim() == null) actuator.Down();
-			else if (actuator.victim() == "alive") first_check_alive = true;
+			if (!actuator.hasVictim()) actuator.Down();
 	
 			clear();
 		}
@@ -698,6 +700,7 @@ void Rescue () {
 		if (DetectTriangleRight()) {
 			sideToSearch = 'L';
 			side_triangle = 2;
+			side_sensor = 3;
 		}
 
 		actuator.Down();

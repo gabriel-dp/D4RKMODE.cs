@@ -35,13 +35,15 @@ public class Actuator {
 
 	public bool isUp () => (bot.AngleActuator() > 80);
 
-	const int temperature_alive = 36;
-	public string victim () {
-		if (bot.HasVictim() && isUp()) {
-			if (bot.Heat() > temperature_alive) return "alive";
-			else return "dead";
+	public bool hasVictim () => (bot.HasVictim() && isUp());
+
+	public bool isAlive () {
+		ActuatorAdjust(45, 0);
+		if (bot.Heat() > 35) {
+			Up();
+			return (bot.Heat() > 37);
 		}
-		return null;
+		return false;
 	}
 
 }

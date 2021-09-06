@@ -1,14 +1,13 @@
-byte side_sensor = 3;
+byte side_sensor = 2;
 
 void Search () {
-	if (sideToSearch == 'R') side_sensor = 2;
 
-	if (ultra(side_sensor) < 150 && actuator.victim() == null) {
+	if (ultra(side_sensor) < 150 && !actuator.hasVictim()) {
 		stop();
 		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(side_sensor)}<$ zm", color["cyan"]);
 
 		actuator.Up();
-		if (actuator.victim() != null) return;
+		if (actuator.hasVictim()) return;
 
 		//align with the ball
 			float last_ultra = 0;
@@ -39,8 +38,7 @@ void Search () {
 			centerQuadrant();
 		//
 
-		if (actuator.victim() == null) actuator.Down();
-		else if (actuator.victim() == "alive") first_check_alive = true;
+		if (!actuator.hasVictim()) actuator.Down();
 
 		clear();
 	}
