@@ -30,7 +30,7 @@ bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.
 
 bool isColorized (byte[] sensors) {
 	for (byte i = 0; i < sensors.Length; i++) {
-		if (colors.R(sensors[i]) != colors.B(sensors[i])); return false;
+		if (colors.R(sensors[i]) != colors.B(sensors[i])) return false;
 	}
 	return true;
 }

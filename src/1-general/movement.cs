@@ -43,5 +43,3 @@ void reverse (float motor, int ms = 999999) {
 int error = 0;
 int last_error = 0;
 int turn = 0;
-int motorR = 0;
-int motorL = 0;

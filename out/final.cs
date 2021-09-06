@@ -100,8 +100,6 @@ void Setup () {
 	int error = 0;
 	int last_error = 0;
 	int turn = 0;
-	int motorR = 0;
-	int motorL = 0;
 	//Constants of calibration
 	const float max_white = 60;
 	const byte high_black = 50;
@@ -173,7 +171,7 @@ void Setup () {
 	
 	bool isColorized (byte[] sensors) {
 		for (byte i = 0; i < sensors.Length; i++) {
-			if (colors.R(sensors[i]) != colors.B(sensors[i])); return false;
+			if (colors.R(sensors[i]) != colors.B(sensors[i])) return false;
 		}
 		return true;
 	}
