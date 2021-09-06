@@ -12,14 +12,18 @@ void Rescue () {
 		open_actuator = true;
 
 		moveTime(300, 500);
-		if (DetectTriangleRight()) sideToSearch = 'L';
+		if (DetectTriangleRight()) {
+			sideToSearch = 'L';
+			side_triangle = 2;
+		}
 
 		actuator.Down();
 	}
 
 	while (local == Local.rescue) {
-		forward(300);
+		FollowerGyro();
 		Search();
 		Wall();
+		Triangle();
 	}
 }

@@ -270,6 +270,36 @@ void Setup () {
 	
 		}
 	//
+	
+	const int Kg = 15;
+	void FollowerGyro (int angle = 1000) {
+		//error to turn
+			int direction_ideal = angle;
+			if (angle == 1000) direction_ideal = Direction() * 90;
+	
+			int direction_actual = direction();
+			if ((direction_ideal >= 0 && direction_ideal < 15) && direction_actual > 300) direction_actual -= 360;
+			else if ((direction_ideal > 345 && direction_ideal <= 360) && direction_actual < 300) direction_actual += 360;
+	
+			error = direction_actual-direction_ideal;
+			turn = error*Kg;
+	
+			if (turn > 100) turn = 100;
+			else if (turn < -100) turn = -100;
+		//
+	
+		//turn to motors
+			if (Math.Abs(turn) > 15) {
+				if (turn > 0) move(-(300*Math.Abs(turn)*0.01f), 300);
+				else move(300, -(300*Math.Abs(turn)*0.01f));
+			}
+			else {
+				forward(300);
+			}
+		//
+	
+		printMotors();
+	}
 	float ultra (byte sensor) {
 		float ultra_data = bc.Distance(sensor - 1);
 		ultra_data = ((float)((int)(ultra_data *100)))/100;
@@ -571,8 +601,22 @@ void Track () {
 	}
 	
 	void Triangle () {
-		if (sideToSearch == 'L') side_triangle = 2;
-		alignToTriangle(3);
+		if (Math.Abs(bot.GetFrontalLeftForce()-bot.GetFrontalRightForce()) > 380 && ultra(1) < 120) {
+			time.reset();
+			float last_ultra = ultra(1);
+			do {
+				FollowerGyro();
+				if (last_ultra - 1 > ultra(1)) return;
+			} while (time.timer() < 100);
+	
+			stop();
+			actuator.Up();
+			if (actuator.victim() != null) led(color["red"]);
+	
+			alignToTriangle(side_triangle);
+			reverse(1000);
+			stop(9999);
+		}
 	}
 	
 	void Wall () {
@@ -651,15 +695,19 @@ void Rescue () {
 		open_actuator = true;
 
 		moveTime(300, 500);
-		if (DetectTriangleRight()) sideToSearch = 'L';
+		if (DetectTriangleRight()) {
+			sideToSearch = 'L';
+			side_triangle = 2;
+		}
 
 		actuator.Down();
 	}
 
 	while (local == Local.rescue) {
-		forward(300);
+		FollowerGyro();
 		Search();
 		Wall();
+		Triangle();
 	}
 }
 

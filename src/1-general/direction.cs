@@ -79,3 +79,33 @@ int scaleAngle (int angle) {
 
 	}
 //
+
+const int Kg = 15;
+void FollowerGyro (int angle = 1000) {
+	//error to turn
+		int direction_ideal = angle;
+		if (angle == 1000) direction_ideal = Direction() * 90;
+
+		int direction_actual = direction();
+		if ((direction_ideal >= 0 && direction_ideal < 15) && direction_actual > 300) direction_actual -= 360;
+		else if ((direction_ideal > 345 && direction_ideal <= 360) && direction_actual < 300) direction_actual += 360;
+
+		error = direction_actual-direction_ideal;
+		turn = error*Kg;
+
+		if (turn > 100) turn = 100;
+		else if (turn < -100) turn = -100;
+	//
+
+	//turn to motors
+		if (Math.Abs(turn) > 15) {
+			if (turn > 0) move(-(300*Math.Abs(turn)*0.01f), 300);
+			else move(300, -(300*Math.Abs(turn)*0.01f));
+		}
+		else {
+			forward(300);
+		}
+	//
+
+	printMotors();
+}
