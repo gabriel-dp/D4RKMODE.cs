@@ -171,6 +171,13 @@ void Setup () {
 	
 	bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.B(sensor) < 10) && isThatColor(sensor, "GREEN"));
 	
+	bool isColorized (byte[] sensors) {
+		for (byte i = 0; i < sensors.Length; i++) {
+			if (colors.R(sensors[i]) != colors.B(sensors[i])); return false;
+		}
+		return true;
+	}
+	
 	int direction () => (int) bot.Compass();
 	
 	byte Direction () {
@@ -314,6 +321,20 @@ void Setup () {
 		led("off");
 	}
 	
+	int start_print = 0;
+	void printMotors () {
+		if (start_print + 63 < time.millis()) {
+			string right_data = ((int)bot.GetFrontalRightForce()).ToString();
+			string left_data = ((int)bot.GetFrontalLeftForce()).ToString();
+	
+			string right_spaces = new string (' ', 5 - right_data.Length);
+			string left_spaces = new string (' ', 5 - left_data.Length);
+	
+			console(3, $"$>| {right_spaces+right_data}   |   {left_data+left_spaces} |<$", color["comment"]);
+			start_print = time.millis();
+		}
+	}
+	
 	//both
 	void console_led (int line, string text, string hexcolor, string ledcolor = "") {
 		if (ledcolor == "") ledcolor = hexcolor;
@@ -374,35 +395,66 @@ void Setup () {
 //Track - imported files
 	const int Kc = 15;
 	
-	void Centralize () {
+	void Centralize (int timeout = 2000) {
 	
 		//If only the external sensors are above the line
 		if (isWhite(new byte[] {1,2,3}) && isBlack(4)) {
+			moveTime(200, 15);
 			while (!isFullBlack(3)) left(1000);
 		} else if (isBlack(1) && isWhite(new byte[] {2,3,4})) {
+			moveTime(200, 15);
 			while (!isFullBlack(2)) right(1000);
 		}
 	
+		time.reset();
 		do {
 			error = (light(2) - light(3)) * Kc;
 			left(error);
-		} while (Math.Abs(error) > Kc*2);
+		} while ((Math.Abs(error) > Kc*2 && time.timer() > timeout) || time.timer() < 150);
 	
 		stop();
+	}
+	void CurveBlack () {
+		char curve_side = 'n';
+		if (!isWhite(1) && !isColorized(1)) {
+			console_led(2, "Curva para Direita →", color["black"]);
+			curve_side = 'R';
+		} else if (!isWhite(4) && !isColorized(4)) {
+			console_led(2, "Curva para Esquerda ←", color["black"]);
+			curve_side = 'L';
+		}
+	
+		if (curve_side != 'n') {
+			Centralize();
+			if (!isWhite(1) || !isWhite(4)) {
+				moveTime(300, 330);
+				if (curve_side == 'R') {
+					while (!isFullBlack(3) || isColorized(3)) right(1000);
+				} else {
+					while (!isFullBlack(2) || isColorized(2)) left(1000);
+				}
+			} else {
+				clear();
+				return;
+			}
+			Centralize();
+			clear();
+		}
 	}
 	const float Kp = 1;
 	const float Kd = 20;
 	
-	const int vel_max_front = 300;
-	const int vel_max_axis = 1000;
+	const int vel_front = 300;
+	const int vel_axis = 1000;
+	const int motor_limit = 190;
 	
-	const int turn_divider = 10;
-	const int motor_limit = 100;
-	const int motor_axis_min = 150;
-	
-	
+	const int turn_axis = 50;
+	const int turn_normal = 15;
+	const float turn_coefficient = 0.01f;
 	
 	void LineFollower () {
+	
+		CurveBlack();
 	
 		//error to turn
 			error = light(2)-light(3);
@@ -417,11 +469,20 @@ void Setup () {
 		//
 	
 		//turn to motors
-	
+			if (Math.Abs(turn) > turn_axis) {
+				left(vel_axis*turn);
+			}
+			else if (Math.Abs(turn) > turn_normal) {
+				if (turn > 0) move(-(vel_front*Math.Abs(turn)*turn_coefficient), vel_front);
+				else move(vel_front, -(vel_front*Math.Abs(turn)*turn_coefficient));
+			}
+			else {
+				forward(motor_limit);
+			}
 		//
 	
-		//move(motorR, motorL);
 		led(color["white"]);
+		//printMotors();
 	
 	}
 	void RedEnd () {
@@ -439,7 +500,7 @@ void Setup () {
 void Track () {
 	console(1, "$>--Track--<$", color["comment"]);
 	while (local == Local.track) {
-		forward(200);
+		LineFollower();
 		TrackEnd();
 	}
 }

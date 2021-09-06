@@ -44,6 +44,20 @@ void clear (int line = 2) {
 	led("off");
 }
 
+int start_print = 0;
+void printMotors () {
+	if (start_print + 63 < time.millis()) {
+		string right_data = ((int)bot.GetFrontalRightForce()).ToString();
+		string left_data = ((int)bot.GetFrontalLeftForce()).ToString();
+
+		string right_spaces = new string (' ', 5 - right_data.Length);
+		string left_spaces = new string (' ', 5 - left_data.Length);
+
+		console(3, $"$>| {right_spaces+right_data}   |   {left_data+left_spaces} |<$", color["comment"]);
+		start_print = time.millis();
+	}
+}
+
 //both
 void console_led (int line, string text, string hexcolor, string ledcolor = "") {
 	if (ledcolor == "") ledcolor = hexcolor;
