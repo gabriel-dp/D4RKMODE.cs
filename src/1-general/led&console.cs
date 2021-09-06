@@ -41,7 +41,7 @@ void console (int line, string text, string hexcolor = "") {
 
 void clear (int line = 2) {
 	bot.ClearConsoleLine(line - 1);
-	led("off");
+	if (line == 2) led(color["white"]);
 }
 
 int start_print = 0;

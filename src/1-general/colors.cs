@@ -1,7 +1,7 @@
 public class Colors {
-	public int R (byte sensor) => (int) bot.ReturnRed(sensor-1);
-	public int G (byte sensor) => (int) bot.ReturnGreen(sensor-1);
-	public int B (byte sensor) => (int) bot.ReturnBlue(sensor-1);
+	public int R (byte sensor) => (int) (bot.ReturnRed(sensor-1) + 1);
+	public int G (byte sensor) => (int) (bot.ReturnGreen(sensor-1) + 1);
+	public int B (byte sensor) => (int) (bot.ReturnBlue(sensor-1) + 1);
 }
 
 Colors colors = new Colors();

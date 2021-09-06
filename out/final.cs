@@ -140,9 +140,9 @@ void Setup () {
 		}
 	//
 	public class Colors {
-		public int R (byte sensor) => (int) bot.ReturnRed(sensor-1);
-		public int G (byte sensor) => (int) bot.ReturnGreen(sensor-1);
-		public int B (byte sensor) => (int) bot.ReturnBlue(sensor-1);
+		public int R (byte sensor) => (int) (bot.ReturnRed(sensor-1) + 1);
+		public int G (byte sensor) => (int) (bot.ReturnGreen(sensor-1) + 1);
+		public int B (byte sensor) => (int) (bot.ReturnBlue(sensor-1) + 1);
 	}
 	
 	Colors colors = new Colors();
@@ -316,7 +316,7 @@ void Setup () {
 	
 	void clear (int line = 2) {
 		bot.ClearConsoleLine(line - 1);
-		led("off");
+		if (line == 2) led(color["white"]);
 	}
 	
 	int start_print = 0;
@@ -433,7 +433,7 @@ void Setup () {
 	
 		if (curve_side != 'n') {
 			Centralize();
-			if (!isWhite(1) || !isWhite(4)) {
+			if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
 				moveTime(300, 330);
 				if (curve_side == 'R') {
 					while (!isFullBlack(3) || isColorized(3)) right(1000);
@@ -499,7 +499,7 @@ void Setup () {
 	}
 	void TrackEnd () {
 		if (isWhite(new byte[] {1,2,3,4}) && (ultraLimits(1, 350, 390) || ultraLimits(1, 250, 290)) && (ultra(2) < 45 && ultra(3) < 45)) {
-			local++;
+			local = Local.rescue;
 		}
 	}
 //
@@ -509,6 +509,7 @@ void Track () {
 	while (local == Local.track) {
 		LineFollower();
 		TrackEnd();
+		RedEnd();
 	}
 }
 

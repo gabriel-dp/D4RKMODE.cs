@@ -11,6 +11,7 @@ void Track () {
 	while (local == Local.track) {
 		LineFollower();
 		TrackEnd();
+		RedEnd();
 	}
 }
 
