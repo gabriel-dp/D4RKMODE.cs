@@ -8,6 +8,7 @@
 
 void Track () {
 	console(1, "$>--Track--<$", color["comment"]);
+
 	while (local == Local.track) {
 		LineFollower();
 		TrackEnd();
