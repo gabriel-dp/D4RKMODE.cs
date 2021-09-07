@@ -39,9 +39,11 @@ public class Actuator {
 
 	public bool isAlive () {
 		ActuatorAdjust(45, 0);
-		if (bot.Heat() > 35) {
+		bot.Wait(500);
+		if (bot.Heat() > 34 && bot.Heat() < 37) {
 			Up();
-			return (bot.Heat() > 37);
+			bot.Wait(500);
+			return (bot.Heat() > 35.5);
 		}
 		return false;
 	}
