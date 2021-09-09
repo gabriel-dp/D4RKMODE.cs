@@ -12,6 +12,7 @@ const float turn_coefficient = 0.01f;
 void LineFollower () {
 
 	CurveBlack();
+	Green();
 
 	//error to turn
 		error = light(2)-light(3);

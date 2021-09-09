@@ -10,8 +10,15 @@ void CurveBlack () {
 
 	if (curve_side != 'n') {
 		Centralize();
+
+		//verifies if is a green square
+			moveTime(300, 15);
+			GreenClassifier();
+			if (green_direction != 'n') return;
+		//
+
 		if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
-			moveTime(300, 330);
+			moveTime(300, 315);
 			if (curve_side == 'R') {
 				while (!isFullBlack(3) || isColorized(3)) right(1000);
 			} else {
