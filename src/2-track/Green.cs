@@ -21,6 +21,7 @@ void Green () {
 
 		//centralizes in the line and verifies again
 			GreenClassifier();
+
 			if (green_direction == 'B') {
 				while (!isFullBlack(2)) left(1000);
 			} else if (green_direction == 'L') {
@@ -29,6 +30,10 @@ void Green () {
 				while (!isFullBlack(2)) left(1000);
 			}
 			GreenClassifier();
+			if (green_direction == 'n') {
+				moveTime(-300, 200);
+				return;
+			}
 		//
 
 		console(2, $"{green_direction}");

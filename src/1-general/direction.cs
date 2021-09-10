@@ -8,7 +8,6 @@ byte Direction () {
 	return quadrant;
 }
 
-
 int scaleAngle (int angle) {
 	angle = angle%90;
 	if (angle >= 45) angle -= 2*(angle-45);
