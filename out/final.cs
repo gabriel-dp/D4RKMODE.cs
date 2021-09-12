@@ -519,10 +519,10 @@ void Setup () {
 			} else {
 				if (green_direction == 'R') {
 					if (scaleAngle(direction()) < 25) CentralizeGyro(45);
-					while (!isFullBlack(3)) right(1000);
+					while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
 				} else {
 					if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
-					while (!isFullBlack(2)) left(1000);
+					while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
 				}
 			}
 			Centralize();
@@ -544,9 +544,12 @@ void Setup () {
 	
 			//verifies if is a green square
 				moveTime(300, 15);
+				if (isWhite(1) && isWhite(4)) {
+					moveTime(-300, 100);
+					return;
+				}
 				GreenClassifier();
 				if (green_direction != 'n') {
-					clear();
 					return;
 				}
 			//
@@ -560,9 +563,9 @@ void Setup () {
 				time.reset();
 	
 				if (curve_side == 'R') {
-					while ((!isFullBlack(3) || isColorized(3)) && time.timer() < maxTimeToRotate) right(1000);
+					while (((!isFullBlack(3) || isColorized(3)) && (!isFullBlack(4) || isColorized(4))) && time.timer() < maxTimeToRotate) right(1000);
 				} else {
-					while ((!isFullBlack(2) || isColorized(2)) && time.timer() < maxTimeToRotate) left(1000);
+					while (((!isFullBlack(2) || isColorized(2)) && (!isFullBlack(1) || isColorized(1))) && time.timer() < maxTimeToRotate) left(1000);
 				}
 	
 				//if doesnt find the line
@@ -576,7 +579,6 @@ void Setup () {
 					}
 				//
 			} else {
-				clear();
 				return;
 			}
 			Centralize();

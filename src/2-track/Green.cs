@@ -45,10 +45,10 @@ void Green () {
 		} else {
 			if (green_direction == 'R') {
 				if (scaleAngle(direction()) < 25) CentralizeGyro(45);
-				while (!isFullBlack(3)) right(1000);
+				while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
 			} else {
 				if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
-				while (!isFullBlack(2)) left(1000);
+				while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
 			}
 		}
 		Centralize();
