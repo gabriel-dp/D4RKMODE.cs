@@ -602,6 +602,8 @@ void Setup () {
 	const int turn_normal = 15;
 	const float turn_coefficient = 0.01f;
 	
+	int last_zero = 0;
+	
 	void LineFollower () {
 	
 		CurveBlack();
@@ -622,13 +624,22 @@ void Setup () {
 		//turn to motors
 			if (Math.Abs(turn) > turn_axis) {
 				left(vel_axis*turn);
+				last_zero = time.millis();
 			}
 			else if (Math.Abs(turn) > turn_normal) {
+				last_zero = time.millis();
 				if (turn > 0) move(-(vel_front*Math.Abs(turn)*turn_coefficient), vel_front);
 				else move(vel_front, -(vel_front*Math.Abs(turn)*turn_coefficient));
 			}
 			else {
 				forward(motor_limit);
+			}
+		//
+	
+		//maybe lost the line
+			if (time.millis() - last_zero > 1000 && scaleAngle(direction()) > 2) {
+				CentralizeGyro(0);
+				last_zero = time.millis();
 			}
 		//
 	
@@ -878,8 +889,6 @@ void Track () {
 			//temporary
 				if (ultra(3) > 50) {
 					CentralizeGyro(-90);
-					open_actuator = false;
-					actuator.Down();
 					while (isWhite(3)) forward(200);
 					moveTime(300, 300);
 					Centralize();
@@ -951,18 +960,18 @@ void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
 		centerQuadrant();
-		moveTime(300, 750);
-		CentralizeGyro(90);
-		while (ultra(2) > 70) FollowerGyro();
 		/*
 		open_actuator = true;
 
+		moveTime(300, 500);
 		if (DetectTriangleRight()) {
 			sideToSearch = 'L';
 			side_triangle = 2;
 			side_sensor = 3;
 		}
 		*/
+
+		actuator.Down();
 	}
 
 	while (local == Local.rescue) {
@@ -970,9 +979,9 @@ void Rescue () {
 		//Search();
 		Wall();
 		Triangle();
-		if (ultra(2) > 70) {
-			moveTime(300, 650);
-			CentralizeGyro(90);
+		if (ultra(3) > 70) {
+			moveTime(300, 600);
+			CentralizeGyro(-90);
 			while (isWhite(3)) forward(200);
 			moveTime(300, 300);
 			Centralize();

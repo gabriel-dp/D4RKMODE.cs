@@ -6,8 +6,6 @@ void Wall () {
 		//temporary
 			if (ultra(3) > 50) {
 				CentralizeGyro(-90);
-				open_actuator = false;
-				actuator.Down();
 				while (isWhite(3)) forward(200);
 				moveTime(300, 300);
 				Centralize();
