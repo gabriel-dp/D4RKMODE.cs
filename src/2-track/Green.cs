@@ -39,20 +39,21 @@ void Green () {
 		console(2, $"{green_direction}");
 
 		//goes forward and rotate in the axis to make the curve
-		moveTime(300, 450);
-		if (green_direction == 'B') {
-			CentralizeGyro(180);
-		} else {
-			if (green_direction == 'R') {
-				if (scaleAngle(direction()) < 25) CentralizeGyro(45);
-				while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
+			moveTime(300, 450);
+			if (green_direction == 'B') {
+				CentralizeGyro(180);
 			} else {
-				if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
-				while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
+				if (green_direction == 'R') {
+					if (scaleAngle(direction()) < 25) CentralizeGyro(45);
+					while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
+				} else {
+					if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
+					while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
+				}
 			}
-		}
-		Centralize();
-		clear();
+			Centralize();
+		//
 
+		clear();
 	}
 }

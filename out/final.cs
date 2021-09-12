@@ -513,21 +513,22 @@ void Setup () {
 			console(2, $"{green_direction}");
 	
 			//goes forward and rotate in the axis to make the curve
-			moveTime(300, 450);
-			if (green_direction == 'B') {
-				CentralizeGyro(180);
-			} else {
-				if (green_direction == 'R') {
-					if (scaleAngle(direction()) < 25) CentralizeGyro(45);
-					while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
+				moveTime(300, 450);
+				if (green_direction == 'B') {
+					CentralizeGyro(180);
 				} else {
-					if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
-					while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
+					if (green_direction == 'R') {
+						if (scaleAngle(direction()) < 25) CentralizeGyro(45);
+						while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
+					} else {
+						if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
+						while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
+					}
 				}
-			}
-			Centralize();
-			clear();
+				Centralize();
+			//
 	
+			clear();
 		}
 	}
 	void CurveBlack () {
@@ -542,7 +543,7 @@ void Setup () {
 	
 		if (curve_side != 'n') {
 	
-			//verifies if is a green square
+			//verifies if sensor misread green
 				moveTime(300, 15);
 				if (isWhite(1) && isWhite(4)) {
 					moveTime(-300, 100);
@@ -554,36 +555,38 @@ void Setup () {
 				}
 			//
 	
-			Centralize();
-			if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
-				moveTime(300, 315);
+			//tries to centralize and avoid "false curves" then goes forward and rotate in the axis
+				Centralize();
 	
-				int maxTimeToRotate = 4400;
-				LostTheLine:
-				time.reset();
+				if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
+					moveTime(300, 315);
 	
-				if (curve_side == 'R') {
-					while (((!isFullBlack(3) || isColorized(3)) && (!isFullBlack(4) || isColorized(4))) && time.timer() < maxTimeToRotate) right(1000);
-				} else {
-					while (((!isFullBlack(2) || isColorized(2)) && (!isFullBlack(1) || isColorized(1))) && time.timer() < maxTimeToRotate) left(1000);
-				}
+					int maxTimeToRotate = 4400;
+					LostTheLine:
+					time.reset();
 	
-				//if doesnt find the line
-					if (time.timer() > maxTimeToRotate - 50) {
-						led(color["orange"]);
-						moveTime(-300, 200);
-						if (curve_side == 'R') curve_side = 'L';
-						else curve_side = 'R';
-						maxTimeToRotate += maxTimeToRotate;
-						goto LostTheLine;
+					if (curve_side == 'R') {
+						while (((!isFullBlack(3) || isColorized(3)) && (!isFullBlack(4) || isColorized(4))) && time.timer() < maxTimeToRotate) right(1000);
+					} else {
+						while (((!isFullBlack(2) || isColorized(2)) && (!isFullBlack(1) || isColorized(1))) && time.timer() < maxTimeToRotate) left(1000);
 					}
-				//
-			} else {
-				return;
-			}
-			Centralize();
-			clear();
 	
+					//if doesnt find the line
+						if (time.timer() > maxTimeToRotate - 50) {
+							led(color["orange"]);
+							moveTime(-300, 200);
+							if (curve_side == 'R') curve_side = 'L';
+							else curve_side = 'R';
+							maxTimeToRotate += maxTimeToRotate;
+							goto LostTheLine;
+						}
+					//
+				} else return;
+	
+				Centralize();
+			//
+	
+			clear();
 		}
 	}
 	const float Kp = 1;
