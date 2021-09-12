@@ -18,7 +18,6 @@ void Track () {
 		Ramp();
 		TrackEnd();
 		RedEnd();
-		printMotors();
 	}
 }
 

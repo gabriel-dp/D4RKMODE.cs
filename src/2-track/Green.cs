@@ -24,6 +24,7 @@ void Green () {
 			GreenClassifier();
 			if (green_direction == 'B') {
 				while (!isFullBlack(2)) left(1000);
+				rotate(500, 2);
 			} else if (green_direction == 'L') {
 				while (!isFullBlack(3)) right(1000);
 			} else {
