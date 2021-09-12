@@ -416,7 +416,7 @@ void Setup () {
 		}
 	
 		public void Down () {
-			if (open_actuator) ActuatorAdjust(1, 0, "open");
+			if (open_actuator) ActuatorAdjust(3, 0, "open");
 			else ActuatorAdjust(3, 0);
 		}
 	
@@ -497,6 +497,7 @@ void Setup () {
 				GreenClassifier();
 				if (green_direction == 'B') {
 					while (!isFullBlack(2)) left(1000);
+					rotate(500, 2);
 				} else if (green_direction == 'L') {
 					while (!isFullBlack(3)) right(1000);
 				} else {
@@ -726,6 +727,9 @@ void Setup () {
 	
 		}
 	}
+	bool flag_ramp = false;
+	int time_ramp = 0;
+	
 	void Ramp () {
 		if (inclination() < -7) {
 			led(color["blue"]);
@@ -751,6 +755,19 @@ void Setup () {
 					stop(200);
 				}
 			//
+		}
+	
+		if (inclination() > 17 && !flag_ramp) {
+			flag_ramp = true;
+			open_actuator = true;
+			actuator.Down();
+			time_ramp = time.millis();
+	
+		}
+	
+		if (flag_ramp && time.millis() - time_ramp > 20000) {
+			bot.CloseActuator();
+			flag_ramp = false;
 		}
 	}
 	void RedEnd () {

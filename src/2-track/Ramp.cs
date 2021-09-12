@@ -1,3 +1,6 @@
+bool flag_ramp = false;
+int time_ramp = 0;
+
 void Ramp () {
 	if (inclination() < -7) {
 		led(color["blue"]);
@@ -23,5 +26,18 @@ void Ramp () {
 				stop(200);
 			}
 		//
+	}
+
+	if (inclination() > 17 && !flag_ramp) {
+		flag_ramp = true;
+		open_actuator = true;
+		actuator.Down();
+		time_ramp = time.millis();
+
+	}
+
+	if (flag_ramp && time.millis() - time_ramp > 20000) {
+		bot.CloseActuator();
+		flag_ramp = false;
 	}
 }

@@ -29,7 +29,7 @@ public class Actuator {
 	}
 
 	public void Down () {
-		if (open_actuator) ActuatorAdjust(1, 0, "open");
+		if (open_actuator) ActuatorAdjust(3, 0, "open");
 		else ActuatorAdjust(3, 0);
 	}
 
