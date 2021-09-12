@@ -469,6 +469,7 @@ void Setup () {
 			left(error);
 		} while ((Math.Abs(error) > Kc*2 && time.timer() > timeout) || time.timer() < 150);
 	
+		last_zero = time.millis();
 		stop();
 	}
 	char green_direction = 'n';
@@ -497,6 +498,7 @@ void Setup () {
 				GreenClassifier();
 				if (green_direction == 'B') {
 					while (!isFullBlack(2)) left(1000);
+					rotate(500, 2);
 				} else if (green_direction == 'L') {
 					while (!isFullBlack(3)) right(1000);
 				} else {
@@ -601,6 +603,8 @@ void Setup () {
 	const int turn_normal = 15;
 	const float turn_coefficient = 0.01f;
 	
+	int last_zero = 0;
+	
 	void LineFollower () {
 	
 		CurveBlack();
@@ -621,13 +625,22 @@ void Setup () {
 		//turn to motors
 			if (Math.Abs(turn) > turn_axis) {
 				left(vel_axis*turn);
+				last_zero = time.millis();
 			}
 			else if (Math.Abs(turn) > turn_normal) {
 				if (turn > 0) move(-(vel_front*Math.Abs(turn)*turn_coefficient), vel_front);
 				else move(vel_front, -(vel_front*Math.Abs(turn)*turn_coefficient));
+				last_zero = time.millis();
 			}
 			else {
 				forward(motor_limit);
+			}
+		//
+	
+		//maybe lost the line
+			if (time.millis() - last_zero > 1000 && scaleAngle(direction()) > 2) {
+				CentralizeGyro(0);
+				last_zero = time.millis();
 			}
 		//
 	
@@ -774,7 +787,6 @@ void Track () {
 		Ramp();
 		TrackEnd();
 		RedEnd();
-		printMotors();
 	}
 }
 
