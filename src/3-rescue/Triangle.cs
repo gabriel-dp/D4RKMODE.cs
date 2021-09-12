@@ -55,10 +55,17 @@ void Triangle () {
 		actuator.Up();
 		if (actuator.hasVictim()) led(color["red"]);
 
+		//temporary
+			CentralizeGyro(45);
+			rotate(500, 3);
+			moveTime(300, 1750);
+			centerQuadrant();
+			return;
+		//
+
 		alignToTriangle(side_triangle);
 		reverse(1000);
 		stop(9999);
-
 
 	}
 
