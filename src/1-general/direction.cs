@@ -49,7 +49,6 @@ int scaleAngle (int angle) {
 
 	void CentralizeGyro (int operation = 0) {
 
-
 		switch (operation) {
 			case 0:
 				centerQuadrant();
