@@ -11,12 +11,12 @@ void Ramp () {
 			}
 			actuator.Down();
 			int last_inclination = inclination();
-			while (inclination() < -1) LineFollower();
+			while (inclination() < -2) LineFollower();
 			int last_inclination2 = inclination();
 		//
 
 		//if is a seesaw needs to wait that down
-			if (maths.interval(last_inclination - last_inclination2, -10, 0)) {
+			if (last_inclination - last_inclination2 > -12) {
 				stop(750);
 				moveTime(-300, 250);
 			} else {
