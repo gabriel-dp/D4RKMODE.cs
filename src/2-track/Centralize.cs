@@ -26,5 +26,6 @@ void Centralize (int timeout = 2000) {
 		left(error);
 	} while ((Math.Abs(error) > Kc*2 && time.timer() > timeout) || time.timer() < 150);
 
+	last_zero = time.millis();
 	stop();
 }

@@ -469,6 +469,7 @@ void Setup () {
 			left(error);
 		} while ((Math.Abs(error) > Kc*2 && time.timer() > timeout) || time.timer() < 150);
 	
+		last_zero = time.millis();
 		stop();
 	}
 	char green_direction = 'n';
@@ -655,9 +656,9 @@ void Setup () {
 			actuator.Up();
 	
 			//after lifting the actuator, follows the line for a time to confirm that's a obstacle
-				const int timeObstacle = 1750;
+				const int timeObstacle = 2000;
 				time.reset();
-				while (time.timer() < timeObstacle && ultra(1) > 15) {
+				while (time.timer() < timeObstacle && ultra(1) > 10) {
 					LineFollower();
 				}
 	
@@ -674,12 +675,12 @@ void Setup () {
 				bool surpassed = false;
 	
 				void GoForward (bool first = true, bool second = true) {
-					while (ultra(3) > 50 && first) FollowerGyro(direction());
-					while (ultra(3) < 50 && second) FollowerGyro(direction());
+					while (ultra(2) > 50 && first) FollowerGyro(direction());
+					while (ultra(2) < 50 && second) FollowerGyro(direction());
 				}
 	
 				void AfterAvoid () {
-					CentralizeGyro(90);
+					CentralizeGyro(-90);
 					reverse(300, 100);
 					Centralize();
 					actuator.Down();
@@ -688,34 +689,42 @@ void Setup () {
 				}
 	
 				//	|-> /
-					CentralizeGyro(45);
-					rotate(500, 20);
+					CentralizeGyro(-45);
+					rotate(500, -20);
 					GoForward();
 	
 				//	/ -> |
-					CentralizeGyro(-90);
+					CentralizeGyro(90);
 					//search for the line in a 90 degress obstacle
-						while (ultra(3) > 50 && !surpassed) {
+						while (ultra(2) > 50 && !surpassed) {
 							forward(200);
-							if (!isWhite(new byte[] {3,4})) {
+							if (!isWhite(new byte[] {1,2})) {
 								led(color["pink"]);
 								moveTime(300, 400);
 								AfterAvoid();
 							}
 						}
-						if (surpassed) return;
+						if (surpassed) {
+							time.reset();
+							while (time.timer() < 2400) {
+								LineFollower();
+							}
+							rotate(500, -45);
+							while (isWhite(new byte [] {4, 3})) forward(200);
+							return;
+						}
 					//
 					GoForward(false, true);
 					moveTime(300, 100);
 	
 				//	| -> \
-					CentralizeGyro(-45);
-					rotate(500, -20);
+					CentralizeGyro(45);
+					rotate(500, 20);
 					GoForward(true, false);
 					//search for the line in a normal obstacle
-						while (ultra(3) < 50 && !surpassed) {
+						while (ultra(2) < 50 && !surpassed) {
 							forward(200);
-							if (!isWhite(new byte[] {1,2})) {
+							if (!isWhite(new byte[] {3,4})) {
 								led(color["pink"]);
 								GoForward();
 								moveTime(-300, 150);
@@ -728,8 +737,8 @@ void Setup () {
 				//	\ -> /
 					CentralizeGyro(0);
 					GoForward();
-					CentralizeGyro(-45);
-					rotate(500, -20);
+					CentralizeGyro(45);
+					rotate(500, 20);
 					GoForward();
 					moveTime(-300, 150);
 					AfterAvoid();
