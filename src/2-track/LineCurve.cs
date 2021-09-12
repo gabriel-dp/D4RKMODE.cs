@@ -13,7 +13,7 @@ void CurveBlack () {
 		//verifies if sensor misread green
 			moveTime(300, 15);
 			if (isWhite(1) && isWhite(4)) {
-				moveTime(-300, 100);
+				reverse(300, 100);
 				return;
 			}
 			GreenClassifier();

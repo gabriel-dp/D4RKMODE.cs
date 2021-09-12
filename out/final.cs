@@ -491,11 +491,11 @@ void Setup () {
 			//goes a bit forward to detect dead ends
 				if (scaleAngle(direction()) < 7) moveTime(300, 30);
 				else moveTime(300, 48);
+				if (isFullBlack(new byte[] {1, 4})) moveTime(-300, 16);
 			//
 	
 			//centralizes in the line and verifies again
 				GreenClassifier();
-	
 				if (green_direction == 'B') {
 					while (!isFullBlack(2)) left(1000);
 				} else if (green_direction == 'L') {
@@ -504,8 +504,10 @@ void Setup () {
 					while (!isFullBlack(2)) left(1000);
 				}
 				GreenClassifier();
+	
 				if (green_direction == 'n') {
-					moveTime(-300, 200);
+					led(color["orange"]);
+					reverse(300, 100);
 					return;
 				}
 			//
@@ -546,7 +548,7 @@ void Setup () {
 			//verifies if sensor misread green
 				moveTime(300, 15);
 				if (isWhite(1) && isWhite(4)) {
-					moveTime(-300, 100);
+					reverse(300, 100);
 					return;
 				}
 				GreenClassifier();
