@@ -17,7 +17,7 @@ void Green () {
 		//goes a bit forward to detect dead ends
 			if (scaleAngle(direction()) < 7) moveTime(300, 30);
 			else moveTime(300, 48);
-			if (isFullBlack(new byte[] {1, 4})) moveTime(-300, 16);
+			if (isFullBlack(new byte[] {1, 4})) moveTime(-300, 32);
 		//
 
 		//centralizes in the line and verifies again
@@ -30,11 +30,12 @@ void Green () {
 			} else {
 				while (!isFullBlack(2)) left(1000);
 			}
+			stop(50);
 			GreenClassifier();
 
 			if (green_direction == 'n') {
 				led(color["orange"]);
-				reverse(300, 100);
+				reverse(300, 175);
 				return;
 			}
 		//
