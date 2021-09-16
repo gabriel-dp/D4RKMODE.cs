@@ -822,10 +822,11 @@ void Track () {
 	const int ultra_interval = 120;
 	
 	void DetectTriangle (char side, bool reset = false) {
-		byte sensor = (byte) (side == 'R' ? 2 : 3);
-		float last_T = side == 'R' ? last_T_R : last_T_L ;
 	
 		if (time.millis() - start_ultra > ultra_interval) {
+			byte sensor = (byte) (side == 'R' ? 2 : 3);
+			float last_T = side == 'R' ? last_T_R : last_T_L ;
+	
 			if (maths.interval(Math.Abs(last_T - ultra(sensor)), 8, 11)) {
 				led(color["black"]);
 				stop(9999);
@@ -836,13 +837,15 @@ void Track () {
 				if (reset) start_ultra = time.millis();
 			}
 		}
+	
 	}
 	
 	void DetectVictim (byte sensor, float last) {
-		if (maths.interval(last - ultra(sensor), 5, 400) && ultra(sensor) < 200) {
-			led(color["cyan"]);
-			stop(9999);
+	
+		if (maths.interval(last - ultra(sensor), 5, 400)) {
+			Search(sensor);
 		}
+	
 	}
 	
 	void Ultras (bool victims = true, bool triangle = false) {
@@ -943,13 +946,12 @@ void Track () {
 			clear();
 		}
 	}
-	byte side_sensor = 2;
+	void Search (byte sensor) {
+		sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 	
-	void Search () {
-	
-		if (ultra(side_sensor) < 150 && !actuator.hasVictim()) {
+		if (ultra(sensor) < 150 && !actuator.hasVictim()) {
 			stop();
-			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(side_sensor)}<$ zm", color["cyan"]);
+			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
 			actuator.Up();
 			if (actuator.hasVictim()) return;
@@ -958,10 +960,10 @@ void Track () {
 				float last_ultra = 0;
 				time.reset();
 				do {
-					last_ultra = ultra(side_sensor);
+					last_ultra = ultra(sensor);
 					forward(150);
 					delay(15);
-				} while (ultra(side_sensor) <= last_ultra && time.timer() < 1500);
+				} while (ultra(sensor) <= last_ultra && time.timer() < 1500);
 				if (time.timer() > 1450) return;
 			//
 	
@@ -973,13 +975,13 @@ void Track () {
 			//
 	
 			//go rescue
-				rotate(500, angleToRotate);
+				rotate(500, angleToRotate*side_mod);
 				actuator.Down();
 				moveZm(zmToMove);
 				actuator.Up();
 				stop(150);
 				moveZm(-zmToMove);
-				rotate(500, -angleToRotate);
+				rotate(500, -angleToRotate*side_mod);
 				centerQuadrant();
 			//
 	
@@ -1003,7 +1005,7 @@ void Rescue () {
 
 	while (local == Local.rescue) {
 		FollowerGyro();
-		Ultras();
+		Ultras(true, true);
 	}
 }
 void Finish () {

@@ -18,6 +18,6 @@ void Rescue () {
 
 	while (local == Local.rescue) {
 		FollowerGyro();
-		Ultras();
+		Ultras(true, true);
 	}
 }
