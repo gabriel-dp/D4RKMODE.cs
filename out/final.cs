@@ -489,9 +489,14 @@ void Setup () {
 			led(color["green"]);
 	
 			//goes a bit forward to detect dead ends
-				if (scaleAngle(direction()) < 7) moveTime(300, 30);
-				else moveTime(300, 48);
-				if (isFullBlack(new byte[] {1, 4})) moveTime(-300, 32);
+				int timeGreen = 15;
+				if (scaleAngle(direction()) > 20) timeGreen = 45;
+				else if (scaleAngle(direction()) > 7) timeGreen = 30;
+	
+				time.reset();
+				while (time.timer() < timeGreen) Follower(false);
+	
+				if (isFullBlack(new byte[] {1, 4})) moveTime(-300, 16);
 			//
 	
 			//centralizes in the line and verifies again
@@ -501,8 +506,10 @@ void Setup () {
 					rotate(500, 2);
 				} else if (green_direction == 'L') {
 					while (!isFullBlack(3)) right(1000);
+					rotate(500, -2);
 				} else {
 					while (!isFullBlack(2)) left(1000);
+					rotate(500, 2);
 				}
 				stop(50);
 				GreenClassifier();
@@ -517,7 +524,7 @@ void Setup () {
 			console(2, $"{green_direction}");
 	
 			//goes forward and rotate in the axis to make the curve
-				moveTime(300, 450);
+				moveTime(300, 425);
 				if (green_direction == 'B') {
 					CentralizeGyro(180);
 				} else {
@@ -606,10 +613,7 @@ void Setup () {
 	
 	int last_zero = 0;
 	
-	void LineFollower () {
-	
-		CurveBlack();
-		Green();
+	void Follower (bool led_on = true) {
 	
 		//error to turn
 			error = light(2)-light(3);
@@ -645,8 +649,16 @@ void Setup () {
 			}
 		//
 	
-		led(color["white"]);
+		if (led_on) led(color["white"]);
 		//printMotors();
+	
+	}
+	
+	void LineFollower () {
+	
+		CurveBlack();
+		Green();
+		Follower();
 	
 	}
 	void Obstacle () {

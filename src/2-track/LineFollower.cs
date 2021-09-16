@@ -11,10 +11,7 @@ const float turn_coefficient = 0.01f;
 
 int last_zero = 0;
 
-void LineFollower () {
-
-	CurveBlack();
-	Green();
+void Follower (bool led_on = true) {
 
 	//error to turn
 		error = light(2)-light(3);
@@ -50,7 +47,15 @@ void LineFollower () {
 		}
 	//
 
-	led(color["white"]);
+	if (led_on) led(color["white"]);
 	//printMotors();
+
+}
+
+void LineFollower () {
+
+	CurveBlack();
+	Green();
+	Follower();
 
 }
