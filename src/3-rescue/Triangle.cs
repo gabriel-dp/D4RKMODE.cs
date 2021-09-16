@@ -1,18 +1,3 @@
-bool DetectTriangleRight () {
-	if (ultra(2) > 400) return false;
-
-	int last_frontal = (int) ultra(1);
-	int last_lateral = (int) ultra(2);
-	GoToDistance(last_frontal-10);
-
-	if (maths.interval(ultra(2) - last_lateral, 9, 11)) {
-		CentralizeGyro(90);
-		return true;
-	}
-
-	return false;
-}
-
 const int triangle_hypotenuse = 120;
 byte side_triangle = 3;
 
@@ -40,7 +25,11 @@ void alignToTriangle (byte side) {
 
 void Triangle () {
 
-	if (Math.Abs(bot.GetFrontalLeftForce()-bot.GetFrontalRightForce()) > 380 && ultra(1) < 120) {
+	bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(3) > 50 && ultra(2) < 55);
+
+	bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(2) > 50 && ultra(3) < 55);
+
+	if (TriRight() || TriLeft()) {
 
 		//verify if is the triangle
 			time.reset();
@@ -48,12 +37,13 @@ void Triangle () {
 			do {
 				FollowerGyro();
 				if (last_ultra - 2 > ultra(1)) return;
-			} while (time.timer() < 100);
+			} while (time.timer() < 150);
 		//
+
+		console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
 
 		stop();
 		actuator.Up();
-		if (actuator.hasVictim()) led(color["red"]);
 
 		alignToTriangle(side_triangle);
 		reverse(1000);

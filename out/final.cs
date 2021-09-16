@@ -827,9 +827,12 @@ void Track () {
 			byte sensor = (byte) (side == 'R' ? 2 : 3);
 			float last_T = side == 'R' ? last_T_R : last_T_L ;
 	
-			if (maths.interval(Math.Abs(last_T - ultra(sensor)), 8, 11)) {
-				led(color["black"]);
-				stop(9999);
+			if (maths.interval(Math.Abs(last_T - ultra(sensor)), 8, 11) && ultra(sensor) > 70) {
+				moveTime(300, 250);
+				actuator.Up();
+				if (side == 'R') CentralizeGyro(90);
+				else CentralizeGyro(-90);
+				if (!actuator.hasVictim()) actuator.Down();
 			} else {
 				if (side == 'R') last_T_R = (int) last_R;
 				else last_T_L = (int) last_L;
@@ -842,7 +845,7 @@ void Track () {
 	
 	void DetectVictim (byte sensor, float last) {
 	
-		if (maths.interval(last - ultra(sensor), 5, 400)) {
+		if (last - ultra(sensor) > 5) {
 			Search(sensor);
 		}
 	
@@ -865,21 +868,6 @@ void Track () {
 			DetectTriangle('L', true);
 		}
 	}
-	bool DetectTriangleRight () {
-		if (ultra(2) > 400) return false;
-	
-		int last_frontal = (int) ultra(1);
-		int last_lateral = (int) ultra(2);
-		GoToDistance(last_frontal-10);
-	
-		if (maths.interval(ultra(2) - last_lateral, 9, 11)) {
-			CentralizeGyro(90);
-			return true;
-		}
-	
-		return false;
-	}
-	
 	const int triangle_hypotenuse = 120;
 	byte side_triangle = 3;
 	
@@ -907,7 +895,11 @@ void Track () {
 	
 	void Triangle () {
 	
-		if (Math.Abs(bot.GetFrontalLeftForce()-bot.GetFrontalRightForce()) > 380 && ultra(1) < 120) {
+		bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(3) > 50 && ultra(2) < 55);
+	
+		bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(2) > 50 && ultra(3) < 55);
+	
+		if (TriRight() || TriLeft()) {
 	
 			//verify if is the triangle
 				time.reset();
@@ -915,12 +907,13 @@ void Track () {
 				do {
 					FollowerGyro();
 					if (last_ultra - 2 > ultra(1)) return;
-				} while (time.timer() < 100);
+				} while (time.timer() < 150);
 			//
+	
+			console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
 	
 			stop();
 			actuator.Up();
-			if (actuator.hasVictim()) led(color["red"]);
 	
 			alignToTriangle(side_triangle);
 			reverse(1000);
@@ -1004,8 +997,8 @@ void Rescue () {
 	}
 
 	while (local == Local.rescue) {
-		FollowerGyro();
 		Ultras(true, true);
+		Triangle();
 	}
 }
 void Finish () {

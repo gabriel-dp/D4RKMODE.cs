@@ -17,7 +17,7 @@ void Rescue () {
 	}
 
 	while (local == Local.rescue) {
-		FollowerGyro();
 		Ultras(true, true);
+		Triangle();
 	}
 }
