@@ -391,7 +391,7 @@ void Setup () {
 	
 	public class Actuator {
 	
-		public void ActuatorAdjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
+		public void Adjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
 			bot.ActuatorSpeed(150);
 	
 			if (operation == "open") bot.OpenActuator();
@@ -414,12 +414,12 @@ void Setup () {
 		}
 	
 		public void Up () {
-			ActuatorAdjust(89, 0);
+			Adjust(89, 0);
 		}
 	
-		public void Down () {
-			if (open_actuator) ActuatorAdjust(1, 0, "open");
-			else ActuatorAdjust(3, 0);
+		public void Down (string state = "open") {
+			if (open_actuator) Adjust(1, 0, state);
+			else Adjust(3, 0);
 		}
 	
 		public bool isUp () => (bot.AngleActuator() > 80);
@@ -427,7 +427,7 @@ void Setup () {
 		public bool hasVictim () => (bot.HasVictim() && isUp());
 	
 		public bool isAlive () {
-			ActuatorAdjust(45, 0);
+			Adjust(45, 0);
 			bot.Wait(500);
 			if (bot.Heat() > 34 && bot.Heat() < 37) {
 				Up();
@@ -845,7 +845,7 @@ void Track () {
 	
 	void DetectVictim (byte sensor, float last) {
 	
-		if (last - ultra(sensor) > 5) {
+		if (maths.interval(last - ultra(sensor), 5, 400)) {
 			Search(sensor);
 		}
 	
@@ -895,9 +895,9 @@ void Track () {
 	
 	void Triangle () {
 	
-		bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(3) > 50 && ultra(2) < 55);
+		bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55);
 	
-		bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(2) > 50 && ultra(3) < 55);
+		bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55);
 	
 		if (TriRight() || TriLeft()) {
 	
@@ -915,8 +915,18 @@ void Track () {
 			stop();
 			actuator.Up();
 	
-			alignToTriangle(side_triangle);
-			reverse(1000);
+			if (actuator.hasVictim()) {
+				moveTime(-300, 400);
+				moveTime(300, 200);
+				actuator.Down("closed");
+				moveTime(300, 300);
+				stop(150);
+				actuator.Up();
+				moveTime(-300, 100);
+				CentralizeGyro();
+			}
+			//alignToTriangle(side_triangle);
+			//reverse(1000);
 			stop(9999);
 	
 	

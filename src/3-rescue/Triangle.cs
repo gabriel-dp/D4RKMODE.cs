@@ -25,9 +25,9 @@ void alignToTriangle (byte side) {
 
 void Triangle () {
 
-	bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(3) > 50 && ultra(2) < 55);
+	bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55);
 
-	bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(2) > 50 && ultra(3) < 55);
+	bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55);
 
 	if (TriRight() || TriLeft()) {
 
@@ -45,8 +45,18 @@ void Triangle () {
 		stop();
 		actuator.Up();
 
-		alignToTriangle(side_triangle);
-		reverse(1000);
+		if (actuator.hasVictim()) {
+			moveTime(-300, 400);
+			moveTime(300, 200);
+			actuator.Down("closed");
+			moveTime(300, 300);
+			stop(150);
+			actuator.Up();
+			moveTime(-300, 100);
+			CentralizeGyro();
+		}
+		//alignToTriangle(side_triangle);
+		//reverse(1000);
 		stop(9999);
 
 

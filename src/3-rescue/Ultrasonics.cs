@@ -30,7 +30,7 @@ void DetectTriangle (char side, bool reset = false) {
 
 void DetectVictim (byte sensor, float last) {
 
-	if (last - ultra(sensor) > 5) {
+	if (maths.interval(last - ultra(sensor), 5, 400)) {
 		Search(sensor);
 	}
 

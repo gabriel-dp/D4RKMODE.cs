@@ -2,7 +2,7 @@ static bool open_actuator = false;
 
 public class Actuator {
 
-	public void ActuatorAdjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
+	public void Adjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
 		bot.ActuatorSpeed(150);
 
 		if (operation == "open") bot.OpenActuator();
@@ -25,12 +25,12 @@ public class Actuator {
 	}
 
 	public void Up () {
-		ActuatorAdjust(89, 0);
+		Adjust(89, 0);
 	}
 
-	public void Down () {
-		if (open_actuator) ActuatorAdjust(1, 0, "open");
-		else ActuatorAdjust(3, 0);
+	public void Down (string state = "open") {
+		if (open_actuator) Adjust(1, 0, state);
+		else Adjust(3, 0);
 	}
 
 	public bool isUp () => (bot.AngleActuator() > 80);
@@ -38,7 +38,7 @@ public class Actuator {
 	public bool hasVictim () => (bot.HasVictim() && isUp());
 
 	public bool isAlive () {
-		ActuatorAdjust(45, 0);
+		Adjust(45, 0);
 		bot.Wait(500);
 		if (bot.Heat() > 34 && bot.Heat() < 37) {
 			Up();
