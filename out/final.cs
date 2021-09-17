@@ -269,7 +269,7 @@ void Setup () {
 		}
 	//
 	
-	const int Kg = 15;
+	const int Kg = 20;
 	void FollowerGyro (int angle = 1000) {
 		//error to turn
 			int direction_ideal = angle;
@@ -287,9 +287,9 @@ void Setup () {
 		//
 	
 		//turn to motors
-			if (Math.Abs(turn) > 15) {
-				if (turn > 0) move(-(300*Math.Abs(turn)*0.01f), 300);
-				else move(300, -(300*Math.Abs(turn)*0.01f));
+			if (Math.Abs(turn) > 20) {
+				if (turn > 0) move(-(300*Math.Abs(turn)*0.02f), 300);
+				else move(300, -(300*Math.Abs(turn)*0.02f));
 			}
 			else {
 				forward(300);
@@ -819,7 +819,7 @@ void Track () {
 	float last_T_L = 10000;
 	
 	int start_ultra = 0;
-	const int ultra_interval = 120;
+	const int ultra_interval = 110;
 	
 	void DetectTriangle (char side, bool reset = false) {
 	
@@ -828,7 +828,7 @@ void Track () {
 			float last_T = side == 'R' ? last_T_R : last_T_L ;
 	
 			if (maths.interval(Math.Abs(last_T - ultra(sensor)), 8, 11) && ultra(sensor) > 70) {
-				moveTime(300, 250);
+				moveTime(300, 200);
 				actuator.Up();
 				if (side == 'R') CentralizeGyro(90);
 				else CentralizeGyro(-90);
@@ -868,36 +868,23 @@ void Track () {
 			DetectTriangle('L', true);
 		}
 	}
-	const int triangle_hypotenuse = 120;
-	byte side_triangle = 3;
-	
-	void alignToTriangle (byte side) {
-		if (side == 3) {
-			CentralizeGyro(45);
-			int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
-			GoToDistance(ideal_ultra);
-			centerQuadrant();
-			int degress = -10;
-			if (ultra(1) < 280) degress = 10;
-			CentralizeGyro(45);
-			rotate(500, degress);
-		} else {
-			CentralizeGyro(-45);
-			int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
-			GoToDistance(ideal_ultra);
-			centerQuadrant();
-			int degress = 10;
-			if (ultra(1) < 280) degress = -10;
-			CentralizeGyro(-45);
-			rotate(500, degress);
-		}
-	}
+	char side_triangle = 'n';
 	
 	void Triangle () {
 	
-		bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55);
+		bool TriRight () {
+			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55) {
+				side_triangle = 'R';
+				return true;
+			} else return false;
+		}
 	
-		bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55);
+		bool TriLeft () {
+			if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55) {
+				side_triangle = 'L';
+				return true;
+			} else return false;
+		}
 	
 		if (TriRight() || TriLeft()) {
 	
@@ -916,17 +903,22 @@ void Track () {
 			actuator.Up();
 	
 			if (actuator.hasVictim()) {
-				moveTime(-300, 400);
-				moveTime(300, 200);
-				actuator.Down("closed");
-				moveTime(300, 300);
+				moveTime(-200, 600);
+				actuator.Adjust(20, 0);
+				stop(100);
+				moveTime(300, 600);
 				stop(150);
+				moveTime(-300, 200);
 				actuator.Up();
-				moveTime(-300, 100);
 				CentralizeGyro();
 			}
-			//alignToTriangle(side_triangle);
-			//reverse(1000);
+	
+			GoToDistance(95);
+			if (side_triangle == 'R') CentralizeGyro(-90);
+			else CentralizeGyro(90);
+			reverse(300, 750);
+			actuator.Down();
+	
 			stop(9999);
 	
 	
@@ -1000,7 +992,7 @@ void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
 		centerQuadrant();
-		moveTime(300, 500);
+		moveTime(300, 400);
 
 		open_actuator = true;
 		actuator.Down();

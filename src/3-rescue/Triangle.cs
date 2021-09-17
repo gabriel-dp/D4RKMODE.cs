@@ -1,33 +1,20 @@
-const int triangle_hypotenuse = 120;
-byte side_triangle = 3;
-
-void alignToTriangle (byte side) {
-	if (side == 3) {
-		CentralizeGyro(45);
-		int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
-		GoToDistance(ideal_ultra);
-		centerQuadrant();
-		int degress = -10;
-		if (ultra(1) < 280) degress = 10;
-		CentralizeGyro(45);
-		rotate(500, degress);
-	} else {
-		CentralizeGyro(-45);
-		int ideal_ultra = (int)((triangle_hypotenuse/2)+ultra(side));
-		GoToDistance(ideal_ultra);
-		centerQuadrant();
-		int degress = 10;
-		if (ultra(1) < 280) degress = -10;
-		CentralizeGyro(-45);
-		rotate(500, degress);
-	}
-}
+char side_triangle = 'n';
 
 void Triangle () {
 
-	bool TriRight () => (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55);
+	bool TriRight () {
+		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55) {
+			side_triangle = 'R';
+			return true;
+		} else return false;
+	}
 
-	bool TriLeft () => (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55);
+	bool TriLeft () {
+		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55) {
+			side_triangle = 'L';
+			return true;
+		} else return false;
+	}
 
 	if (TriRight() || TriLeft()) {
 
@@ -46,17 +33,22 @@ void Triangle () {
 		actuator.Up();
 
 		if (actuator.hasVictim()) {
-			moveTime(-300, 400);
-			moveTime(300, 200);
-			actuator.Down("closed");
-			moveTime(300, 300);
+			moveTime(-200, 600);
+			actuator.Adjust(20, 0);
+			stop(100);
+			moveTime(300, 600);
 			stop(150);
+			moveTime(-300, 200);
 			actuator.Up();
-			moveTime(-300, 100);
 			CentralizeGyro();
 		}
-		//alignToTriangle(side_triangle);
-		//reverse(1000);
+
+		GoToDistance(95);
+		if (side_triangle == 'R') CentralizeGyro(-90);
+		else CentralizeGyro(90);
+		reverse(300, 750);
+		actuator.Down();
+
 		stop(9999);
 
 

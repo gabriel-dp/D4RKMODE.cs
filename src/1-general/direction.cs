@@ -78,7 +78,7 @@ int scaleAngle (int angle) {
 	}
 //
 
-const int Kg = 15;
+const int Kg = 20;
 void FollowerGyro (int angle = 1000) {
 	//error to turn
 		int direction_ideal = angle;
@@ -96,9 +96,9 @@ void FollowerGyro (int angle = 1000) {
 	//
 
 	//turn to motors
-		if (Math.Abs(turn) > 15) {
-			if (turn > 0) move(-(300*Math.Abs(turn)*0.01f), 300);
-			else move(300, -(300*Math.Abs(turn)*0.01f));
+		if (Math.Abs(turn) > 20) {
+			if (turn > 0) move(-(300*Math.Abs(turn)*0.02f), 300);
+			else move(300, -(300*Math.Abs(turn)*0.02f));
 		}
 		else {
 			forward(300);

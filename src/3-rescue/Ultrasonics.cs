@@ -4,7 +4,7 @@ float last_L = 0;
 float last_T_L = 10000;
 
 int start_ultra = 0;
-const int ultra_interval = 120;
+const int ultra_interval = 110;
 
 void DetectTriangle (char side, bool reset = false) {
 
@@ -13,7 +13,7 @@ void DetectTriangle (char side, bool reset = false) {
 		float last_T = side == 'R' ? last_T_R : last_T_L ;
 
 		if (maths.interval(Math.Abs(last_T - ultra(sensor)), 8, 11) && ultra(sensor) > 70) {
-			moveTime(300, 250);
+			moveTime(300, 200);
 			actuator.Up();
 			if (side == 'R') CentralizeGyro(90);
 			else CentralizeGyro(-90);

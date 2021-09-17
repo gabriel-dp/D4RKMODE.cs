@@ -10,7 +10,7 @@ void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
 		centerQuadrant();
-		moveTime(300, 500);
+		moveTime(300, 400);
 
 		open_actuator = true;
 		actuator.Down();
