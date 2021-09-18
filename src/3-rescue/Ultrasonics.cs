@@ -13,7 +13,7 @@ void DetectTriangle (char side, bool reset = false) {
 		float last_T = side == 'R' ? last_T_R : last_T_L ;
 
 		if (maths.interval(Math.Abs(last_T - ultra(sensor)), 8, 11) && ultra(sensor) > 70) {
-			moveTime(300, 200);
+			moveTime(300, 300);
 			actuator.Up();
 			if (side == 'R') CentralizeGyro(90);
 			else CentralizeGyro(-90);
@@ -32,14 +32,9 @@ void DetectVictim (byte sensor, float last, string operation) {
 
 	if (last - ultra(sensor) > 5 && !actuator.isUp()) {
 		//align with the ball
-			float last_ultra = 0;
-			time.reset();
-			do {
-				last_ultra = ultra(sensor);
-				forward(200);
-				delay(30);
-			} while (ultra(sensor) <= last_ultra && time.timer() < 125);
-			if (time.timer() < 100 || ultra(sensor) > 1000) return;
+			float last_ultra = ultra(sensor);
+			moveTime(300, 50);
+			if (ultra(sensor) > 1000 || last_ultra - ultra(sensor) < 1) return;
 		//
 
 		if (operation == "normal") Search(sensor);

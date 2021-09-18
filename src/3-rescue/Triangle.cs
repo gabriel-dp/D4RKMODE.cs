@@ -43,6 +43,7 @@ void Triangle () {
 		reverse(300, 750);
 		actuator.Down();
 
+		VictimInEnd:
 		bool wall_ahead = (ultra(1) < 400);
 		timeToFind = time.millis();
 		while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
@@ -51,6 +52,10 @@ void Triangle () {
 		}
 
 		actuator.Up();
+		if (actuator.hasVictim()) {
+			SearchTriangle(2, true);
+			goto VictimInEnd;
+		}
 		stop(9999);
 
 
