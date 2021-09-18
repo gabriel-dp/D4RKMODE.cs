@@ -103,6 +103,8 @@ void Setup () {
 		else moveTime(-300, -timeToMove);
 	}
 	
+	int timeByZm (int ms) => (int)(ms/timePerZm);
+	
 	void reverse (float motor, int ms = 999999) {
 		time.reset();
 		while (!bot.Touch(0) && time.timer() < ms) back(motor);
@@ -440,6 +442,19 @@ void Setup () {
 	}
 	
 	Actuator actuator = new Actuator();
+	
+	void Dispatch () {
+		Retry:
+		moveTime(-200, 600);
+		actuator.Adjust(20, 0);
+		stop(100);
+		moveTime(300, 600);
+		stop(200);
+		moveTime(-300, 200);
+		actuator.Up();
+		CentralizeGyro();
+		if (actuator.hasVictim()) goto Retry;
+	}
 //
 
 //Track - imported files
@@ -843,15 +858,27 @@ void Track () {
 	
 	}
 	
-	void DetectVictim (byte sensor, float last) {
+	void DetectVictim (byte sensor, float last, string operation) {
 	
-		if (maths.interval(last - ultra(sensor), 5, 400)) {
-			Search(sensor);
+		if (last - ultra(sensor) > 5 && !actuator.isUp()) {
+			//align with the ball
+				float last_ultra = 0;
+				time.reset();
+				do {
+					last_ultra = ultra(sensor);
+					forward(200);
+					delay(30);
+				} while (ultra(sensor) <= last_ultra && time.timer() < 125);
+				if (time.timer() < 100 || ultra(sensor) > 1000) return;
+			//
+	
+			if (operation == "normal") Search(sensor);
+			else SearchTriangle(sensor);
 		}
 	
 	}
 	
-	void Ultras (bool victims = true, bool triangle = false) {
+	void Ultras (bool victims = true, bool triangle = false, string operation = "normal") {
 		last_R = ultra(2);
 		last_L = ultra(3);
 	
@@ -859,8 +886,8 @@ void Track () {
 		delay(16);
 	
 		if (victims) {
-			DetectVictim(2, last_R);
-			DetectVictim(3, last_L);
+			DetectVictim(2, last_R, operation);
+			DetectVictim(3, last_L, operation);
 		}
 	
 		if (triangle) {
@@ -868,83 +895,10 @@ void Track () {
 			DetectTriangle('L', true);
 		}
 	}
-	char side_triangle = 'n';
-	
-	void Triangle () {
-	
-		bool TriRight () {
-			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55) {
-				side_triangle = 'R';
-				return true;
-			} else return false;
-		}
-	
-		bool TriLeft () {
-			if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55) {
-				side_triangle = 'L';
-				return true;
-			} else return false;
-		}
-	
-		if (TriRight() || TriLeft()) {
-	
-			//verify if is the triangle
-				time.reset();
-				float last_ultra = ultra(1);
-				do {
-					FollowerGyro();
-					if (last_ultra - 2 > ultra(1)) return;
-				} while (time.timer() < 150);
-			//
-	
-			console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
-	
-			stop();
-			actuator.Up();
-	
-			if (actuator.hasVictim()) {
-				moveTime(-200, 600);
-				actuator.Adjust(20, 0);
-				stop(100);
-				moveTime(300, 600);
-				stop(150);
-				moveTime(-300, 200);
-				actuator.Up();
-				CentralizeGyro();
-			}
-	
-			GoToDistance(95);
-			if (side_triangle == 'R') CentralizeGyro(-90);
-			else CentralizeGyro(90);
-			reverse(300, 750);
-			actuator.Down();
-	
-			stop(9999);
-	
-	
-		}
-	
-	}
-	
-	void Wall () {
-		if (DetectWall()) {
-			console_led(2, "$>Parede<$ detectada", color["yellow"]);
-			stop();
-			if (!actuator.isUp()) actuator.Up();
-	
-			CentralizeGyro(90);
-			if (!actuator.hasVictim()) {
-				reverse(300, 300);
-				actuator.Down();
-			}
-	
-			clear();
-		}
-	}
 	void Search (byte sensor) {
 		sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 	
-		if (ultra(sensor) < 150 && !actuator.hasVictim()) {
+		if (ultra(sensor) < 265 && !actuator.hasVictim()) {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
@@ -958,8 +912,11 @@ void Track () {
 					last_ultra = ultra(sensor);
 					forward(150);
 					delay(15);
-				} while (ultra(sensor) <= last_ultra && time.timer() < 1500);
-				if (time.timer() > 1450) return;
+				} while (ultra(sensor) <= last_ultra && time.timer() < 500);
+				if (time.timer() > 450) {
+					actuator.Down();
+					return;
+				}
 			//
 	
 			//triangle calculation
@@ -986,6 +943,122 @@ void Track () {
 		}
 	
 	}
+	void SearchTriangle (byte sensor) {
+		sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
+	
+		if (ultra(sensor) < 265 && !actuator.hasVictim()) {
+			stop();
+			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
+	
+			timeToFind = time.millis() - timeToFind - 250;
+	
+			actuator.Up();
+			if (actuator.hasVictim()) return;
+	
+			//align with the ball
+				float last_ultra = 0;
+				time.reset();
+				do {
+					last_ultra = ultra(sensor);
+					forward(150);
+					delay(15);
+				} while (ultra(sensor) <= last_ultra && time.timer() < 1000);
+				if (time.timer() > 950) return;
+			//
+	
+			//triangle calculation
+				int zmToMove = (int)(last_ultra+1);
+	
+				int twoLegs = timeByZm(timeToFind);
+				float prop = last_ultra/50;
+				int bigLeg = (int)((prop*twoLegs)/(1+prop));
+	
+				int angleToRotate = 180 - (int) ((180/Math.PI)*(Math.Atan(bigLeg/last_ultra)));
+				console(2, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
+			//
+	
+			//go rescue
+				CentralizeGyro(90*side_mod);
+				actuator.Down();
+				moveZm(zmToMove);
+				actuator.Up();
+				stop(150);
+			//
+	
+			//dispatch in the triangle
+				rotate(500, angleToRotate*side_mod);
+				while (!isFullBlack(5)) FollowerGyro(direction());
+				Dispatch();
+	
+				stop(9999);
+			//
+	
+			if (!actuator.hasVictim()) actuator.Down();
+	
+			clear();
+		}
+	
+	}
+	char side_triangle = 'n';
+	int timeToFind = 0;
+	
+	void Triangle () {
+	
+		bool TriRight () {
+			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 90 && ultra(2) < 55) {
+				side_triangle = 'R';
+				return true;
+			} else return false;
+		}
+	
+		bool TriLeft () {
+			if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 90 && ultra(3) < 55) {
+				side_triangle = 'L';
+				return true;
+			} else return false;
+		}
+	
+		if (TriRight() || TriLeft()) {
+	
+			//verify if is the triangle
+				time.reset();
+				float last_ultra = ultra(1);
+				do {
+					FollowerGyro();
+					if (last_ultra - 2 > ultra(1)) return;
+				} while (time.timer() < 150);
+			//
+	
+			console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
+	
+			stop();
+			actuator.Up();
+	
+			if (actuator.hasVictim()) {
+				Dispatch();
+			}
+	
+			GoToDistance(95);
+			if (side_triangle == 'R') CentralizeGyro(-90);
+			else CentralizeGyro(90);
+			reverse(300, 750);
+			actuator.Down();
+	
+			bool wall_ahead = (ultra(1) < 400);
+			timeToFind = time.millis();
+			while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
+				FollowerGyro();
+				Ultras(true, false, "triangle");
+			}
+	
+			actuator.Up();
+			stop(9999);
+	
+	
+		}
+	
+	}
+	
 //
 
 void Rescue () {

@@ -1,7 +1,7 @@
 void Search (byte sensor) {
 	sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 
-	if (ultra(sensor) < 150 && !actuator.hasVictim()) {
+	if (ultra(sensor) < 265 && !actuator.hasVictim()) {
 		stop();
 		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 
@@ -15,8 +15,11 @@ void Search (byte sensor) {
 				last_ultra = ultra(sensor);
 				forward(150);
 				delay(15);
-			} while (ultra(sensor) <= last_ultra && time.timer() < 1500);
-			if (time.timer() > 1450) return;
+			} while (ultra(sensor) <= last_ultra && time.timer() < 500);
+			if (time.timer() > 450) {
+				actuator.Down();
+				return;
+			}
 		//
 
 		//triangle calculation

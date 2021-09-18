@@ -28,15 +28,27 @@ void DetectTriangle (char side, bool reset = false) {
 
 }
 
-void DetectVictim (byte sensor, float last) {
+void DetectVictim (byte sensor, float last, string operation) {
 
-	if (maths.interval(last - ultra(sensor), 5, 400)) {
-		Search(sensor);
+	if (last - ultra(sensor) > 5 && !actuator.isUp()) {
+		//align with the ball
+			float last_ultra = 0;
+			time.reset();
+			do {
+				last_ultra = ultra(sensor);
+				forward(200);
+				delay(30);
+			} while (ultra(sensor) <= last_ultra && time.timer() < 125);
+			if (time.timer() < 100 || ultra(sensor) > 1000) return;
+		//
+
+		if (operation == "normal") Search(sensor);
+		else SearchTriangle(sensor);
 	}
 
 }
 
-void Ultras (bool victims = true, bool triangle = false) {
+void Ultras (bool victims = true, bool triangle = false, string operation = "normal") {
 	last_R = ultra(2);
 	last_L = ultra(3);
 
@@ -44,8 +56,8 @@ void Ultras (bool victims = true, bool triangle = false) {
 	delay(16);
 
 	if (victims) {
-		DetectVictim(2, last_R);
-		DetectVictim(3, last_L);
+		DetectVictim(2, last_R, operation);
+		DetectVictim(3, last_L, operation);
 	}
 
 	if (triangle) {

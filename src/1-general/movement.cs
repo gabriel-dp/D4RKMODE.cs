@@ -33,6 +33,8 @@ void moveZm (int zm) {
 	else moveTime(-300, -timeToMove);
 }
 
+int timeByZm (int ms) => (int)(ms/timePerZm);
+
 void reverse (float motor, int ms = 999999) {
 	time.reset();
 	while (!bot.Touch(0) && time.timer() < ms) back(motor);

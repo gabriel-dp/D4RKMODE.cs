@@ -1,9 +1,9 @@
 //Rescue - imported files
 	import("3-rescue/Variables.cs");
 	import("3-rescue/Ultrasonics.cs");
-	import("3-rescue/Triangle.cs");
-	import("3-rescue/Wall.cs");
 	import("3-rescue/Search.cs");
+	import("3-rescue/SearchTriangle.cs");
+	import("3-rescue/Triangle.cs");
 //
 
 void Rescue () {

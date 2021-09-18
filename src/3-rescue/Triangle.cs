@@ -1,16 +1,17 @@
 char side_triangle = 'n';
+int timeToFind = 0;
 
 void Triangle () {
 
 	bool TriRight () {
-		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 75 && ultra(2) < 55) {
+		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 90 && ultra(2) < 55) {
 			side_triangle = 'R';
 			return true;
 		} else return false;
 	}
 
 	bool TriLeft () {
-		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 75 && ultra(3) < 55) {
+		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 90 && ultra(3) < 55) {
 			side_triangle = 'L';
 			return true;
 		} else return false;
@@ -33,14 +34,7 @@ void Triangle () {
 		actuator.Up();
 
 		if (actuator.hasVictim()) {
-			moveTime(-200, 600);
-			actuator.Adjust(20, 0);
-			stop(100);
-			moveTime(300, 600);
-			stop(150);
-			moveTime(-300, 200);
-			actuator.Up();
-			CentralizeGyro();
+			Dispatch();
 		}
 
 		GoToDistance(95);
@@ -49,6 +43,14 @@ void Triangle () {
 		reverse(300, 750);
 		actuator.Down();
 
+		bool wall_ahead = (ultra(1) < 400);
+		timeToFind = time.millis();
+		while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
+			FollowerGyro();
+			Ultras(true, false, "triangle");
+		}
+
+		actuator.Up();
 		stop(9999);
 
 
