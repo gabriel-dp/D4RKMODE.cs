@@ -7,5 +7,10 @@ void Kit () {
 		moveTime(300, 750);
 		actuator.Up();
 		if (actuator.hasKit()) alreadyHasKit = true;
+		else {
+			open_actuator = true;
+			actuator.Down();
+		}
+		Centralize();
 	}
 }

@@ -1,3 +1,6 @@
+bool flag_stuck = false;
+int time_stuck = 0;
+
 void Ramp () {
 	if (inclination() < -7) {
 		led(color["blue"]);
@@ -24,4 +27,21 @@ void Ramp () {
 			}
 		//
 	}
+
+	//avoids be stuck in a speed bump after ramp
+		if (inclination() > 8 && ultra(1) < 150) {
+			if (!flag_stuck) {
+				time_stuck = time.millis();
+				flag_stuck = true;
+			} else {
+				if (time.millis() - time_stuck > 3500) {
+					actuator.Up();
+					moveTime(300, 100);
+					actuator.Down();
+				}
+			}
+		} else {
+			flag_stuck = false;
+		}
+	//
 }
