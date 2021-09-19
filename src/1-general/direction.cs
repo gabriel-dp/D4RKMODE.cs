@@ -84,12 +84,12 @@ void FollowerGyro (int angle = 1000) {
 		int direction_ideal = angle;
 		if (angle == 1000) direction_ideal = Direction() * 90;
 
-		int direction_actual = direction();
+		float direction_actual = bot.Compass();
 		if ((direction_ideal >= 0 && direction_ideal < 15) && direction_actual > 300) direction_actual -= 360;
 		else if ((direction_ideal > 345 && direction_ideal <= 360) && direction_actual < 300) direction_actual += 360;
 
-		error = direction_actual-direction_ideal;
-		turn = error*Kg;
+		float direction_error = direction_actual-direction_ideal;
+		turn = (int)(direction_error*Kg);
 
 		if (turn > 100) turn = 100;
 		else if (turn < -100) turn = -100;

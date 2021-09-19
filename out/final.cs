@@ -155,9 +155,9 @@ void Setup () {
 		}
 	//
 	public class Colors {
-		public int R (byte sensor) => (int) (bot.ReturnRed(sensor-1) + 1);
-		public int G (byte sensor) => (int) (bot.ReturnGreen(sensor-1) + 1);
-		public int B (byte sensor) => (int) (bot.ReturnBlue(sensor-1) + 1);
+		public float R (byte sensor) => (bot.ReturnRed(sensor-1) + 1);
+		public float G (byte sensor) => (bot.ReturnGreen(sensor-1) + 1);
+		public float B (byte sensor) => (bot.ReturnBlue(sensor-1) + 1);
 	}
 	
 	Colors colors = new Colors();
@@ -183,6 +183,27 @@ void Setup () {
 	bool isRed (byte sensor) => ((colors.R(sensor)/colors.B(sensor) > 3.5 && colors.G(sensor) < 20) && isThatColor(sensor, "RED"));
 	
 	bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.B(sensor) < 10) && isThatColor(sensor, "GREEN"));
+	
+	bool isBlue (byte sensor) => (colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75);
+	
+	bool anySensorColor (string color) {
+		for (byte i = 1; i<5; i++) {
+			switch (color) {
+				case "red":
+					if (isRed(i)) return true;
+					break;
+				case "green":
+					if (isGreen(i)) return true;
+					break;
+				case "blue":
+					if (isBlue(i)) return true;
+					break;
+				default:
+					break;
+			}
+		}
+		return false;
+	}
 	
 	bool isColorized (byte[] sensors) {
 		for (byte i = 0; i < sensors.Length; i++) {
@@ -277,12 +298,12 @@ void Setup () {
 			int direction_ideal = angle;
 			if (angle == 1000) direction_ideal = Direction() * 90;
 	
-			int direction_actual = direction();
+			float direction_actual = bot.Compass();
 			if ((direction_ideal >= 0 && direction_ideal < 15) && direction_actual > 300) direction_actual -= 360;
 			else if ((direction_ideal > 345 && direction_ideal <= 360) && direction_actual < 300) direction_actual += 360;
 	
-			error = direction_actual-direction_ideal;
-			turn = error*Kg;
+			float direction_error = direction_actual-direction_ideal;
+			turn = (int)(direction_error*Kg);
 	
 			if (turn > 100) turn = 100;
 			else if (turn < -100) turn = -100;
@@ -502,7 +523,7 @@ void Setup () {
 	}
 	
 	void Green () {
-		if (isGreen(1) || isGreen(2) || isGreen(3) || isGreen(4)) {
+		if (anySensorColor("green")) {
 			led(color["green"]);
 	
 			//goes a bit forward to detect dead ends
@@ -797,21 +818,16 @@ void Setup () {
 		}
 	}
 	void RedEnd () {
-		for (byte i = 1; i<5; i++) {
-			if (isRed(i)) local = Local.end;
+		if (anySensorColor("red")) {
+			local = Local.end;
 		}
 	}
 	void TrackEnd () {
-		/* ESSE ERA O ANTIGO
-		if (isWhite(new byte[] {1,2,3,4}) && (ultraLimits(1, 350, 390) || ultraLimits(1, 250, 290)) && (ultra(2) < 45 && ultra(3) < 45)) {
-			local = Local.rescue;
-		}
-		*/
-	
-		if (isWhite(new byte[] {1,2,3,4}) && (ultra(2) < 45 && ultra(3) < 45)) {
+		if (anySensorColor("blue")) {
 			local = Local.rescue;
 		}
 	}
+	
 //
 
 void Track () {
@@ -945,13 +961,17 @@ void Track () {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
-			timeToFind = time.millis() - timeToFind - 250;
+			timeToFind = time.millis() - timeToFind - 250; //measures the time until find the victim, 250 is the offset
 	
 			actuator.Up();
 			if (actuator.hasVictim()) {
-				reverse(300);
-				CentralizeGyro(-90*side_mod);
-				Dispatch();
+	
+				//dispatches a victim that already was in the actuator
+					reverse(300);
+					CentralizeGyro(-90*side_mod);
+					Dispatch();
+				//
+	
 			} else {
 	
 				//align with the ball
@@ -976,7 +996,7 @@ void Track () {
 					int bigLeg = (int)((prop*twoLegs)/(1+prop));
 	
 					int angleToRotate = 180 - (int) ((180/Math.PI)*(Math.Atan(bigLeg/last_ultra)));
-					console(2, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
+					console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
 				//
 	
 				//go rescue
@@ -996,17 +1016,18 @@ void Track () {
 					while (!isFullBlack(5)) FollowerGyro(direction());
 					Dispatch();
 	
-					if (angleToRotate < 135) rotate(500, (180-angleToRotate)*side_mod);
+					//if (angleToRotate < 135) rotate(500, -(int)(((180-angleToRotate)*side_mod)*0.5));
 					CentralizeGyro();
 				//
 			}
 	
-			GoToDistance(95);
-			if (side_triangle == 'R') CentralizeGyro(-90);
-			else CentralizeGyro(90);
-			reverse(300, 750);
-			actuator.Down();
-			timeToFind = time.millis();
+			//position the robot in the side of the triangle
+				GoToDistance(95);
+				CentralizeGyro(90*side_mod);
+				reverse(300, 750);
+				actuator.Down();
+				timeToFind = time.millis();
+			//
 	
 			clear();
 		}
@@ -1016,6 +1037,8 @@ void Track () {
 	int timeToFind = 0;
 	
 	void Triangle () {
+	
+		//((bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380) || (actuator.isUp() && isFullBlack(5)))
 	
 		bool TriRight () {
 			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 90 && ultra(2) < 55) {
@@ -1033,7 +1056,7 @@ void Track () {
 	
 		if (TriRight() || TriLeft()) {
 	
-			//verify if is the triangle
+			//verifies if is the triangle
 				time.reset();
 				float last_ultra = ultra(1);
 				do {
@@ -1044,35 +1067,41 @@ void Track () {
 	
 			console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
 	
-			stop();
-			actuator.Up();
+			//lifts the actuator and dispatches if it has a victim
+				stop();
+				actuator.Up();
+				if (actuator.hasVictim()) {
+					Dispatch();
+				}
+			//
 	
-			if (actuator.hasVictim()) {
-				Dispatch();
-			}
+			//position the robot in the side of the triangle
+				GoToDistance(95);
+				if (side_triangle == 'R') CentralizeGyro(-90);
+				else CentralizeGyro(90);
+				reverse(300, 750);
+				actuator.Down();
+			//
 	
-			GoToDistance(95);
-			if (side_triangle == 'R') CentralizeGyro(-90);
-			else CentralizeGyro(90);
-			reverse(300, 750);
-			actuator.Down();
+			//search for victims
+				VictimInEnd:
+				bool wall_ahead = (ultra(1) < 400);
+				timeToFind = time.millis();
+				while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
+					FollowerGyro();
+					Ultras(true, false, "triangle");
+				}
 	
-			VictimInEnd:
-			bool wall_ahead = (ultra(1) < 400);
-			timeToFind = time.millis();
-			while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
-				FollowerGyro();
-				Ultras(true, false, "triangle");
-			}
+				//wall or line
+					actuator.Up();
+					if (actuator.hasVictim()) {
+						SearchTriangle(2, true);
+						goto VictimInEnd;
+					}
+				//
+			//
 	
-			actuator.Up();
-			if (actuator.hasVictim()) {
-				SearchTriangle(2, true);
-				goto VictimInEnd;
-			}
 			stop(9999);
-	
-	
 		}
 	
 	}
@@ -1082,8 +1111,8 @@ void Track () {
 void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
-		centerQuadrant();
-		moveTime(300, 400);
+		CentralizeGyro();
+		moveTime(300, 750);
 
 		open_actuator = true;
 		actuator.Down();

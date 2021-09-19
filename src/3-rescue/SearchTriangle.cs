@@ -5,13 +5,17 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 		stop();
 		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 
-		timeToFind = time.millis() - timeToFind - 250;
+		timeToFind = time.millis() - timeToFind - 250; //measures the time until find the victim, 250 is the offset
 
 		actuator.Up();
 		if (actuator.hasVictim()) {
-			reverse(300);
-			CentralizeGyro(-90*side_mod);
-			Dispatch();
+
+			//dispatches a victim that already was in the actuator
+				reverse(300);
+				CentralizeGyro(-90*side_mod);
+				Dispatch();
+			//
+
 		} else {
 
 			//align with the ball
@@ -36,7 +40,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 				int bigLeg = (int)((prop*twoLegs)/(1+prop));
 
 				int angleToRotate = 180 - (int) ((180/Math.PI)*(Math.Atan(bigLeg/last_ultra)));
-				console(2, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
+				console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
 			//
 
 			//go rescue
@@ -56,17 +60,18 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 				while (!isFullBlack(5)) FollowerGyro(direction());
 				Dispatch();
 
-				if (angleToRotate < 135) rotate(500, (180-angleToRotate)*side_mod);
+				//if (angleToRotate < 135) rotate(500, -(int)(((180-angleToRotate)*side_mod)*0.5));
 				CentralizeGyro();
 			//
 		}
 
-		GoToDistance(95);
-		if (side_triangle == 'R') CentralizeGyro(-90);
-		else CentralizeGyro(90);
-		reverse(300, 750);
-		actuator.Down();
-		timeToFind = time.millis();
+		//position the robot in the side of the triangle
+			GoToDistance(95);
+			CentralizeGyro(90*side_mod);
+			reverse(300, 750);
+			actuator.Down();
+			timeToFind = time.millis();
+		//
 
 		clear();
 	}

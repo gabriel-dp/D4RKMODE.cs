@@ -11,7 +11,7 @@ void GreenClassifier () {
 }
 
 void Green () {
-	if (isGreen(1) || isGreen(2) || isGreen(3) || isGreen(4)) {
+	if (anySensorColor("green")) {
 		led(color["green"]);
 
 		//goes a bit forward to detect dead ends

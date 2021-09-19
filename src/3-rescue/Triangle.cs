@@ -3,6 +3,8 @@ int timeToFind = 0;
 
 void Triangle () {
 
+	//((bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380) || (actuator.isUp() && isFullBlack(5)))
+
 	bool TriRight () {
 		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 90 && ultra(2) < 55) {
 			side_triangle = 'R';
@@ -19,7 +21,7 @@ void Triangle () {
 
 	if (TriRight() || TriLeft()) {
 
-		//verify if is the triangle
+		//verifies if is the triangle
 			time.reset();
 			float last_ultra = ultra(1);
 			do {
@@ -30,35 +32,41 @@ void Triangle () {
 
 		console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
 
-		stop();
-		actuator.Up();
+		//lifts the actuator and dispatches if it has a victim
+			stop();
+			actuator.Up();
+			if (actuator.hasVictim()) {
+				Dispatch();
+			}
+		//
 
-		if (actuator.hasVictim()) {
-			Dispatch();
-		}
+		//position the robot in the side of the triangle
+			GoToDistance(95);
+			if (side_triangle == 'R') CentralizeGyro(-90);
+			else CentralizeGyro(90);
+			reverse(300, 750);
+			actuator.Down();
+		//
 
-		GoToDistance(95);
-		if (side_triangle == 'R') CentralizeGyro(-90);
-		else CentralizeGyro(90);
-		reverse(300, 750);
-		actuator.Down();
+		//search for victims
+			VictimInEnd:
+			bool wall_ahead = (ultra(1) < 400);
+			timeToFind = time.millis();
+			while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
+				FollowerGyro();
+				Ultras(true, false, "triangle");
+			}
 
-		VictimInEnd:
-		bool wall_ahead = (ultra(1) < 400);
-		timeToFind = time.millis();
-		while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
-			FollowerGyro();
-			Ultras(true, false, "triangle");
-		}
+			//wall or line
+				actuator.Up();
+				if (actuator.hasVictim()) {
+					SearchTriangle(2, true);
+					goto VictimInEnd;
+				}
+			//
+		//
 
-		actuator.Up();
-		if (actuator.hasVictim()) {
-			SearchTriangle(2, true);
-			goto VictimInEnd;
-		}
 		stop(9999);
-
-
 	}
 
 }
