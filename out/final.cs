@@ -449,6 +449,8 @@ void Setup () {
 	
 		public bool hasVictim () => (bot.HasVictim() && isUp());
 	
+		public bool hasKit () => (bot.HasRescueKit());
+	
 		public bool isAlive () {
 			Adjust(45, 0);
 			bot.Wait(500);
@@ -836,7 +838,7 @@ void Setup () {
 		}
 	}
 	void TrackEnd () {
-		if (anySensorColor("blue") && isBlack(new byte[] {2,3})) {
+		if (isBlue(2) && isBlue(3) && isBlack(new byte[] {2,3})) {
 			CentralizeGyro();
 			time.reset();
 			do {
@@ -1091,7 +1093,7 @@ void Track () {
 			//lifts the actuator and dispatches if it has a victim
 				stop();
 				actuator.Up();
-				if (actuator.hasVictim()) {
+				if (actuator.hasVictim() || actuator.hasKit()) {
 					Dispatch();
 				}
 			//
@@ -1135,7 +1137,9 @@ void Rescue () {
 		moveTime(300, 300);
 
 		open_actuator = true;
-		actuator.Down();
+		if (actuator.hasKit()) actuator.Up();
+		else actuator.Down();
+
 	}
 
 	while (local == Local.rescue) {

@@ -1,5 +1,5 @@
 void TrackEnd () {
-	if (anySensorColor("blue") && isBlack(new byte[] {2,3})) {
+	if (isBlue(2) && isBlue(3) && isBlack(new byte[] {2,3})) {
 		CentralizeGyro();
 		time.reset();
 		do {

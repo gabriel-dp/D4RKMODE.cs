@@ -12,7 +12,9 @@ void Rescue () {
 		moveTime(300, 300);
 
 		open_actuator = true;
-		actuator.Down();
+		if (actuator.hasKit()) actuator.Up();
+		else actuator.Down();
+
 	}
 
 	while (local == Local.rescue) {

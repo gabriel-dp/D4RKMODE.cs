@@ -37,6 +37,8 @@ public class Actuator {
 
 	public bool hasVictim () => (bot.HasVictim() && isUp());
 
+	public bool hasKit () => (bot.HasRescueKit());
+
 	public bool isAlive () {
 		Adjust(45, 0);
 		bot.Wait(500);

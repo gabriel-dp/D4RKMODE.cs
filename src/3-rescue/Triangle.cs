@@ -35,7 +35,7 @@ void Triangle () {
 		//lifts the actuator and dispatches if it has a victim
 			stop();
 			actuator.Up();
-			if (actuator.hasVictim()) {
+			if (actuator.hasVictim() || actuator.hasKit()) {
 				Dispatch();
 			}
 		//
