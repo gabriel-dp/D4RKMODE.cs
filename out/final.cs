@@ -919,7 +919,7 @@ void Track () {
 		while (isWhite(new byte[] {1,2,3,4})) FollowerGyro();
 		moveTime(300, 500);
 		Centralize();
-		local = Local.Exit;
+		local = Local.exit;
 	}
 	float last_R = 0;
 	float last_T_R = 10000;
