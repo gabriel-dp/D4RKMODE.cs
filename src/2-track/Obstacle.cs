@@ -15,7 +15,7 @@ void Obstacle () {
 			//if isn't a obstacle, downs the actuator
 			if (time.timer() > timeObstacle - 50) {
 				stop();
-				actuator.Down();
+				if (!actuator.hasKit()) actuator.Down();
 				return;
 			}
 		//
@@ -46,7 +46,7 @@ void Obstacle () {
 				CentralizeGyro(90);
 				reverse(300, 100);
 				Centralize();
-				actuator.Down();
+				if (!actuator.hasKit()) actuator.Down();
 				surpassed = true;
 				clear();
 			}

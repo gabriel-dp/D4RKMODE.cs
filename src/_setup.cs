@@ -8,7 +8,10 @@ enum Local {
 Local local = Local.track;
 void Setup () {
 	open_actuator = false;
-	actuator.Down();
+	if (actuator.hasKit()) {
+		actuator.Up();
+		alreadyHasKit = true;
+	} else actuator.Down();
 
 	//search for the line
 		const int angleToSearch = 20;

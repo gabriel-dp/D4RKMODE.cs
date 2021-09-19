@@ -3,8 +3,6 @@ int timeToFind = 0;
 
 void Triangle () {
 
-	//((bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380) || (actuator.isUp() && isFullBlack(5)))
-
 	bool TriRight () {
 		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 90 && ultra(2) < 55) {
 			side_triangle = 'R';

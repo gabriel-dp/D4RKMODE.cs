@@ -2,7 +2,7 @@ bool flag_stuck = false;
 int time_stuck = 0;
 
 void Ramp () {
-	if (inclination() < -7) {
+	if (inclination() < -7 && !actuator.hasKit()) {
 		led(color["blue"]);
 
 		//lifts the actuator and follows the line for a time then down that
@@ -29,7 +29,7 @@ void Ramp () {
 	}
 
 	//avoids be stuck in a speed bump after ramp
-		if (inclination() > 8 && ultra(1) < 150) {
+		if (inclination() > 8 && ultra(1) < 150 && !actuator.hasKit()) {
 			if (!flag_stuck) {
 				time_stuck = time.millis();
 				flag_stuck = true;

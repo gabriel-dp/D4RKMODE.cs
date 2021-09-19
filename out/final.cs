@@ -15,7 +15,10 @@ enum Local {
 Local local = Local.track;
 void Setup () {
 	open_actuator = false;
-	actuator.Down();
+	if (actuator.hasKit()) {
+		actuator.Up();
+		alreadyHasKit = true;
+	} else actuator.Down();
 
 	//search for the line
 		const int angleToSearch = 20;
@@ -720,7 +723,7 @@ void Setup () {
 				//if isn't a obstacle, downs the actuator
 				if (time.timer() > timeObstacle - 50) {
 					stop();
-					actuator.Down();
+					if (!actuator.hasKit()) actuator.Down();
 					return;
 				}
 			//
@@ -751,7 +754,7 @@ void Setup () {
 					CentralizeGyro(90);
 					reverse(300, 100);
 					Centralize();
-					actuator.Down();
+					if (!actuator.hasKit()) actuator.Down();
 					surpassed = true;
 					clear();
 				}
@@ -811,7 +814,7 @@ void Setup () {
 	int time_stuck = 0;
 	
 	void Ramp () {
-		if (inclination() < -7) {
+		if (inclination() < -7 && !actuator.hasKit()) {
 			led(color["blue"]);
 	
 			//lifts the actuator and follows the line for a time then down that
@@ -838,7 +841,7 @@ void Setup () {
 		}
 	
 		//avoids be stuck in a speed bump after ramp
-			if (inclination() > 8 && ultra(1) < 150) {
+			if (inclination() > 8 && ultra(1) < 150 && !actuator.hasKit()) {
 				if (!flag_stuck) {
 					time_stuck = time.millis();
 					flag_stuck = true;
@@ -971,12 +974,12 @@ void Track () {
 	void Search (byte sensor) {
 		sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 	
-		if (ultra(sensor) < 265 && !actuator.hasVictim()) {
+		if (ultra(sensor) < 265 && !actuator.hasVictim() && !actuator.hasKit()) {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
 			actuator.Up();
-			if (actuator.hasVictim()) return;
+			if (actuator.hasVictim() || actuator.hasKit()) return;
 	
 			//align with the ball
 				float last_ultra = 0;
@@ -1100,8 +1103,6 @@ void Track () {
 	
 	void Triangle () {
 	
-		//((bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380) || (actuator.isUp() && isFullBlack(5)))
-	
 		bool TriRight () {
 			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 90 && ultra(2) < 55) {
 				side_triangle = 'R';
@@ -1176,9 +1177,7 @@ void Rescue () {
 		moveTime(300, 300);
 
 		open_actuator = true;
-		if (actuator.hasKit()) actuator.Up();
-		else actuator.Down();
-
+		if (!actuator.hasKit()) actuator.Down();
 	}
 
 	while (local == Local.rescue) {

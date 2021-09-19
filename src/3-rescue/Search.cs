@@ -1,12 +1,12 @@
 void Search (byte sensor) {
 	sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 
-	if (ultra(sensor) < 265 && !actuator.hasVictim()) {
+	if (ultra(sensor) < 265 && !actuator.hasVictim() && !actuator.hasKit()) {
 		stop();
 		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 
 		actuator.Up();
-		if (actuator.hasVictim()) return;
+		if (actuator.hasVictim() || actuator.hasKit()) return;
 
 		//align with the ball
 			float last_ultra = 0;
