@@ -1,7 +1,7 @@
 void Exit () { //pura gamiarra
 	CentralizeGyro(90);
 	while (ultra(3) < 200) forward(300);
-	moveTime(-300, 600);
+	moveTime(300, 600);
 	CentralizeGyro(-90);
 	open_actuator = false;
 	actuator.Down();
