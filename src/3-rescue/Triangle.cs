@@ -64,7 +64,8 @@ void Triangle () {
 			//
 		//
 
-		stop(9999);
+		Exit();
+
 	}
 
 }

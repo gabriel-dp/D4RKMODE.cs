@@ -475,7 +475,7 @@ void Setup () {
 		moveTime(-200, 600);
 		actuator.Adjust(20, 0);
 		stop(100);
-		if (actuator.hasKit()) moveTime(300, 800);
+		if (actuator.hasKit()) moveTime(300, 900);
 		else moveTime(300, 600);
 		stop(200);
 		moveTime(-300, 200);
@@ -909,6 +909,18 @@ void Track () {
 
 //Rescue - imported files
 	char sideToSearch = 'R';
+	void Exit () { //pura gamiarra
+		CentralizeGyro(90);
+		while (ultra(3) < 200) forward(300);
+		moveTime(-300, 600);
+		CentralizeGyro(-90);
+		open_actuator = false;
+		actuator.Down();
+		while (isWhite(new byte[] {1,2,3,4})) FollowerGyro();
+		moveTime(300, 500);
+		Centralize();
+		local = Local.Exit;
+	}
 	float last_R = 0;
 	float last_T_R = 10000;
 	float last_L = 0;
@@ -1164,7 +1176,8 @@ void Track () {
 				//
 			//
 	
-			stop(9999);
+			Exit();
+	
 		}
 	
 	}

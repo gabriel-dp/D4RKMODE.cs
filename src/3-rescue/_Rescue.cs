@@ -1,5 +1,6 @@
 //Rescue - imported files
 	import("3-rescue/Variables.cs");
+	import("3-rescue/Exit.cs");
 	import("3-rescue/Ultrasonics.cs");
 	import("3-rescue/Search.cs");
 	import("3-rescue/SearchTriangle.cs");

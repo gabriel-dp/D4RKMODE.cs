@@ -60,7 +60,7 @@ void Dispatch () {
 	moveTime(-200, 600);
 	actuator.Adjust(20, 0);
 	stop(100);
-	if (actuator.hasKit()) moveTime(300, 800);
+	if (actuator.hasKit()) moveTime(300, 900);
 	else moveTime(300, 600);
 	stop(200);
 	moveTime(-300, 200);
