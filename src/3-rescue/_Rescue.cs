@@ -9,8 +9,7 @@
 void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
-		CentralizeGyro();
-		moveTime(300, 750);
+		moveTime(300, 300);
 
 		open_actuator = true;
 		actuator.Down();

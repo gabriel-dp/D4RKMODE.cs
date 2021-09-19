@@ -184,7 +184,7 @@ void Setup () {
 	
 	bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.B(sensor) < 10) && isThatColor(sensor, "GREEN"));
 	
-	bool isBlue (byte sensor) => (colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75);
+	bool isBlue (byte sensor) => (colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75 && isBlack(sensor));
 	
 	bool anySensorColor (string color) {
 		for (byte i = 1; i<5; i++) {
@@ -724,10 +724,23 @@ void Setup () {
 			//if is a obstacle, starts avoid it
 				led(color["purple"]);
 				bool surpassed = false;
+				bool obstructed = false;
 	
+				const int timeout = 1250;
 				void GoForward (bool first = true, bool second = true) {
+					obstructed = false;
 					while (ultra(3) > 50 && first) FollowerGyro(direction());
-					while (ultra(3) < 50 && second) FollowerGyro(direction());
+					time.reset();
+					while (ultra(3) < 50 && second && time.timer() < timeout) FollowerGyro(direction());
+					if (time.timer() > timeout-50) {
+						moveTime(-300, 50);
+						rotate(500, -25);
+						moveTime(300, 200);
+						rotate(500, -25);
+						moveTime(300, 400);
+						CentralizeGyro();
+						obstructed = true;
+					}
 				}
 	
 				void AfterAvoid () {
@@ -745,7 +758,7 @@ void Setup () {
 					GoForward();
 	
 				//	/ -> |
-					CentralizeGyro(-90);
+					if (!obstructed) CentralizeGyro(-90);
 					//search for the line in a 90 degress obstacle
 						while (ultra(3) > 50 && !surpassed) {
 							forward(200);
@@ -823,8 +836,16 @@ void Setup () {
 		}
 	}
 	void TrackEnd () {
-		if (anySensorColor("blue")) {
-			local = Local.rescue;
+		if (anySensorColor("blue") && isBlack(new byte[] {2,3})) {
+			CentralizeGyro();
+			time.reset();
+			do {
+				forward(300);
+				if (ultra(2) < 50 && ultra(3) < 50) {
+					local = Local.rescue;
+					return;
+				}
+			} while (time.timer() < 500);
 		}
 	}
 	
@@ -1111,8 +1132,7 @@ void Track () {
 void Rescue () {
 	if (local == Local.rescue) {
 		console(1, "$>--Rescue--<$", color["comment"]);
-		CentralizeGyro();
-		moveTime(300, 750);
+		moveTime(300, 300);
 
 		open_actuator = true;
 		actuator.Down();

@@ -23,10 +23,23 @@ void Obstacle () {
 		//if is a obstacle, starts avoid it
 			led(color["purple"]);
 			bool surpassed = false;
+			bool obstructed = false;
 
+			const int timeout = 1250;
 			void GoForward (bool first = true, bool second = true) {
+				obstructed = false;
 				while (ultra(3) > 50 && first) FollowerGyro(direction());
-				while (ultra(3) < 50 && second) FollowerGyro(direction());
+				time.reset();
+				while (ultra(3) < 50 && second && time.timer() < timeout) FollowerGyro(direction());
+				if (time.timer() > timeout-50) {
+					moveTime(-300, 50);
+					rotate(500, -25);
+					moveTime(300, 200);
+					rotate(500, -25);
+					moveTime(300, 400);
+					CentralizeGyro();
+					obstructed = true;
+				}
 			}
 
 			void AfterAvoid () {
@@ -44,7 +57,7 @@ void Obstacle () {
 				GoForward();
 
 			//	/ -> |
-				CentralizeGyro(-90);
+				if (!obstructed) CentralizeGyro(-90);
 				//search for the line in a 90 degress obstacle
 					while (ultra(3) > 50 && !surpassed) {
 						forward(200);
