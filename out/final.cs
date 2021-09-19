@@ -420,19 +420,20 @@ void Setup () {
 			if (operation == "open") bot.OpenActuator();
 			else bot.CloseActuator();
 	
+			int start = bot.Millis();
 			int angle_actuator = 0;
 			do {
 				angle_actuator = (int) bot.AngleActuator();
 				if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
 				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
-			} while (!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2));
+			} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < 750);
 	
 			int angle_scoop = 0;
 			do {
 				angle_scoop = (int) bot.AngleScoop();
 				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
-			} while (!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2));
+			} while ((!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2)) && bot.Millis() - start < 1500);
 	
 		}
 	
@@ -1077,7 +1078,7 @@ void Track () {
 					while (!isFullBlack(5)) FollowerGyro(direction());
 					Dispatch();
 	
-					//if (angleToRotate < 135) rotate(500, -(int)(((180-angleToRotate)*side_mod)*0.5));
+					if (angleToRotate < 135) rotate(500, (int)(180-angleToRotate*side_mod));
 					CentralizeGyro();
 				//
 			}

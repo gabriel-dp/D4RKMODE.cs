@@ -60,7 +60,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 				while (!isFullBlack(5)) FollowerGyro(direction());
 				Dispatch();
 
-				//if (angleToRotate < 135) rotate(500, -(int)(((180-angleToRotate)*side_mod)*0.5));
+				if (angleToRotate < 135) rotate(500, (int)(180-angleToRotate*side_mod));
 				CentralizeGyro();
 			//
 		}
