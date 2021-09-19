@@ -471,7 +471,8 @@ void Setup () {
 		moveTime(-200, 600);
 		actuator.Adjust(20, 0);
 		stop(100);
-		moveTime(300, 600);
+		if (actuator.hasKit()) moveTime(300, 800);
+		else moveTime(300, 600);
 		stop(200);
 		moveTime(-300, 200);
 		actuator.Up();
@@ -832,6 +833,17 @@ void Setup () {
 			//
 		}
 	}
+	bool alreadyHasKit = false;
+	
+	void Kit () {
+		if (actuator.hasKit() && !alreadyHasKit) {
+			open_actuator = true;
+			actuator.Down();
+			moveTime(300, 750);
+			actuator.Up();
+			if (actuator.hasKit()) alreadyHasKit = true;
+		}
+	}
 	void RedEnd () {
 		if (anySensorColor("red")) {
 			local = Local.end;
@@ -860,6 +872,7 @@ void Track () {
 		LineFollower();
 		Obstacle();
 		Ramp();
+		Kit();
 		TrackEnd();
 		RedEnd();
 	}

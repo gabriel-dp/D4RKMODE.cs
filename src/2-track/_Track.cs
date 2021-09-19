@@ -5,6 +5,7 @@
 	import("2-track/LineFollower.cs");
 	import("2-track/Obstacle.cs");
 	import("2-track/Ramp.cs");
+	import("2-track/RescueKit.cs");
 	import("2-track/RedEnd.cs");
 	import("2-track/TrackEnd.cs");
 //
@@ -16,6 +17,7 @@ void Track () {
 		LineFollower();
 		Obstacle();
 		Ramp();
+		Kit();
 		TrackEnd();
 		RedEnd();
 	}
