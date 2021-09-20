@@ -12,7 +12,13 @@ void Ramp () {
 			while (time.timer() < 2000 + 100*scaleAngle(direction())) {
 				LineFollower();
 			}
-			if (!actuator.hasKit()) actuator.Down();
+			if (!actuator.hasKit()) {
+				actuator.Down();
+				stop(75);
+			} else {
+				moveTime(200, 250);
+				stop(75);
+			}
 			int last_inclination = inclination();
 			while (inclination() < -2) LineFollower();
 			int last_inclination2 = inclination();
