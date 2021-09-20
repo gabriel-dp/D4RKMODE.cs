@@ -1082,37 +1082,63 @@ void Track () {
 					}
 				//
 	
-				//triangle calculation
-					int zmToMove = (int)(last_ultra+1);
+				if ((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) { //if the victim is on the complex side
 	
-					int twoLegs = timeByZm(timeToFind);
-					float prop = last_ultra/50;
-					int bigLeg = (int)((prop*twoLegs)/(1+prop));
+					//triangle calculation
+						int zmToMove = (int)(last_ultra+1);
 	
-					int angleToRotate = 180 - maths.ArcTan(bigLeg, last_ultra);
-					console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
-				//
+						int twoLegs = timeByZm(timeToFind);
+						float prop = last_ultra/50;
+						int bigLeg = (int)((prop*twoLegs)/(1+prop));
 	
-				//go rescue
-					CentralizeGyro(90*side_mod);
-					if (last_ultra < 30) {
-						moveTime(-300, 500);
-						actuator.Down();
-						moveTime(300, 500);
-					} else actuator.Down();
-					moveZm(zmToMove);
-					actuator.Up();
-					stop(150);
-				//
+						int angleToRotate = 180 - maths.ArcTan(bigLeg, last_ultra);
+						console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
+					//
 	
-				//dispatch in the triangle
-					rotate(500, angleToRotate*side_mod);
-					while (!isFullBlack(5)) FollowerGyro(direction());
+					//go rescue
+						CentralizeGyro(90*side_mod);
+						if (last_ultra < 30) {
+							moveTime(-300, 500);
+							actuator.Down();
+							moveTime(300, 500);
+						} else actuator.Down();
+						moveZm(zmToMove);
+						actuator.Up();
+						stop(150);
+					//
+	
+					//dispatch in the triangle
+						rotate(500, angleToRotate*side_mod);
+						while (!isFullBlack(5)) FollowerGyro(direction());
+						Dispatch();
+	
+						if (angleToRotate <= 135) rotate(500, (int)(180-Math.Abs(angleToRotate)*side_mod));
+						CentralizeGyro();
+					//
+	
+				} else { //if the victim is on the simple side
+	
+					//go rescue
+						CentralizeGyro(-90*side_mod);
+						if (last_ultra < 30) {
+							moveTime(-300, 500);
+							actuator.Down();
+							moveTime(300, 500);
+						} else actuator.Down();
+						moveZm((int)last_ultra);
+						actuator.Up();
+						stop(150);
+						if (ultra(1) > 400) moveZm((int)-last_ultra);
+						else GoToDistance(95);
+						CentralizeGyro(90*side_mod);
+					//
+	
+					reverse(300);
+					CentralizeGyro(-90*side_mod);
 					Dispatch();
 	
-					if (angleToRotate < 135) rotate(500, (int)(180-Math.Abs(angleToRotate)*side_mod));
-					CentralizeGyro();
-				//
+				}
+	
 			}
 	
 			//position the robot in the side of the triangle
