@@ -41,11 +41,11 @@ void Setup () {
 	
 		const float PI = 3.14f;
 	
+		public bool interval (float val, float min, float max) => (val >= min && val <= max);
+	
 		public int map (float number, float min, float max, float minTo, float maxTo) {
 			return (int)((((number - min) * (maxTo - minTo)) / (max - min)) + minTo);
 		}
-	
-		public bool interval (float val, float min, float max) => (val >= min && val <= max);
 	
 		public int hypotenuse (double leg1, double leg2) {
 			return (int) (Math.Sqrt(Math.Pow(leg1, 2)+Math.Pow(leg2,2)));
@@ -1083,7 +1083,7 @@ void Track () {
 					float prop = last_ultra/50;
 					int bigLeg = (int)((prop*twoLegs)/(1+prop));
 	
-					int angleToRotate = 180 - (int) ((180/Math.PI)*(Math.Atan(bigLeg/last_ultra)));
+					int angleToRotate = 180 - maths.ArcTan(bigLeg, last_ultra);
 					console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
 				//
 	
