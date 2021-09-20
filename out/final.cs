@@ -322,7 +322,7 @@ void Setup () {
 			}
 		//
 	
-		printMotors();
+		//printMotors();
 	}
 	float ultra (byte sensor) {
 		float ultra_data = bc.Distance(sensor - 1);
@@ -388,9 +388,13 @@ void Setup () {
 		}
 	}
 	
-	void clear (int line = 2) {
-		bot.ClearConsoleLine(line - 1);
-		if (line == 2) led(color["white"]);
+	void clear (int line = 999) {
+		if (line == 999) {
+			led(color["white"]);
+			bot.ClearConsoleLine(1);
+			bot.ClearConsoleLine(2);
+		}
+		else	bot.ClearConsoleLine(line - 1);
 	}
 	
 	int start_print = 0;
@@ -522,10 +526,16 @@ void Setup () {
 		green_direction = 'n';
 		if ((isGreen(1) || isGreen(2)) && (isGreen(3) || isGreen(4))) {
 			green_direction = 'B';
+			console_led(2, "$>Beco sem saída<$", color["green"]);
+			console(3, "↓");
 		} else if (isGreen(1) || isGreen(2)) {
 			green_direction = 'R';
+			console_led(2, "$>Intersecção<$ para $>Direita<$", color["green"]);
+			console(3, "→");
 		} else if (isGreen(3) || isGreen(4)){
 			green_direction = 'L';
+			console_led(2, "$>Intersecção<$ para $>Esquerda<$", color["green"]);
+			console(3, "←");
 		}
 	}
 	
@@ -566,8 +576,6 @@ void Setup () {
 				}
 			//
 	
-			console(2, $"{green_direction}");
-	
 			//goes forward and rotate in the axis to make the curve
 				moveTime(300, 425);
 				if (green_direction == 'B') {
@@ -590,10 +598,12 @@ void Setup () {
 	void CurveBlack () {
 		char curve_side = 'n';
 		if (!isWhite(1) && !isColorized(1)) {
-			console_led(2, "Curva para Direita →", color["black"]);
+			console_led(2, "$>Curva<$ para $>Direita<$", color["gray"], color["black"]);
+			console(3, "→");
 			curve_side = 'R';
 		} else if (!isWhite(4) && !isColorized(4)) {
-			console_led(2, "Curva para Esquerda ←", color["black"]);
+			console_led(2, "$>Curva<$ para $>Esquerda<$", color["gray"], color["black"]);
+			console(3, "←");
 			curve_side = 'L';
 		}
 	
@@ -689,7 +699,7 @@ void Setup () {
 	
 		//maybe lost the line
 			if (time.millis() - last_zero > 1000 && scaleAngle(direction()) > 2) {
-				CentralizeGyro(0);
+				CentralizeGyro();
 				last_zero = time.millis();
 			}
 		//
@@ -708,10 +718,10 @@ void Setup () {
 	}
 	void Obstacle () {
 		if (DetectWall()) {
-			led(color["pink"]);
+			console_led(2, "$>Obstáculo<$   Possível", color["pink"]);
 			reverse(300, 50);
 			stop();
-			actuator.Up();
+			if (!actuator.hasKit()) actuator.Up();
 	
 			//after lifting the actuator, follows the line for a time to confirm that's a obstacle
 				const int timeObstacle = 1750;
@@ -729,7 +739,7 @@ void Setup () {
 			//
 	
 			//if is a obstacle, starts avoid it
-				led(color["purple"]);
+				console_led(2, "$>Obstáculo<$ Confirmado", color["purple"]);
 				bool surpassed = false;
 				bool obstructed = false;
 	
@@ -740,6 +750,7 @@ void Setup () {
 					time.reset();
 					while (ultra(3) < 50 && second && time.timer() < timeout) FollowerGyro(direction());
 					if (time.timer() > timeout-50) {
+						led(color["orange"]);
 						moveTime(-300, 50);
 						rotate(500, -25);
 						moveTime(300, 200);
@@ -814,17 +825,17 @@ void Setup () {
 	int time_stuck = 0;
 	
 	void Ramp () {
-		if (inclination() < -7 && !actuator.hasKit()) {
-			led(color["blue"]);
+		if (inclination() < -7) {
+			console_led(2, "$>Rampa<$ ou $>Gangorra<$", color["blue"]);
 	
 			//lifts the actuator and follows the line for a time then down that
 				stop();
-				actuator.Up();
+				if (!actuator.hasKit()) actuator.Up();
 				time.reset();
 				while (time.timer() < 2000 + 100*scaleAngle(direction())) {
 					LineFollower();
 				}
-				actuator.Down();
+				if (!actuator.hasKit()) actuator.Down();
 				int last_inclination = inclination();
 				while (inclination() < -2) LineFollower();
 				int last_inclination2 = inclination();
@@ -940,7 +951,7 @@ void Track () {
 				actuator.Up();
 				if (side == 'R') CentralizeGyro(90);
 				else CentralizeGyro(-90);
-				if (!actuator.hasVictim()) actuator.Down();
+				if (!actuator.hasVictim() && !actuator.hasKit()) actuator.Down();
 			} else {
 				if (side == 'R') last_T_R = (int) last_R;
 				else last_T_L = (int) last_L;
@@ -1186,6 +1197,7 @@ void Track () {
 
 void Rescue () {
 	if (local == Local.rescue) {
+		clear();
 		console(1, "$>--Rescue--<$", color["comment"]);
 		moveTime(300, 300);
 

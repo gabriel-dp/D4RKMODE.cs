@@ -2,17 +2,17 @@ bool flag_stuck = false;
 int time_stuck = 0;
 
 void Ramp () {
-	if (inclination() < -7 && !actuator.hasKit()) {
-		led(color["blue"]);
+	if (inclination() < -7) {
+		console_led(2, "$>Rampa<$ ou $>Gangorra<$", color["blue"]);
 
 		//lifts the actuator and follows the line for a time then down that
 			stop();
-			actuator.Up();
+			if (!actuator.hasKit()) actuator.Up();
 			time.reset();
 			while (time.timer() < 2000 + 100*scaleAngle(direction())) {
 				LineFollower();
 			}
-			actuator.Down();
+			if (!actuator.hasKit()) actuator.Down();
 			int last_inclination = inclination();
 			while (inclination() < -2) LineFollower();
 			int last_inclination2 = inclination();

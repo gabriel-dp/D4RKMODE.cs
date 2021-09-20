@@ -42,7 +42,7 @@ void Follower (bool led_on = true) {
 
 	//maybe lost the line
 		if (time.millis() - last_zero > 1000 && scaleAngle(direction()) > 2) {
-			CentralizeGyro(0);
+			CentralizeGyro();
 			last_zero = time.millis();
 		}
 	//

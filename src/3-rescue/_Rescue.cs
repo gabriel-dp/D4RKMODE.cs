@@ -9,6 +9,7 @@
 
 void Rescue () {
 	if (local == Local.rescue) {
+		clear();
 		console(1, "$>--Rescue--<$", color["comment"]);
 		moveTime(300, 300);
 

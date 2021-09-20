@@ -17,7 +17,7 @@ void DetectTriangle (char side, bool reset = false) {
 			actuator.Up();
 			if (side == 'R') CentralizeGyro(90);
 			else CentralizeGyro(-90);
-			if (!actuator.hasVictim()) actuator.Down();
+			if (!actuator.hasVictim() && !actuator.hasKit()) actuator.Down();
 		} else {
 			if (side == 'R') last_T_R = (int) last_R;
 			else last_T_L = (int) last_L;

@@ -1,10 +1,12 @@
 void CurveBlack () {
 	char curve_side = 'n';
 	if (!isWhite(1) && !isColorized(1)) {
-		console_led(2, "Curva para Direita →", color["black"]);
+		console_led(2, "$>Curva<$ para $>Direita<$", color["gray"], color["black"]);
+		console(3, "→");
 		curve_side = 'R';
 	} else if (!isWhite(4) && !isColorized(4)) {
-		console_led(2, "Curva para Esquerda ←", color["black"]);
+		console_led(2, "$>Curva<$ para $>Esquerda<$", color["gray"], color["black"]);
+		console(3, "←");
 		curve_side = 'L';
 	}
 

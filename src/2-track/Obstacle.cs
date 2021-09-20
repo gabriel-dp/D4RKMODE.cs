@@ -1,9 +1,9 @@
 void Obstacle () {
 	if (DetectWall()) {
-		led(color["pink"]);
+		console_led(2, "$>Obstáculo<$   Possível", color["pink"]);
 		reverse(300, 50);
 		stop();
-		actuator.Up();
+		if (!actuator.hasKit()) actuator.Up();
 
 		//after lifting the actuator, follows the line for a time to confirm that's a obstacle
 			const int timeObstacle = 1750;
@@ -21,7 +21,7 @@ void Obstacle () {
 		//
 
 		//if is a obstacle, starts avoid it
-			led(color["purple"]);
+			console_led(2, "$>Obstáculo<$ Confirmado", color["purple"]);
 			bool surpassed = false;
 			bool obstructed = false;
 
@@ -32,6 +32,7 @@ void Obstacle () {
 				time.reset();
 				while (ultra(3) < 50 && second && time.timer() < timeout) FollowerGyro(direction());
 				if (time.timer() > timeout-50) {
+					led(color["orange"]);
 					moveTime(-300, 50);
 					rotate(500, -25);
 					moveTime(300, 200);

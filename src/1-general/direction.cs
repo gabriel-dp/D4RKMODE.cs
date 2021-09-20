@@ -105,5 +105,5 @@ void FollowerGyro (int angle = 1000) {
 		}
 	//
 
-	printMotors();
+	//printMotors();
 }

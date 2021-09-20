@@ -3,10 +3,16 @@ void GreenClassifier () {
 	green_direction = 'n';
 	if ((isGreen(1) || isGreen(2)) && (isGreen(3) || isGreen(4))) {
 		green_direction = 'B';
+		console_led(2, "$>Beco sem saída<$", color["green"]);
+		console(3, "↓");
 	} else if (isGreen(1) || isGreen(2)) {
 		green_direction = 'R';
+		console_led(2, "$>Intersecção<$ para $>Direita<$", color["green"]);
+		console(3, "→");
 	} else if (isGreen(3) || isGreen(4)){
 		green_direction = 'L';
+		console_led(2, "$>Intersecção<$ para $>Esquerda<$", color["green"]);
+		console(3, "←");
 	}
 }
 
@@ -46,8 +52,6 @@ void Green () {
 				return;
 			}
 		//
-
-		console(2, $"{green_direction}");
 
 		//goes forward and rotate in the axis to make the curve
 			moveTime(300, 425);

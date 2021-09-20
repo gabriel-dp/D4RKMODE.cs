@@ -39,9 +39,13 @@ void console (int line, string text, string hexcolor = "") {
 	}
 }
 
-void clear (int line = 2) {
-	bot.ClearConsoleLine(line - 1);
-	if (line == 2) led(color["white"]);
+void clear (int line = 999) {
+	if (line == 999) {
+		led(color["white"]);
+		bot.ClearConsoleLine(1);
+		bot.ClearConsoleLine(2);
+	}
+	else	bot.ClearConsoleLine(line - 1);
 }
 
 int start_print = 0;
