@@ -786,7 +786,7 @@ void Setup () {
 					if (!obstructed) CentralizeGyro(-90);
 					//search for the line in a 90 degress obstacle
 						while (ultra(3) > 50 && !surpassed) {
-							forward(200);
+							forward(190);
 							if (!isWhite(new byte[] {3,4})) {
 								led(color["pink"]);
 								moveTime(300, 400);
@@ -804,7 +804,7 @@ void Setup () {
 					GoForward(true, false);
 					//search for the line in a normal obstacle
 						while (ultra(3) < 50 && !surpassed) {
-							forward(200);
+							forward(190);
 							if (!isWhite(new byte[] {1,2})) {
 								led(color["pink"]);
 								GoForward();
@@ -831,6 +831,28 @@ void Setup () {
 	bool flag_stuck = false;
 	int time_stuck = 0;
 	
+	void StuckObstacle () {
+		if (inclination() < -8 && (ultra(1) > 400 || ultra(1) < 35) && !actuator.isUp()) {
+			if (!flag_stuck) {
+				time_stuck = time.millis();
+				flag_stuck = true;
+			} else {
+				if (time.millis() - time_stuck > 7000) {
+					led(color["orange"]);
+					stop();
+					actuator.Up();
+					delay(500);
+					moveTime(300, 300);
+					Obstacle();
+					actuator.Down();
+					flag_stuck = false;
+				}
+			}
+		} else {
+			flag_stuck = false;
+		}
+	}
+	
 	void Ramp () {
 		if (inclination() < -7) {
 			console_led(2, "$>Rampa<$ ou $>Gangorra<$", color["blue"]);
@@ -850,7 +872,10 @@ void Setup () {
 					stop(75);
 				}
 				int last_inclination = inclination();
-				while (inclination() < -2) LineFollower();
+				while (inclination() < -2) {
+					LineFollower();
+					StuckObstacle();
+				}
 				int last_inclination2 = inclination();
 			//
 	
@@ -881,6 +906,7 @@ void Setup () {
 				flag_stuck = false;
 			}
 		//
+	
 	}
 	bool alreadyHasKit = false;
 	

@@ -1,6 +1,28 @@
 bool flag_stuck = false;
 int time_stuck = 0;
 
+void StuckObstacle () {
+	if (inclination() < -8 && (ultra(1) > 400 || ultra(1) < 35) && !actuator.isUp()) {
+		if (!flag_stuck) {
+			time_stuck = time.millis();
+			flag_stuck = true;
+		} else {
+			if (time.millis() - time_stuck > 7000) {
+				led(color["orange"]);
+				stop();
+				actuator.Up();
+				delay(500);
+				moveTime(300, 300);
+				Obstacle();
+				actuator.Down();
+				flag_stuck = false;
+			}
+		}
+	} else {
+		flag_stuck = false;
+	}
+}
+
 void Ramp () {
 	if (inclination() < -7) {
 		console_led(2, "$>Rampa<$ ou $>Gangorra<$", color["blue"]);
@@ -20,7 +42,10 @@ void Ramp () {
 				stop(75);
 			}
 			int last_inclination = inclination();
-			while (inclination() < -2) LineFollower();
+			while (inclination() < -2) {
+				LineFollower();
+				StuckObstacle();
+			}
 			int last_inclination2 = inclination();
 		//
 
@@ -51,4 +76,5 @@ void Ramp () {
 			flag_stuck = false;
 		}
 	//
+
 }

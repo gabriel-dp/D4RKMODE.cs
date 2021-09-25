@@ -61,7 +61,7 @@ void Obstacle () {
 				if (!obstructed) CentralizeGyro(-90);
 				//search for the line in a 90 degress obstacle
 					while (ultra(3) > 50 && !surpassed) {
-						forward(200);
+						forward(190);
 						if (!isWhite(new byte[] {3,4})) {
 							led(color["pink"]);
 							moveTime(300, 400);
@@ -79,7 +79,7 @@ void Obstacle () {
 				GoForward(true, false);
 				//search for the line in a normal obstacle
 					while (ultra(3) < 50 && !surpassed) {
-						forward(200);
+						forward(190);
 						if (!isWhite(new byte[] {1,2})) {
 							led(color["pink"]);
 							GoForward();
