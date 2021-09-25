@@ -1,7 +1,7 @@
 void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 	sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
 
-	if ((ultra(sensor) < 265 && !actuator.hasVictim()) || alreadyInActuator) {
+	if (((ultra(sensor) < 265 && !actuator.hasVictim()) || alreadyInActuator) && (((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) || ((side_triangle == 'L' && sensor == 3 && !DeadVictimReserved) || (side_triangle == 'R' && sensor == 2 && !DeadVictimReserved)))) {
 		stop();
 		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 
@@ -30,11 +30,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					last_ultra = ultra(sensor);
 					forward(150);
 					delay(15);
-				} while (ultra(sensor) <= last_ultra && time.timer() < 500);
-				if (time.timer() > 450) {
-					actuator.Down();
-					return;
-				}
+				} while (ultra(sensor) <= last_ultra && time.timer() < 100);
 			//
 
 			if ((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) { //if the victim is on the complex side

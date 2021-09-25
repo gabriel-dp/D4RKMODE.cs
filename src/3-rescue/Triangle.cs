@@ -60,7 +60,7 @@ void Triangle () {
 				Ultras(true, false, "triangle");
 			}
 			int mid_arena = (time.millis()-timeToFind)/2;
-			if (timeToFind > 6950) {
+			if (timeToFind > 10950) {
 				mid_arena = (time.millis()-timeToFind)/3;
 			}
 
@@ -84,17 +84,22 @@ void Triangle () {
 				moveZm(95);
 				CentralizeGyro(-90 * side_mod);
 
+				stop();
+				actuator.Down();
 				while (!DetectWall()) FollowerGyro();
 				stop();
 				actuator.Up();
+
 				CentralizeGyro(-90 * side_mod);
+				GoToDistance(85);
 				Dispatch();
 
 				CentralizeGyro(90 * side_mod);
 				GoToDistance(95);
+				CentralizeGyro(90 * side_mod);
 				reverse(300, 1250);
 
-				moveTime(300, mid_arena);
+				moveTime(300, (int)(mid_arena*1.5));
 			} else moveTime(-300, mid_arena);
 
 			Exit(side_mod);

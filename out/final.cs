@@ -1150,7 +1150,7 @@ void Track () {
 	void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 		sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
 	
-		if ((ultra(sensor) < 265 && !actuator.hasVictim()) || alreadyInActuator) {
+		if (((ultra(sensor) < 265 && !actuator.hasVictim()) || alreadyInActuator) && (((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) || ((side_triangle == 'L' && sensor == 3 && !DeadVictimReserved) || (side_triangle == 'R' && sensor == 2 && !DeadVictimReserved)))) {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
@@ -1179,11 +1179,7 @@ void Track () {
 						last_ultra = ultra(sensor);
 						forward(150);
 						delay(15);
-					} while (ultra(sensor) <= last_ultra && time.timer() < 500);
-					if (time.timer() > 450) {
-						actuator.Down();
-						return;
-					}
+					} while (ultra(sensor) <= last_ultra && time.timer() < 100);
 				//
 	
 				if ((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) { //if the victim is on the complex side
@@ -1330,7 +1326,7 @@ void Track () {
 					Ultras(true, false, "triangle");
 				}
 				int mid_arena = (time.millis()-timeToFind)/2;
-				if (timeToFind > 6950) {
+				if (timeToFind > 10950) {
 					mid_arena = (time.millis()-timeToFind)/3;
 				}
 	
@@ -1354,17 +1350,22 @@ void Track () {
 					moveZm(95);
 					CentralizeGyro(-90 * side_mod);
 	
+					stop();
+					actuator.Down();
 					while (!DetectWall()) FollowerGyro();
 					stop();
 					actuator.Up();
+	
 					CentralizeGyro(-90 * side_mod);
+					GoToDistance(85);
 					Dispatch();
 	
 					CentralizeGyro(90 * side_mod);
 					GoToDistance(95);
+					CentralizeGyro(90 * side_mod);
 					reverse(300, 1250);
 	
-					moveTime(300, mid_arena);
+					moveTime(300, (int)(mid_arena*1.5));
 				} else moveTime(-300, mid_arena);
 	
 				Exit(side_mod);
