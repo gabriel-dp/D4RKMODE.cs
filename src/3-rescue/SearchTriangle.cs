@@ -13,7 +13,12 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 			//dispatches a victim that already was in the actuator
 				reverse(300);
 				CentralizeGyro(-90*side_mod);
-				Dispatch();
+				if (actuator.isAlive() || AliveVictimsRescued > 1) {
+					Dispatch();
+					AliveVictimsRescued++;
+				} else {
+					DeadVictim(side_mod);
+				}
 			//
 
 		} else {
@@ -60,7 +65,11 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 				//dispatch in the triangle
 					rotate(500, angleToRotate*side_mod);
 					while (!isFullBlack(5)) FollowerGyro(direction());
-					Dispatch();
+
+					if (actuator.isAlive() || AliveVictimsRescued > 1) {
+						Dispatch();
+						AliveVictimsRescued++;
+					}
 
 					if (angleToRotate <= 135) rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
 					CentralizeGyro();
@@ -85,16 +94,23 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 
 				reverse(300);
 				CentralizeGyro(-90*side_mod);
-				Dispatch();
+				if (actuator.isAlive() || AliveVictimsRescued > 1) {
+					Dispatch();
+					AliveVictimsRescued++;
+				}
 
 			}
 
 		}
 
 		//position the robot in the side of the triangle
-			GoToDistance(95);
-			CentralizeGyro(90*side_mod);
-			reverse(300, 750);
+			if (actuator.hasVictim() && AliveVictimsRescued < 2) {
+				DeadVictim(side_mod);
+			} else {
+				GoToDistance(95);
+				CentralizeGyro(90*side_mod);
+				reverse(300, 750);
+			}
 			actuator.Down();
 			timeToFind = time.millis();
 		//

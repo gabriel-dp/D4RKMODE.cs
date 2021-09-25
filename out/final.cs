@@ -460,14 +460,8 @@ void Setup () {
 		public bool hasKit () => (bot.HasRescueKit());
 	
 		public bool isAlive () {
-			Adjust(45, 0);
-			bot.Wait(500);
-			if (bot.Heat() > 34 && bot.Heat() < 37) {
-				Up();
-				bot.Wait(500);
-				return (bot.Heat() > 35.5);
-			}
-			return false;
+			bot.Wait(100);
+			return (bot.Heat() > 35.5);
 		}
 	
 	}
@@ -959,10 +953,6 @@ void Track () {
 }
 
 //Rescue - imported files
-	char sideToSearch = 'R';
-	
-	bool DeadVictimReserved = false;
-	byte AliveVictims = 0;
 	void Exit (sbyte side_mod) {
 	
 		//verifies if already is in front of a empty space
@@ -1138,7 +1128,6 @@ void Track () {
 				moveTime(-300, 500);
 				int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
 				int zmToMove = maths.hypotenuse(last_ultra, 23) + 1;
-				if (sideToSearch == 'L') angleToRotate = -angleToRotate;
 			//
 	
 			//go rescue
@@ -1173,7 +1162,12 @@ void Track () {
 				//dispatches a victim that already was in the actuator
 					reverse(300);
 					CentralizeGyro(-90*side_mod);
-					Dispatch();
+					if (actuator.isAlive() || AliveVictimsRescued > 1) {
+						Dispatch();
+						AliveVictimsRescued++;
+					} else {
+						DeadVictim(side_mod);
+					}
 				//
 	
 			} else {
@@ -1220,7 +1214,11 @@ void Track () {
 					//dispatch in the triangle
 						rotate(500, angleToRotate*side_mod);
 						while (!isFullBlack(5)) FollowerGyro(direction());
-						Dispatch();
+	
+						if (actuator.isAlive() || AliveVictimsRescued > 1) {
+							Dispatch();
+							AliveVictimsRescued++;
+						}
 	
 						if (angleToRotate <= 135) rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
 						CentralizeGyro();
@@ -1245,16 +1243,23 @@ void Track () {
 	
 					reverse(300);
 					CentralizeGyro(-90*side_mod);
-					Dispatch();
+					if (actuator.isAlive() || AliveVictimsRescued > 1) {
+						Dispatch();
+						AliveVictimsRescued++;
+					}
 	
 				}
 	
 			}
 	
 			//position the robot in the side of the triangle
-				GoToDistance(95);
-				CentralizeGyro(90*side_mod);
-				reverse(300, 750);
+				if (actuator.hasVictim() && AliveVictimsRescued < 2) {
+					DeadVictim(side_mod);
+				} else {
+					GoToDistance(95);
+					CentralizeGyro(90*side_mod);
+					reverse(300, 750);
+				}
 				actuator.Down();
 				timeToFind = time.millis();
 			//
@@ -1299,15 +1304,20 @@ void Track () {
 			//lifts the actuator and dispatches if it has a victim
 				stop();
 				actuator.Up();
-				if (actuator.hasVictim() || actuator.hasKit()) {
+				if ((actuator.hasVictim() && actuator.isAlive()) || actuator.hasKit()) {
 					Dispatch();
+					AliveVictimsRescued++;
+				} else if (actuator.hasVictim()) {
+					DeadVictim(side_mod);
 				}
 			//
 	
 			//position the robot in the side of the triangle
-				GoToDistance(95);
-				CentralizeGyro(90 * side_mod);
-				reverse(300, 750);
+				if (!DeadVictimReserved) {
+					GoToDistance(95);
+					CentralizeGyro(90 * side_mod);
+					reverse(300, 750);
+				}
 				actuator.Down();
 			//
 	
@@ -1315,7 +1325,7 @@ void Track () {
 				VictimInEnd:
 				bool wall_ahead = (ultra(1) < 400);
 				timeToFind = time.millis();
-				while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 7000) {
+				while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 11000) {
 					FollowerGyro();
 					Ultras(true, false, "triangle");
 				}
@@ -1364,7 +1374,34 @@ void Track () {
 	
 	}
 	
+	void DeadVictim (sbyte side_mod) {
+		GoToDistance(95);
+		CentralizeGyro(90 * side_mod);
+		reverse(300, 750);
+		moveZm(95);
+		CentralizeGyro(-90 * side_mod);
+	
+		while (ultra(1) > 40) FollowerGyro();
+		stop();
+		open_actuator = false;
+		actuator.Down();
+		moveTime(200, 300);
+	
+		delay(500);
+		moveTime(-300, 150);
+		moveTime(300, 50);
+	
+		GoToDistance(95);
+		CentralizeGyro(90 * side_mod);
+		reverse(300, 1500);
+	
+		DeadVictimReserved = true;
+		open_actuator = true;
+	}
 //
+
+bool DeadVictimReserved = false;
+byte AliveVictimsRescued = 0;
 
 void Rescue () {
 	if (local == Local.rescue) {

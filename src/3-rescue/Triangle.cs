@@ -34,15 +34,20 @@ void Triangle () {
 		//lifts the actuator and dispatches if it has a victim
 			stop();
 			actuator.Up();
-			if (actuator.hasVictim() || actuator.hasKit()) {
+			if ((actuator.hasVictim() && actuator.isAlive()) || actuator.hasKit()) {
 				Dispatch();
+				AliveVictimsRescued++;
+			} else if (actuator.hasVictim()) {
+				DeadVictim(side_mod);
 			}
 		//
 
 		//position the robot in the side of the triangle
-			GoToDistance(95);
-			CentralizeGyro(90 * side_mod);
-			reverse(300, 750);
+			if (!DeadVictimReserved) {
+				GoToDistance(95);
+				CentralizeGyro(90 * side_mod);
+				reverse(300, 750);
+			}
 			actuator.Down();
 		//
 
@@ -50,7 +55,7 @@ void Triangle () {
 			VictimInEnd:
 			bool wall_ahead = (ultra(1) < 400);
 			timeToFind = time.millis();
-			while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 7000) {
+			while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 11000) {
 				FollowerGyro();
 				Ultras(true, false, "triangle");
 			}

@@ -41,14 +41,8 @@ public class Actuator {
 	public bool hasKit () => (bot.HasRescueKit());
 
 	public bool isAlive () {
-		Adjust(45, 0);
-		bot.Wait(500);
-		if (bot.Heat() > 34 && bot.Heat() < 37) {
-			Up();
-			bot.Wait(500);
-			return (bot.Heat() > 35.5);
-		}
-		return false;
+		bot.Wait(100);
+		return (bot.Heat() > 35.5);
 	}
 
 }

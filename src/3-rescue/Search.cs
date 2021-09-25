@@ -26,7 +26,6 @@ void Search (byte sensor) {
 			moveTime(-300, 500);
 			int angleToRotate = (int) ((180/Math.PI)*(Math.Atan(last_ultra/23)));
 			int zmToMove = maths.hypotenuse(last_ultra, 23) + 1;
-			if (sideToSearch == 'L') angleToRotate = -angleToRotate;
 		//
 
 		//go rescue

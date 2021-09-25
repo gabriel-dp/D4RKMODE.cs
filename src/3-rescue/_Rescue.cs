@@ -5,7 +5,11 @@
 	import("3-rescue/Search.cs");
 	import("3-rescue/SearchTriangle.cs");
 	import("3-rescue/Triangle.cs");
+	import("3-rescue/DeadVictim.cs");
 //
+
+bool DeadVictimReserved = false;
+byte AliveVictimsRescued = 0;
 
 void Rescue () {
 	if (local == Local.rescue) {
