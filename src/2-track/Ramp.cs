@@ -44,6 +44,7 @@ void Ramp () {
 					actuator.Up();
 					moveTime(300, 100);
 					actuator.Down();
+					flag_stuck = false;
 				}
 			}
 		} else {

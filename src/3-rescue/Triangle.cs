@@ -4,14 +4,14 @@ int timeToFind = 0;
 void Triangle () {
 
 	bool TriRight () {
-		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 97 && ultra(2) < 55) {
+		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 100 && ultra(2) < 55) {
 			side_triangle = 'R';
 			return true;
 		} else return false;
 	}
 
 	bool TriLeft () {
-		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 97 && ultra(3) < 55) {
+		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 100 && ultra(3) < 55) {
 			side_triangle = 'L';
 			return true;
 		} else return false;
@@ -50,13 +50,19 @@ void Triangle () {
 			VictimInEnd:
 			bool wall_ahead = (ultra(1) < 400);
 			timeToFind = time.millis();
-			while ((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) {
+			while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 7000) {
 				FollowerGyro();
 				Ultras(true, false, "triangle");
 			}
+			int mid_arena = (time.millis()-timeToFind)/2;
+			if (timeToFind > 6950) {
+				mid_arena = (time.millis()-timeToFind)/3;
+			}
 
 			//wall or line
+				stop();
 				actuator.Up();
+				CentralizeGyro();
 				if (actuator.hasVictim()) {
 					SearchTriangle(2, true);
 					goto VictimInEnd;
@@ -66,7 +72,6 @@ void Triangle () {
 		//
 
 		//search for the exit
-			int mid_arena = (time.millis()-500-timeToFind)/2;
 			console(2, $"{time.millis() - timeToFind} | {mid_arena}");
 
 			if (DeadVictimReserved) { //rescue the remanescent dead victim
@@ -87,51 +92,7 @@ void Triangle () {
 				moveTime(300, mid_arena);
 			} else moveTime(-300, mid_arena);
 
-
-			FindTheExitAgain:
-
-			byte whichSensor = 0;
-			while (true) {
-				right(1000 * side_mod);
-				for (byte i = 0; i < 4; i++) {
-					if (ultra(i) > 400) {
-						whichSensor = i;
-						break;
-					}
-				}
-				if (whichSensor != 0) break;
-			}
-
-			time.reset();
-			while (ultra(whichSensor) > 400) right(1000*side_mod);
-			int timeDetecting = time.timer();
-			time.reset();
-			while (time.timer() < timeDetecting/2) left(1000*side_mod);
-
-			if (whichSensor != 1) rotate(500, 90*side_mod);
-			stop();
-			open_actuator = false;
-			actuator.Down();
-
-			time.reset();
-			while (isWhite(new byte[] {2,3})) FollowerGyro(direction());
-			int timeToBack = time.timer();
-
-			moveTime(300, 50);
-			if (anySensorColor("blue") && !isThatColor(2, "GREEN") && !isThatColor(3, "GREEN")) {
-				led(color["orange"]);
-				moveTime(-300, timeToBack);
-				if (whichSensor != 1) rotate(500, -90*side_mod);
-				while (ultra(whichSensor) > 400) right(1000*side_mod);
-				right(1000*side_mod);
-				delay(250);
-				goto FindTheExitAgain;
-			} else {
-				led(color["green_dark"]);
-				moveTime(300, 300);
-				Centralize();
-				local = Local.exit;
-			}
+			Exit(side_mod);
 		//
 
 	}
