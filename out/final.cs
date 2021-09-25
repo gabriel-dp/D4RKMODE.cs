@@ -966,8 +966,8 @@ void Track () {
 			time.reset();
 			while (time.timer() < timeDetecting/1.6) left(1000*side_mod);
 	
-			if (whichSensor == 2) rotate(500, -90*side_mod);
-			else if (whichSensor == 3) rotate(500, 90*side_mod);
+			if (whichSensor == 2) rotate(500, 90*side_mod);
+			else if (whichSensor == 3) rotate(500, -90*side_mod);
 			stop();
 			open_actuator = false;
 			actuator.Down();
@@ -981,11 +981,11 @@ void Track () {
 		//
 	
 		//verifies if that is the entrance or the exit
-			if (anySensorColor("blue") && !isThatColor(2, "GREEN") && !isThatColor(3, "GREEN")) {
+			if (anySensorColor("blue") && !isThatColor(1, "GREEN") && !isThatColor(2, "GREEN") && !isThatColor(3, "GREEN") && !isThatColor(4, "GREEN")) {
 				led(color["orange"]);
 				moveTime(-300, timeToBack);
-				if (whichSensor == 2) rotate(500, 90*side_mod);
-				else if (whichSensor == 3) rotate(500, -90*side_mod);
+				if (whichSensor == 2) rotate(500, -90*side_mod);
+				else if (whichSensor == 3) rotate(500, 90*side_mod);
 				while (ultra(whichSensor) > 360) {
 					right(1000*side_mod);
 					for (byte i = 0; i < 4; i++) {
