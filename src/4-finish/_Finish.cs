@@ -3,6 +3,7 @@
 //
 
 void Finish () {
+	console(1, "$>--Rescue--<$", color["comment"]);
 	while (local == Local.exit) {
 		RedEnd();
 		LineFollower();
@@ -10,5 +11,5 @@ void Finish () {
 		Ramp();
 	}
 	moveTime(300, 200);
-	Celebrate("D4RKMODE", rainbow);
+	Celebrate("D4RKMODE", fade);
 }
