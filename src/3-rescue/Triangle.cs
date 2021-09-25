@@ -4,14 +4,14 @@ int timeToFind = 0;
 void Triangle () {
 
 	bool TriRight () {
-		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 100 && ultra(2) < 55) {
+		if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 97 && ultra(2) < 55) {
 			side_triangle = 'R';
 			return true;
 		} else return false;
 	}
 
 	bool TriLeft () {
-		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 100 && ultra(3) < 55) {
+		if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 97 && ultra(3) < 55) {
 			side_triangle = 'L';
 			return true;
 		} else return false;

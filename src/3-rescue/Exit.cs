@@ -73,13 +73,9 @@ void Exit (sbyte side_mod) {
 			goto FindTheExitAgain;
 		} else {
 			led(color["green_dark"]);
-			moveTime(300, 300);
-			if (isBlack(2) || isBlack(3)) {
-				Centralize();
-			} else {
-				while (!isFullBlack(2) && !isFullBlack(3)) forward(200);
-				Centralize();
-			}
+			while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
+			while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN")) forward(200);
+			Centralize();
 			local = Local.exit;
 		}
 	//

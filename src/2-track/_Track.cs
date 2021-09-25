@@ -11,7 +11,7 @@
 //
 
 void Track () {
-	console(1, "$>--Track--<$", color["comment"]);
+	console(1, "$>--Pista--<$", color["comment"]);
 
 	while (local == Local.track) {
 		LineFollower();

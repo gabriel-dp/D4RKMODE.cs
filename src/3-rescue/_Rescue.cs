@@ -10,7 +10,7 @@
 void Rescue () {
 	if (local == Local.rescue) {
 		clear();
-		console(1, "$>--Rescue--<$", color["comment"]);
+		console(1, "$>--Resgate--<$", color["comment"]);
 		moveTime(300, 300);
 
 		open_actuator = true;

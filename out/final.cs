@@ -946,7 +946,7 @@ void Setup () {
 //
 
 void Track () {
-	console(1, "$>--Track--<$", color["comment"]);
+	console(1, "$>--Pista--<$", color["comment"]);
 
 	while (local == Local.track) {
 		LineFollower();
@@ -1038,13 +1038,9 @@ void Track () {
 				goto FindTheExitAgain;
 			} else {
 				led(color["green_dark"]);
-				moveTime(300, 300);
-				if (isBlack(2) || isBlack(3)) {
-					Centralize();
-				} else {
-					while (!isFullBlack(2) && !isFullBlack(3)) forward(200);
-					Centralize();
-				}
+				while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
+				while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN")) forward(200);
+				Centralize();
 				local = Local.exit;
 			}
 		//
@@ -1271,14 +1267,14 @@ void Track () {
 	void Triangle () {
 	
 		bool TriRight () {
-			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 100 && ultra(2) < 55) {
+			if (bot.GetFrontalLeftForce()-bot.GetFrontalRightForce() > 380 && ultra(1) < 97 && ultra(2) < 55) {
 				side_triangle = 'R';
 				return true;
 			} else return false;
 		}
 	
 		bool TriLeft () {
-			if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 100 && ultra(3) < 55) {
+			if (bot.GetFrontalRightForce()-bot.GetFrontalLeftForce() > 380 && ultra(1) < 97 && ultra(3) < 55) {
 				side_triangle = 'L';
 				return true;
 			} else return false;
@@ -1371,7 +1367,7 @@ void Track () {
 void Rescue () {
 	if (local == Local.rescue) {
 		clear();
-		console(1, "$>--Rescue--<$", color["comment"]);
+		console(1, "$>--Resgate--<$", color["comment"]);
 		moveTime(300, 300);
 
 		open_actuator = true;
@@ -1413,7 +1409,7 @@ void Rescue () {
 //
 
 void Finish () {
-	console(1, "$>--Rescue--<$", color["comment"]);
+	console(1, "$>--Saída--<$", color["comment"]);
 	while (local == Local.exit) {
 		RedEnd();
 		LineFollower();

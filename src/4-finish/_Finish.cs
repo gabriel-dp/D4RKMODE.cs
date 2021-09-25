@@ -3,7 +3,7 @@
 //
 
 void Finish () {
-	console(1, "$>--Rescue--<$", color["comment"]);
+	console(1, "$>--Saída--<$", color["comment"]);
 	while (local == Local.exit) {
 		RedEnd();
 		LineFollower();
