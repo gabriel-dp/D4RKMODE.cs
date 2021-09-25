@@ -999,8 +999,13 @@ void Track () {
 			time.reset();
 			while (time.timer() < timeDetecting/1.6) left(1000*side_mod);
 	
-			if (whichSensor == 2) rotate(500, 90*side_mod);
-			else if (whichSensor == 3) rotate(500, -90*side_mod);
+			if (whichSensor == 2) rotate(500, 90);
+			else if (whichSensor == 3) rotate(500, -90);
+	
+			if (ultra(1) < 400) {
+				goto FindTheExitAgain;
+			}
+	
 			stop();
 			open_actuator = false;
 			actuator.Down();
