@@ -30,6 +30,13 @@ void CurveBlack () {
 			if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
 				moveTime(300, 315);
 
+				//avoids lost the line in the seesaw
+					if (inclination() > 8) {
+						CentralizeGyro();
+						return;
+					}
+				//
+
 				int maxTimeToRotate = 4400;
 				LostTheLine:
 				time.reset();
