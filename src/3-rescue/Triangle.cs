@@ -55,12 +55,12 @@ void Triangle () {
 			VictimInEnd:
 			bool wall_ahead = (ultra(1) < 400);
 			timeToFind = time.millis();
-			while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 11000) {
+			while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 10000) {
 				FollowerGyro();
 				Ultras(true, false, "triangle");
 			}
 			int mid_arena = (time.millis()-timeToFind)/2;
-			if (timeToFind > 10950) {
+			if (timeToFind > 9950) {
 				mid_arena = (time.millis()-timeToFind)/3;
 			}
 
