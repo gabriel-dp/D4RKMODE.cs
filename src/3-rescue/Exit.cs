@@ -80,12 +80,12 @@ void Exit (sbyte side_mod) {
 			if (!isWhite(new byte[] {1,2,3,4})) Centralize();
 			else {
 				//search for the line
-					const int angleToSearch = 10;
-					if (isWhite(new byte[] {1,2,3,4})) {
+					const int angleToSearch = 20;
+					if (!anySensorLine()) {
 						rotate(500, angleToSearch);
-						if (isWhite(new byte[] {1,2,3,4})) {
+						if (!anySensorLine()) {
 							rotate(500, -(2*angleToSearch));
-							if (isWhite(new byte[] {1,2,3,4})) {
+							if (!anySensorLine()) {
 								rotate(500, angleToSearch);
 							}
 						}
