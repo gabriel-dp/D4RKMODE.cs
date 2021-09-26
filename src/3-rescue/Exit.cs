@@ -34,7 +34,7 @@ void Exit (sbyte side_mod) {
 			int timeDetecting = time.timer();
 
 			time.reset();
-			while (time.timer() < timeDetecting/1.6) left(1000*side_mod);
+			while (time.timer() < timeDetecting/1.75) left(1000*side_mod);
 
 			if (whichSensor == 2) rotate(500, 90);
 			else if (whichSensor == 3) rotate(500, -90);
@@ -79,6 +79,7 @@ void Exit (sbyte side_mod) {
 			while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN")) forward(200);
 			if (!isWhite(new byte[] {1,2,3,4})) Centralize();
 			else {
+				moveTime(300, 200);
 				//search for the line
 					const int angleToSearch = 20;
 					if (!anySensorLine()) {
@@ -87,6 +88,7 @@ void Exit (sbyte side_mod) {
 							rotate(500, -(2*angleToSearch));
 							if (!anySensorLine()) {
 								rotate(500, angleToSearch);
+								CentralizeGyro();
 							}
 						}
 					}

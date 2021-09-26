@@ -11,6 +11,10 @@ void Kit () {
 			open_actuator = true;
 			actuator.Down();
 		}
+
+		if (isWhite(new byte[] {1,2,3,4})) {
+			moveTime(-300, 350);
+		}
 		Centralize();
 	}
 }
