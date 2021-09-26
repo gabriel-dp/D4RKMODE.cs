@@ -4,7 +4,7 @@ void TrackEnd () {
 		time.reset();
 		do {
 			forward(300);
-			if (ultra(2) < 50 && ultra(3) < 50) {
+			if (ultra(2) < 60 && ultra(3) < 60) {
 				local = Local.rescue;
 				return;
 			}
