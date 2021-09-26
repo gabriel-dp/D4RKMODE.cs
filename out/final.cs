@@ -1022,7 +1022,7 @@ void Track () {
 			//
 	
 			//verifies if that is the entrance or the exit
-			if (anySensorColor("blue") && !isThatColor(1, "GREEN") && !isThatColor(2, "GREEN") && !isThatColor(3, "GREEN") && !isThatColor(4, "GREEN")) {
+			if (anySensorColor("blue") && !isThatColor(1, "GREEN") && !isThatColor(2, "GREEN") && !isThatColor(3, "GREEN") && !isThatColor(4, "GREEN") && !isThatColor(2, "CYAN") && !isThatColor(3, "CYAN")) {
 				led(color["orange"]);
 				moveTime(-300, timeToBack);
 				if (whichSensor == 2) rotate(500, -90*side_mod);
@@ -1054,6 +1054,7 @@ void Track () {
 								rotate(500, -(2*angleToSearch));
 								if (!anySensorLine()) {
 									rotate(500, angleToSearch);
+									moveTime(-300, 150);
 									CentralizeGyro();
 								}
 							}
