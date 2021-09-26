@@ -69,6 +69,7 @@ void Triangle () {
 				actuator.Up();
 				CentralizeGyro();
 				if (actuator.hasVictim()) {
+					led(color["red"]);
 					SearchTriangle(2, true);
 					goto VictimInEnd;
 				}
@@ -91,7 +92,7 @@ void Triangle () {
 				actuator.Up();
 
 				CentralizeGyro(-90 * side_mod);
-				GoToDistance(85);
+				GoToDistance(80);
 				Dispatch();
 
 				CentralizeGyro(90 * side_mod);

@@ -77,7 +77,21 @@ void Exit (sbyte side_mod) {
 			led(color["green_dark"]);
 			while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
 			while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN")) forward(200);
-			Centralize();
+			if (!isWhite(new byte[] {1,2,3,4})) Centralize();
+			else {
+				//search for the line
+					const int angleToSearch = 10;
+					if (isWhite(new byte[] {1,2,3,4})) {
+						rotate(500, angleToSearch);
+						if (isWhite(new byte[] {1,2,3,4})) {
+							rotate(500, -(2*angleToSearch));
+							if (isWhite(new byte[] {1,2,3,4})) {
+								rotate(500, angleToSearch);
+							}
+						}
+					}
+				//
+			}
 			local = Local.exit;
 		}
 	//

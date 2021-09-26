@@ -473,7 +473,7 @@ void Setup () {
 		moveTime(-200, 600);
 		actuator.Adjust(20, 0);
 		stop(100);
-		if (actuator.hasKit()) moveTime(300, 900);
+		if (actuator.hasKit()) moveTime(300, 1000);
 		else moveTime(300, 600);
 		stop(200);
 		moveTime(-300, 200);
@@ -577,10 +577,10 @@ void Setup () {
 				} else {
 					if (green_direction == 'R') {
 						if (scaleAngle(direction()) < 25) CentralizeGyro(45);
-						while (!isFullBlack(3) && !isFullBlack(4)) right(1000);
+						while (!isFullBlack(3) && !isFullBlack(4) && !isBlack(4)) right(1000);
 					} else {
 						if (scaleAngle(direction()) < 25) CentralizeGyro(-45);
-						while (!isFullBlack(2) && !isFullBlack(1)) left(1000);
+						while (!isFullBlack(2) && !isFullBlack(1) && !isBlack(1)) left(1000);
 					}
 				}
 				Centralize();
@@ -1032,7 +1032,21 @@ void Track () {
 				led(color["green_dark"]);
 				while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
 				while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN")) forward(200);
-				Centralize();
+				if (!isWhite(new byte[] {1,2,3,4})) Centralize();
+				else {
+					//search for the line
+						const int angleToSearch = 10;
+						if (isWhite(new byte[] {1,2,3,4})) {
+							rotate(500, angleToSearch);
+							if (isWhite(new byte[] {1,2,3,4})) {
+								rotate(500, -(2*angleToSearch));
+								if (isWhite(new byte[] {1,2,3,4})) {
+									rotate(500, angleToSearch);
+								}
+							}
+						}
+					//
+				}
 				local = Local.exit;
 			}
 		//
@@ -1149,8 +1163,9 @@ void Track () {
 	}
 	void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 		sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
+		bool reserved = false;
 	
-		if (((ultra(sensor) < 265 && !actuator.hasVictim()) || alreadyInActuator) && (((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) || ((side_triangle == 'L' && sensor == 3 && !DeadVictimReserved) || (side_triangle == 'R' && sensor == 2 && !DeadVictimReserved)))) {
+		if ((ultra(sensor) < 265 && !actuator.hasVictim()) && (((side_triangle == 'R' && sensor == 3) || (side_triangle == 'L' && sensor == 2)) || ((side_triangle == 'L' && sensor == 3 && !DeadVictimReserved) || (side_triangle == 'R' && sensor == 2 && !DeadVictimReserved))) || alreadyInActuator) {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
@@ -1167,6 +1182,7 @@ void Track () {
 						AliveVictimsRescued++;
 					} else {
 						DeadVictim(side_mod);
+						reserved = true;
 					}
 				//
 	
@@ -1251,7 +1267,7 @@ void Track () {
 			//position the robot in the side of the triangle
 				if (actuator.hasVictim() && AliveVictimsRescued < 2) {
 					DeadVictim(side_mod);
-				} else {
+				} else if (!reserved) {
 					GoToDistance(95);
 					CentralizeGyro(90*side_mod);
 					reverse(300, 750);
@@ -1335,6 +1351,7 @@ void Track () {
 					actuator.Up();
 					CentralizeGyro();
 					if (actuator.hasVictim()) {
+						led(color["red"]);
 						SearchTriangle(2, true);
 						goto VictimInEnd;
 					}
@@ -1357,7 +1374,7 @@ void Track () {
 					actuator.Up();
 	
 					CentralizeGyro(-90 * side_mod);
-					GoToDistance(85);
+					GoToDistance(80);
 					Dispatch();
 	
 					CentralizeGyro(90 * side_mod);
