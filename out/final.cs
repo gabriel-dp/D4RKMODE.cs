@@ -610,6 +610,8 @@ void Setup () {
 	
 		if (curve_side != 'n') {
 	
+			byte timesLost = 0;
+	
 			//verifies if sensor misread green
 				moveTime(300, 15);
 				if (isWhite(1) && isWhite(4)) {
@@ -629,7 +631,7 @@ void Setup () {
 					moveTime(300, 315);
 	
 					//avoids lost the line in the seesaw
-						if (inclination() > 8) {
+						if (inclination() > 5) {
 							CentralizeGyro();
 							return;
 						}
@@ -646,12 +648,12 @@ void Setup () {
 					}
 	
 					//if doesnt find the line
-						if (time.timer() > maxTimeToRotate - 50) {
+						if (time.timer() > maxTimeToRotate - 50 && timesLost < 1) {
 							led(color["orange"]);
 							moveTime(-300, 200);
 							if (curve_side == 'R') curve_side = 'L';
 							else curve_side = 'R';
-							maxTimeToRotate += maxTimeToRotate;
+							timesLost++;
 							goto LostTheLine;
 						}
 					//
@@ -1433,7 +1435,7 @@ void Track () {
 //
 
 bool DeadVictimReserved = false;
-static byte AliveVictimsRescued = 0;
+public static byte AliveVictimsRescued = 0;
 
 void Rescue () {
 	if (local == Local.rescue) {
