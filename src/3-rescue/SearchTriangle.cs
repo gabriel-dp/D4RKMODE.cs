@@ -64,7 +64,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					rotate(500, angleToRotate*side_mod);
 					while (!isFullBlack(5)) FollowerGyro(direction());
 
-					if (actuator.isAlive() || AliveVictimsRescued > 1) {
+					if (actuator.isAlive() || AliveVictimsRescued > 1|| actuator.hasKit()) {
 						Dispatch();
 						AliveVictimsRescued++;
 					}

@@ -9,7 +9,7 @@
 //
 
 bool DeadVictimReserved = false;
-byte AliveVictimsRescued = 0;
+static byte AliveVictimsRescued = 0;
 
 void Rescue () {
 	if (local == Local.rescue) {

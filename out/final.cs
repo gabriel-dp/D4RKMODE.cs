@@ -1227,7 +1227,7 @@ void Track () {
 						rotate(500, angleToRotate*side_mod);
 						while (!isFullBlack(5)) FollowerGyro(direction());
 	
-						if (actuator.isAlive() || AliveVictimsRescued > 1) {
+						if (actuator.isAlive() || AliveVictimsRescued > 1|| actuator.hasKit()) {
 							Dispatch();
 							AliveVictimsRescued++;
 						}
@@ -1419,7 +1419,7 @@ void Track () {
 //
 
 bool DeadVictimReserved = false;
-byte AliveVictimsRescued = 0;
+static byte AliveVictimsRescued = 0;
 
 void Rescue () {
 	if (local == Local.rescue) {
