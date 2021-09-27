@@ -8,10 +8,10 @@
 	import("3-rescue/DeadVictim.cs");
 //
 
-bool DeadVictimReserved = false;
-public static byte AliveVictimsRescued = 0;
-
 void Rescue () {
+	bool DeadVictimReserved = false;
+	public static byte AliveVictimsRescued = 0;
+
 	if (local == Local.rescue) {
 		clear();
 		console(1, "$>--Resgate--<$", color["comment"]);

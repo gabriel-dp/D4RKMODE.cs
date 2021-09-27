@@ -5,6 +5,7 @@ Sesi Anísio Teixeira - VCA/BA
 
 const bool console_on = true;
 
+
 enum Local {
 	track,
 	rescue,
@@ -37,6 +38,7 @@ void Setup () {
 }
 
 //General - imported files
+
 	public class Maths {
 	
 		const float PI = 3.14f;
@@ -58,6 +60,7 @@ void Setup () {
 	}
 	
 	Maths maths = new Maths();
+
 	void delay (int ms) => bot.Wait(ms);
 	
 	public class Time {
@@ -71,6 +74,7 @@ void Setup () {
 	}
 	
 	Time time = new Time();
+
 	//simplified basic commands
 	void move (float motor_L, float motor_R) => bot.Move(motor_L, motor_R);
 	
@@ -118,6 +122,7 @@ void Setup () {
 	int error = 0;
 	int last_error = 0;
 	int turn = 0;
+
 	//Constants of calibration
 	const float max_white = 60;
 	const byte high_black = 50;
@@ -164,6 +169,7 @@ void Setup () {
 			return false;
 		}
 	//
+
 	public class Colors {
 		public float R (byte sensor) => (bot.ReturnRed(sensor-1) + 1);
 		public float G (byte sensor) => (bot.ReturnGreen(sensor-1) + 1);
@@ -222,6 +228,7 @@ void Setup () {
 		return true;
 	}
 	
+
 	int direction () => (int) bot.Compass();
 	
 	byte Direction () {
@@ -331,6 +338,7 @@ void Setup () {
 	
 		//printMotors();
 	}
+
 	float ultra (byte sensor) {
 		float ultra_data = bc.Distance(sensor - 1);
 		ultra_data = ((float)((int)(ultra_data *100)))/100;
@@ -349,11 +357,13 @@ void Setup () {
 	}
 	
 	bool DetectWall () => (ultra(1) < (Math.Pow(scaleAngle(direction()), 2) * 0.006f + 28));
+
 	int inclination () {
 		int inclination_data = (int) bot.Inclination();
 		if (inclination_data > 300) inclination_data -= 360;
 		return inclination_data;
 	}
+
 	//colors
 	Dictionary <string, string> color = new Dictionary <string,string> () {
 		{"white","#FFFFFF"},
@@ -424,6 +434,7 @@ void Setup () {
 		console(line, text, hexcolor);
 		led(ledcolor);
 	}
+
 	static bool open_actuator = false;
 	
 	public class Actuator {
@@ -491,6 +502,7 @@ void Setup () {
 //
 
 //Track - imported files
+
 	const int Kc = 15;
 	
 	void Centralize (int timeout = 2000) {
@@ -522,6 +534,7 @@ void Setup () {
 		last_zero = time.millis();
 		stop();
 	}
+
 	char green_direction = 'n';
 	void GreenClassifier () {
 		green_direction = 'n';
@@ -596,6 +609,7 @@ void Setup () {
 			clear();
 		}
 	}
+
 	void CurveBlack () {
 		char curve_side = 'n';
 		if (!isWhite(1) && !isColorized(1)) {
@@ -665,6 +679,7 @@ void Setup () {
 			clear();
 		}
 	}
+
 	const float Kp = 1;
 	const float Kd = 20;
 	
@@ -726,6 +741,7 @@ void Setup () {
 		Follower();
 	
 	}
+
 	void Obstacle () {
 		if (DetectWall()) {
 			console_led(2, "$>Obstáculo<$   Possível", color["pink"]);
@@ -831,6 +847,7 @@ void Setup () {
 	
 		}
 	}
+
 	bool flag_stuck = false;
 	int time_stuck = 0;
 	
@@ -911,6 +928,7 @@ void Setup () {
 		//
 	
 	}
+
 	bool alreadyHasKit = false;
 	
 	void Kit () {
@@ -931,11 +949,13 @@ void Setup () {
 			Centralize();
 		}
 	}
+
 	void RedEnd () {
 		if (anySensorColor("red")) {
 			local = Local.end;
 		}
 	}
+
 	void TrackEnd () {
 		if (isBlue(2) && isBlue(3) && isBlack(new byte[] {2,3})) {
 			CentralizeGyro();
@@ -966,6 +986,8 @@ void Track () {
 }
 
 //Rescue - imported files
+
+
 	void Exit (sbyte side_mod) {
 	
 		//verifies if already is in front of a empty space
@@ -1068,6 +1090,7 @@ void Track () {
 		//
 	
 	}
+
 	float last_R = 0;
 	float last_T_R = 10000;
 	float last_L = 0;
@@ -1130,6 +1153,7 @@ void Track () {
 			DetectTriangle('L', true);
 		}
 	}
+
 	void Search (byte sensor) {
 		sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 	
@@ -1177,6 +1201,7 @@ void Track () {
 		}
 	
 	}
+
 	void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 		sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
 		bool reserved = false;
@@ -1296,6 +1321,7 @@ void Track () {
 		}
 	
 	}
+
 	char side_triangle = 'n';
 	int timeToFind = 0;
 	
@@ -1408,6 +1434,7 @@ void Track () {
 	
 	}
 	
+
 	void DeadVictim (sbyte side_mod) {
 		GoToDistance(95);
 		CentralizeGyro(90 * side_mod);
@@ -1434,10 +1461,10 @@ void Track () {
 	}
 //
 
-bool DeadVictimReserved = false;
-public static byte AliveVictimsRescued = 0;
-
 void Rescue () {
+	bool DeadVictimReserved = false;
+	public static byte AliveVictimsRescued = 0;
+
 	if (local == Local.rescue) {
 		clear();
 		console(1, "$>--Resgate--<$", color["comment"]);
@@ -1452,7 +1479,9 @@ void Rescue () {
 		Triangle();
 	}
 }
+
 //Finish - imported files
+
 	string[] rainbow = {"#FF0000", "#FF8800", "#FFFF00", "#00FF00", "#00DDDD", "#00AAFF", "#0044FF", "#AA00FF", "#FF00FF", "#FF0088"};
 	
 	string[] fade = {"#43434E", "#52525C", "#676770", "#77777F", "#8C8C93", "#A6A6AB", "#C3C3C6", "#E2E2E4", "#EEEEEE", "#FFFFFF"};
