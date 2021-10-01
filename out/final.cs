@@ -661,6 +661,7 @@ void Setup () {
 					//
 	
 					int maxTimeToRotate = 4400;
+					int timeBackward = 200;
 					LostTheLine:
 					time.reset();
 	
@@ -671,13 +672,19 @@ void Setup () {
 					}
 	
 					//if doesnt find the line
-						if (time.timer() > maxTimeToRotate - 50 && timesLost < 1) {
+						if (time.timer() > maxTimeToRotate - 50 && timesLost < 2) {
 							led(color["orange"]);
-							moveTime(-300, 200);
+							moveTime(-300, timeBackward);
 							if (curve_side == 'R') curve_side = 'L';
 							else curve_side = 'R';
 							timesLost++;
+							maxTimeToRotate -= 1000;
+							timeBackward = timeBackward/2;
 							goto LostTheLine;
+						}
+	
+						if (timesLost == 2) {
+							CentralizeGyro();
 						}
 					//
 				} else return;
