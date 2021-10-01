@@ -638,6 +638,13 @@ void Setup () {
 				}
 			//
 	
+			//avoids lost the line in the seesaw
+				if (Math.Abs(inclination()) > 5) {
+					CentralizeGyro();
+					stop(500);
+				}
+			//
+	
 			//tries to centralize and avoid "false curves" then goes forward and rotate in the axis
 				Centralize();
 	
@@ -645,8 +652,10 @@ void Setup () {
 					moveTime(300, 315);
 	
 					//avoids lost the line in the seesaw
-						if (inclination() > 5) {
+						if (Math.Abs(inclination()) > 5) {
 							CentralizeGyro();
+							reverse(300, 300);
+							stop(200);
 							return;
 						}
 					//
@@ -876,6 +885,7 @@ void Setup () {
 	void Ramp () {
 		if (inclination() < -7) {
 			console_led(2, "$>Rampa<$ ou $>Gangorra<$", color["blue"]);
+			console(3, "↑");
 	
 			//lifts the actuator and follows the line for a time then down that
 				stop();

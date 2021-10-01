@@ -26,6 +26,7 @@ void StuckObstacle () {
 void Ramp () {
 	if (inclination() < -7) {
 		console_led(2, "$>Rampa<$ ou $>Gangorra<$", color["blue"]);
+		console(3, "↑");
 
 		//lifts the actuator and follows the line for a time then down that
 			stop();

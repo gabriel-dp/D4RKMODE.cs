@@ -26,6 +26,13 @@ void CurveBlack () {
 			}
 		//
 
+		//avoids lost the line in the seesaw
+			if (Math.Abs(inclination()) > 5) {
+				CentralizeGyro();
+				stop(500);
+			}
+		//
+
 		//tries to centralize and avoid "false curves" then goes forward and rotate in the axis
 			Centralize();
 
@@ -33,8 +40,10 @@ void CurveBlack () {
 				moveTime(300, 315);
 
 				//avoids lost the line in the seesaw
-					if (inclination() > 5) {
+					if (Math.Abs(inclination()) > 5) {
 						CentralizeGyro();
+						reverse(300, 300);
+						stop(200);
 						return;
 					}
 				//
