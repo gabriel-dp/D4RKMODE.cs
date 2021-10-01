@@ -51,14 +51,23 @@ Actuator actuator = new Actuator();
 
 void Dispatch () {
 	Retry:
+
 	moveTime(-200, 600);
 	actuator.Adjust(20, 0);
 	stop(100);
-	if (actuator.hasKit()) moveTime(300, 900);
-	else moveTime(300, 600);
-	stop(200);
-	moveTime(-300, 200);
-	actuator.Up();
+
+	if (actuator.hasKit()) {
+		moveTime(300, 900);
+		stop(200);
+		actuator.Up();
+		moveTime(-300, 200);
+	} else  {
+		moveTime(300, 600);
+		stop(200);
+		moveTime(-300, 200);
+		actuator.Up();
+	}
+
 	CentralizeGyro();
 	if (actuator.hasVictim() || actuator.hasKit()) goto Retry;
 }
