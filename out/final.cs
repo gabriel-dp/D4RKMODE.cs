@@ -1223,7 +1223,7 @@ void Track () {
 				centerQuadrant();
 			//
 	
-			if (!actuator.hasVictim()) actuator.Down();
+			if (!actuator.hasVictim() && !actuator.hasKit()) actuator.Down();
 	
 			clear();
 		}
@@ -1421,7 +1421,7 @@ void Track () {
 				}
 				int mid_arena = (time.millis()-timeToFind)/2;
 				if (timeToFind > 9950) {
-					mid_arena = (time.millis()-timeToFind)/3;
+					mid_arena = (time.millis()-timeToFind)/4;
 				}
 	
 				//wall or line

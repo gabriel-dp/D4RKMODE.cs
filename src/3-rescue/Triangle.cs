@@ -61,7 +61,7 @@ void Triangle () {
 			}
 			int mid_arena = (time.millis()-timeToFind)/2;
 			if (timeToFind > 9950) {
-				mid_arena = (time.millis()-timeToFind)/3;
+				mid_arena = (time.millis()-timeToFind)/4;
 			}
 
 			//wall or line

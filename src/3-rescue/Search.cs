@@ -39,7 +39,7 @@ void Search (byte sensor) {
 			centerQuadrant();
 		//
 
-		if (!actuator.hasVictim()) actuator.Down();
+		if (!actuator.hasVictim() && !actuator.hasKit()) actuator.Down();
 
 		clear();
 	}
