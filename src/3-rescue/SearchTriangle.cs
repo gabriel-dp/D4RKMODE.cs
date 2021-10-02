@@ -60,18 +60,6 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					stop(150);
 				//
 
-				//if didn't rescued
-					if (!actuator.hasVictim() && !actuator.hasKit()) {
-						moveZm(-zmToMove);
-						CentralizeGyro(-90*side_mod);
-						reverse(300);
-						CentralizeGyro();
-						actuator.Down();
-						timeToFind = time.millis();
-						return;
-					}
-				//
-
 				//dispatch in the triangle
 					rotate(500, angleToRotate*side_mod);
 					while (!isFullBlack(5)) FollowerGyro(direction());
