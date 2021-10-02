@@ -88,6 +88,7 @@ void Exit (sbyte side_mod) {
 						rotate(500, -45);
 						moveTime(-300, 100);
 						while (isWhite(new byte[] {2,3})) left(1000);
+						Centralize();
 					}
 					stop();
 					actuator.Down();
