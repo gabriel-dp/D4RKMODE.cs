@@ -39,7 +39,7 @@ void Ramp () {
 				actuator.Down();
 				stop(75);
 			} else {
-				moveTime(200, 250);
+				moveTime(200, 150);
 				stop(75);
 			}
 			int last_inclination = inclination();
@@ -54,6 +54,7 @@ void Ramp () {
 			if (last_inclination - last_inclination2 > -12) {
 				stop(750);
 				moveTime(-300, 250);
+				if (scaleAngle(direction()) > 20) CentralizeGyro();
 			} else {
 				stop(200);
 			}

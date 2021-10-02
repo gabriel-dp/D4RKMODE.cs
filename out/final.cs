@@ -636,7 +636,7 @@ void Setup () {
 			byte timesLost = 0;
 	
 			//verifies if sensor misread green
-				moveTime(300, 15);
+				moveTime(200, 15);
 				if (isWhite(1) && isWhite(4)) {
 					reverse(300, 100);
 					return;
@@ -710,7 +710,7 @@ void Setup () {
 	
 	const int vel_front = 300;
 	const int vel_axis = 1000;
-	const int motor_limit = 190;
+	const int motor_limit = 185;
 	
 	const int turn_axis = 50;
 	const int turn_normal = 15;
@@ -914,7 +914,7 @@ void Setup () {
 					actuator.Down();
 					stop(75);
 				} else {
-					moveTime(200, 250);
+					moveTime(200, 150);
 					stop(75);
 				}
 				int last_inclination = inclination();
@@ -929,6 +929,7 @@ void Setup () {
 				if (last_inclination - last_inclination2 > -12) {
 					stop(750);
 					moveTime(-300, 250);
+					if (scaleAngle(direction()) > 20) CentralizeGyro();
 				} else {
 					stop(200);
 				}
@@ -1290,18 +1291,6 @@ void Track () {
 						moveZm(zmToMove);
 						actuator.Up();
 						stop(150);
-					//
-	
-					//if didn't rescued
-						if (!actuator.hasVictim() && !actuator.hasKit()) {
-							moveZm(-zmToMove);
-							CentralizeGyro(-90*side_mod);
-							reverse(300);
-							CentralizeGyro();
-							actuator.Down();
-							timeToFind = time.millis();
-							return;
-						}
 					//
 	
 					//dispatch in the triangle

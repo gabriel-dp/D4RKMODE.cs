@@ -3,7 +3,7 @@ const float Kd = 20;
 
 const int vel_front = 300;
 const int vel_axis = 1000;
-const int motor_limit = 190;
+const int motor_limit = 185;
 
 const int turn_axis = 50;
 const int turn_normal = 15;

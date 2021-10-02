@@ -15,7 +15,7 @@ void CurveBlack () {
 		byte timesLost = 0;
 
 		//verifies if sensor misread green
-			moveTime(300, 15);
+			moveTime(200, 15);
 			if (isWhite(1) && isWhite(4)) {
 				reverse(300, 100);
 				return;
