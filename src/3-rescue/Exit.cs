@@ -77,22 +77,20 @@ void Exit (sbyte side_mod) {
 			led(color["green_dark"]);
 			while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
 			while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN")) forward(200);
-			moveTime(300, 75);
-			if (!anySensorLine()) Centralize();
-			else {
-				moveTime(300, 150);
-				if (scaleAngle(direction()) > 30) {
-					actuator.Up();
-					while (isWhite(new byte[] {2,3})) right(1000);
-					if (isThatColor(1, "GREEN") || isThatColor(4, "GREEN")) {
-						rotate(500, -45);
-						moveTime(-300, 100);
-						while (isWhite(new byte[] {2,3})) left(1000);
-						Centralize();
-					}
-					stop();
-					actuator.Down();
+			moveTime(300, 100);
+			Centralize();
+			if (isWhite(new byte[] {1,2,3,4})) {
+				stop();
+				actuator.Up();
+				while (isWhite(new byte[] {2,3})) right(1000);
+				if (isThatColor(1, "GREEN") || isThatColor(1, "CYAN") || isThatColor(4, "GREEN") || isThatColor(4, "CYAN")) {
+					rotate(500, -45);
+					moveTime(-300, 100);
+					while (isWhite(new byte[] {2,3})) left(1000);
+					Centralize();
 				}
+				stop();
+				actuator.Down();
 			}
 			local = Local.exit;
 		}

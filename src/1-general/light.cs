@@ -38,7 +38,7 @@ int light (int sensor) {
 	}
 
 	bool anySensorLine () {
-		for (byte i = 0; i < 4; i++) {
+		for (byte i = 0; i < 5; i++) {
 			if (light(i) < low_black && !isColorized(i)) return true;
 		}
 		return false;

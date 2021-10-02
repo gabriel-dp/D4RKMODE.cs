@@ -59,7 +59,7 @@ void Triangle () {
 				FollowerGyro();
 				Ultras(true, false, "triangle");
 			}
-			int mid_arena = (time.millis()-timeToFind)/2;
+			int mid_arena = (int)((time.millis()-timeToFind)/1.7);
 			if (timeToFind > 9950) {
 				mid_arena = (time.millis()-timeToFind)/4;
 			}
