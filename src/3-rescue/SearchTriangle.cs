@@ -1,3 +1,5 @@
+int maxReadVictim = 10000;
+
 void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 	sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
 	bool reserved = false;
@@ -58,6 +60,12 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					moveZm(zmToMove);
 					actuator.Up();
 					stop(150);
+				//
+
+				//if dont rescue
+					if (!actuator.hasVictim()) {
+						maxReadVictim = 400;
+					}
 				//
 
 				//dispatch in the triangle

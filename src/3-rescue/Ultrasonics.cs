@@ -30,7 +30,7 @@ void DetectTriangle (char side, bool reset = false) {
 
 void DetectVictim (byte sensor, float last, string operation) {
 
-	if (last - ultra(sensor) > 5 && !actuator.isUp()) {
+	if (maths.interval(last - ultra(sensor), 5, maxReadVictim) && !actuator.isUp()) {
 		//align with the ball
 			float last_ultra = ultra(sensor);
 			moveTime(300, 50);
