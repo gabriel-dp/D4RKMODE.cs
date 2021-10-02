@@ -635,10 +635,16 @@ void Setup () {
 	
 			byte timesLost = 0;
 	
-			//verifies if sensor misread green
+			//verifies if sensor misread green or blue
 				moveTime(200, 15);
 				if (isWhite(1) && isWhite(4)) {
 					reverse(300, 100);
+					if (isColorized(1) || isColorized(4)) {
+						if ((colors.B(1) > colors.R(1)) || (colors.B(4) > colors.R(4))) {
+							CentralizeGyro();
+							reverse(300, 200);
+						}
+					}
 					return;
 				}
 				GreenClassifier();
@@ -986,7 +992,7 @@ void Setup () {
 	}
 
 	void TrackEnd () {
-		if (isBlue(2) && isBlue(3) && isBlack(new byte[] {2,3})) {
+		if (isBlue(2) && isBlue(3)) {
 			CentralizeGyro();
 			time.reset();
 			do {
