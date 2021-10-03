@@ -982,6 +982,7 @@ void Setup () {
 	
 			if (isWhite(new byte[] {1,2,3,4})) {
 				moveTime(-300, 350);
+				if (isWhite(new byte[] {1,2,3,4})) moveTime(-300, 450);
 			}
 			Centralize();
 		}
@@ -1121,6 +1122,12 @@ void Track () {
 					//returns to the line
 						rotate(500, -45);
 						while (isWhite(new byte[] {2,3}) && !isOrtogonal()) left(1000);
+						if (scaleAngle(direction()) > 35) {
+							moveTime(300, 75);
+							if (isWhite(new byte[] {1,2,3,4})) {
+								rotate(500, -40);
+							}
+						}
 						Centralize();
 						stop();
 						actuator.Down();

@@ -16,6 +16,7 @@ void Kit () {
 
 		if (isWhite(new byte[] {1,2,3,4})) {
 			moveTime(-300, 350);
+			if (isWhite(new byte[] {1,2,3,4})) moveTime(-300, 450);
 		}
 		Centralize();
 	}

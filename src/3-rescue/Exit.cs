@@ -94,6 +94,12 @@ void Exit (sbyte side_mod) {
 				//returns to the line
 					rotate(500, -45);
 					while (isWhite(new byte[] {2,3}) && !isOrtogonal()) left(1000);
+					if (scaleAngle(direction()) > 35) {
+						moveTime(300, 75);
+						if (isWhite(new byte[] {1,2,3,4})) {
+							rotate(500, -40);
+						}
+					}
 					Centralize();
 					stop();
 					actuator.Down();
