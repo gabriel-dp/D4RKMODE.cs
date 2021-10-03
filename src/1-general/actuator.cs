@@ -55,7 +55,7 @@ void Dispatch () {
 
 	moveTime(-200, 600);
 	int actuator_vel = bot.Heat() > 32 && actuator.hasVictim() ? 30 : 150;
-	actuator.Adjust(20, 0, "close", actuator_vel);
+	actuator.Adjust(22, 0, "close", actuator_vel);
 	stop(100);
 
 	if (actuator.hasKit()) {

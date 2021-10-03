@@ -502,7 +502,7 @@ void Tests () {
 	
 		moveTime(-200, 600);
 		int actuator_vel = bot.Heat() > 32 && actuator.hasVictim() ? 30 : 150;
-		actuator.Adjust(20, 0, "close", actuator_vel);
+		actuator.Adjust(22, 0, "close", actuator_vel);
 		stop(100);
 	
 		if (actuator.hasKit()) {
@@ -1311,6 +1311,7 @@ void Track () {
 						int bigLeg = (int)((prop*twoLegs)/(1+prop));
 	
 						int angleToRotate = 180 - maths.ArcTan(bigLeg, last_ultra);
+						if (angleToRotate == 135) angleToRotate++;
 						console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
 					//
 	

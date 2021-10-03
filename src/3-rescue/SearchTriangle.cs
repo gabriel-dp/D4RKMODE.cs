@@ -47,6 +47,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					int bigLeg = (int)((prop*twoLegs)/(1+prop));
 
 					int angleToRotate = 180 - maths.ArcTan(bigLeg, last_ultra);
+					if (angleToRotate == 135) angleToRotate++;
 					console(3, $"{twoLegs} | {prop} | {bigLeg} | {angleToRotate}");
 				//
 
