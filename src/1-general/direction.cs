@@ -14,6 +14,8 @@ int scaleAngle (int angle) {
 	return angle;
 }
 
+bool isOrtogonal () => (direction() == 0 || direction() == 90 || direction() == 180 || direction() == 270);
+
 //Gyro alignment
 	void changeQuadrant (string side) {
 		byte last_quadrant = Direction();
