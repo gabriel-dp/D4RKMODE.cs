@@ -4,6 +4,7 @@ Sesi Anísio Teixeira - VCA/BA
 --------------------------------------------------*/
 
 const bool console_on = true;
+const bool test = false;
 
 
 enum Local {
@@ -35,6 +36,13 @@ void Setup () {
 		}
 	//
 	Centralize();
+}
+
+void Tests () {
+	if (test) {
+		Dispatch();
+		stop(9999);
+	}
 }
 
 //General - imported files
@@ -441,26 +449,27 @@ void Setup () {
 	
 	public class Actuator {
 	
-		public void Adjust (int ideal_actuator, int ideal_scoop, string operation = "close") {
-			bot.ActuatorSpeed(150);
+		public void Adjust (int ideal_actuator, int ideal_scoop, string operation = "close", int vel = 150) {
+			bot.ActuatorSpeed(vel);
 	
 			if (operation == "open") bot.OpenActuator();
 			else bot.CloseActuator();
 	
 			int start = bot.Millis();
+			int max_time = 112500/vel;
 			int angle_actuator = 0;
 			do {
 				angle_actuator = (int) bot.AngleActuator();
 				if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
 				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
-			} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < 750);
+			} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < max_time);
 	
 			int angle_scoop = 0;
 			do {
 				angle_scoop = (int) bot.AngleScoop();
 				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
-			} while ((!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2)) && bot.Millis() - start < 1500);
+			} while ((!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2)) && bot.Millis() - start < max_time*2);
 	
 		}
 	
@@ -492,7 +501,8 @@ void Setup () {
 		Retry:
 	
 		moveTime(-200, 600);
-		actuator.Adjust(20, 0);
+		int actuator_vel = bot.Heat() > 32 && actuator.hasVictim() ? 30 : 150;
+		actuator.Adjust(20, 0, "close", actuator_vel);
 		stop(100);
 	
 		if (actuator.hasKit()) {
@@ -501,7 +511,7 @@ void Setup () {
 			actuator.Up();
 			moveTime(-300, 200);
 		} else  {
-			moveTime(300, 600);
+			moveTime(300, 650);
 			stop(200);
 			moveTime(-300, 200);
 			actuator.Up();
@@ -1582,6 +1592,7 @@ void Finish () {
 
 void Main () {
 
+	Tests();
 	Setup();
 	Track();
 	Rescue();
