@@ -1116,16 +1116,17 @@ void Track () {
 						actuator.Up();
 						while ((!isThatColor(2, "GREEN") || !isThatColor(2, "CYAN")) && (!isThatColor(3, "GREEN") || isThatColor(3, "CYAN"))) right(1000);
 						CentralizeGyro();
-						GoToDistance(22);
+						GoToDistance(23);
 					//
 	
 					//returns to the line
 						rotate(500, -45);
+						while (!isWhite(4)) left(1000);
 						while (isWhite(new byte[] {2,3}) && !isOrtogonal()) left(1000);
-						if (scaleAngle(direction()) > 35) {
+						if (scaleAngle(direction()) > 25) {
 							moveTime(300, 75);
 							if (isWhite(new byte[] {1,2,3,4})) {
-								rotate(500, -40);
+								rotate(500, -30);
 							}
 						}
 						Centralize();
