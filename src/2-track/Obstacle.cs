@@ -1,3 +1,5 @@
+byte timesFailed = 0;
+
 void Obstacle () {
 	if (DetectWall()) {
 		console_led(2, "$>Obstáculo<$   Possível", color["pink"]);
@@ -16,6 +18,14 @@ void Obstacle () {
 			if (time.timer() > timeObstacle - 50) {
 				stop();
 				if (!actuator.hasKit()) actuator.Down();
+
+				//avoids the bug of up and down
+					timesFailed++;
+					if (timesFailed >= 2) {
+						bot.ActuatorDown(16);
+					}
+				//
+
 				return;
 			}
 		//
