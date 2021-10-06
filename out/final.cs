@@ -478,7 +478,7 @@ void Tests () {
 		}
 	
 		public void Down (string state = "open") {
-			if (open_actuator) Adjust(1, 0, state);
+			if (open_actuator) Adjust(0, 0, state);
 			else Adjust(3, 0);
 		}
 	
@@ -1136,6 +1136,10 @@ void Track () {
 						actuator.Up();
 						while ((!isThatColor(2, "GREEN") || !isThatColor(2, "CYAN")) && (!isThatColor(3, "GREEN") || isThatColor(3, "CYAN"))) right(1000);
 						CentralizeGyro();
+	
+						if (ultra(1) > 60) {
+							rotate(500, -10);
+						}
 						GoToDistance(23);
 					//
 	
@@ -1288,7 +1292,7 @@ void Track () {
 			if (actuator.hasVictim()) {
 	
 				//dispatches a victim that already was in the actuator
-					reverse(300);
+					reverse(300, timeToFind);
 					CentralizeGyro(-90*side_mod);
 					if (actuator.isAlive() || AliveVictimsRescued > 1) {
 						Dispatch();
@@ -1373,7 +1377,7 @@ void Track () {
 						CentralizeGyro(90*side_mod);
 					//
 	
-					reverse(300);
+					reverse(300, timeToFind);
 					CentralizeGyro(-90*side_mod);
 					if (actuator.isAlive() || AliveVictimsRescued > 1) {
 						Dispatch();
@@ -1438,8 +1442,9 @@ void Track () {
 				stop();
 				actuator.Up();
 				if ((actuator.hasVictim() && actuator.isAlive()) || actuator.hasKit()) {
+					bool wasKit = actuator.hasKit();
 					Dispatch();
-					AliveVictimsRescued++;
+					if (!wasKit) AliveVictimsRescued++;
 				} else if (actuator.hasVictim()) {
 					DeadVictim(side_mod);
 				}
@@ -1455,6 +1460,8 @@ void Track () {
 			//
 	
 			//search for victims
+				byte timesSearched = 0;
+	
 				VictimInEnd:
 				bool wall_ahead = (ultra(1) < 400);
 				timeToFind = time.millis();
@@ -1471,9 +1478,10 @@ void Track () {
 					stop();
 					actuator.Up();
 					CentralizeGyro();
-					if (actuator.hasVictim()) {
+					if (actuator.hasVictim() && timesSearched < 3) {
 						led(color["red"]);
 						SearchTriangle(2, true);
+						timesSearched++;
 						goto VictimInEnd;
 					}
 				//
@@ -1484,7 +1492,7 @@ void Track () {
 				console(2, $"{time.millis() - timeToFind} | {mid_arena}");
 	
 				if (DeadVictimReserved) { //rescue the remanescent dead victim
-					reverse(300);
+					reverse(300, (time.millis() - timeToFind) - 250);
 					moveZm(95);
 					CentralizeGyro(-90 * side_mod);
 	

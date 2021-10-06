@@ -31,7 +31,7 @@ public class Actuator {
 	}
 
 	public void Down (string state = "open") {
-		if (open_actuator) Adjust(1, 0, state);
+		if (open_actuator) Adjust(0, 0, state);
 		else Adjust(3, 0);
 	}
 

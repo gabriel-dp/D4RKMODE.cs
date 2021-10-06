@@ -88,6 +88,10 @@ void Exit (sbyte side_mod) {
 					actuator.Up();
 					while ((!isThatColor(2, "GREEN") || !isThatColor(2, "CYAN")) && (!isThatColor(3, "GREEN") || isThatColor(3, "CYAN"))) right(1000);
 					CentralizeGyro();
+
+					if (ultra(1) > 60) {
+						rotate(500, -10);
+					}
 					GoToDistance(23);
 				//
 

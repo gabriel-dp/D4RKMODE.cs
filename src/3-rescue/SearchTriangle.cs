@@ -14,7 +14,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 		if (actuator.hasVictim()) {
 
 			//dispatches a victim that already was in the actuator
-				reverse(300);
+				reverse(300, timeToFind);
 				CentralizeGyro(-90*side_mod);
 				if (actuator.isAlive() || AliveVictimsRescued > 1) {
 					Dispatch();
@@ -99,7 +99,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					CentralizeGyro(90*side_mod);
 				//
 
-				reverse(300);
+				reverse(300, timeToFind);
 				CentralizeGyro(-90*side_mod);
 				if (actuator.isAlive() || AliveVictimsRescued > 1) {
 					Dispatch();

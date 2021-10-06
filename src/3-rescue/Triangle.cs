@@ -35,8 +35,9 @@ void Triangle () {
 			stop();
 			actuator.Up();
 			if ((actuator.hasVictim() && actuator.isAlive()) || actuator.hasKit()) {
+				bool wasKit = actuator.hasKit();
 				Dispatch();
-				AliveVictimsRescued++;
+				if (!wasKit) AliveVictimsRescued++;
 			} else if (actuator.hasVictim()) {
 				DeadVictim(side_mod);
 			}
@@ -52,6 +53,8 @@ void Triangle () {
 		//
 
 		//search for victims
+			byte timesSearched = 0;
+
 			VictimInEnd:
 			bool wall_ahead = (ultra(1) < 400);
 			timeToFind = time.millis();
@@ -68,9 +71,10 @@ void Triangle () {
 				stop();
 				actuator.Up();
 				CentralizeGyro();
-				if (actuator.hasVictim()) {
+				if (actuator.hasVictim() && timesSearched < 3) {
 					led(color["red"]);
 					SearchTriangle(2, true);
+					timesSearched++;
 					goto VictimInEnd;
 				}
 			//
@@ -81,7 +85,7 @@ void Triangle () {
 			console(2, $"{time.millis() - timeToFind} | {mid_arena}");
 
 			if (DeadVictimReserved) { //rescue the remanescent dead victim
-				reverse(300);
+				reverse(300, (time.millis() - timeToFind) - 250);
 				moveZm(95);
 				CentralizeGyro(-90 * side_mod);
 
