@@ -28,7 +28,7 @@ bool isRed (byte sensor) => ((colors.R(sensor)/colors.B(sensor) > 3.5 && colors.
 
 bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.B(sensor) < 10) && isThatColor(sensor, "GREEN"));
 
-bool isBlue (byte sensor) => (colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75 && isBlack(sensor));
+bool isBlue (byte sensor) => ((colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75) && isThatColor(sensor, "WHITE"));
 
 bool anySensorColor (string color) {
 	for (byte i = 1; i<5; i++) {

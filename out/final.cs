@@ -208,7 +208,7 @@ void Tests () {
 	
 	bool isGreen (byte sensor) => ((colors.G(sensor)/colors.R(sensor) > 4 && colors.B(sensor) < 10) && isThatColor(sensor, "GREEN"));
 	
-	bool isBlue (byte sensor) => (colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75 && isBlack(sensor));
+	bool isBlue (byte sensor) => ((colors.B(sensor)/colors.R(sensor) > 1.2 && colors.G(sensor) < 75) && isThatColor(sensor, "WHITE"));
 	
 	bool anySensorColor (string color) {
 		for (byte i = 1; i<5; i++) {
@@ -460,6 +460,7 @@ void Tests () {
 			int angle_actuator = 0;
 			do {
 				angle_actuator = (int) bot.AngleActuator();
+				if (angle_actuator > 300) angle_actuator -= 360;
 				if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
 				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
 			} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < max_time);
@@ -478,11 +479,17 @@ void Tests () {
 		}
 	
 		public void Down (string state = "open") {
-			if (open_actuator) Adjust(0, 0, state);
-			else Adjust(3, 0);
+			if (open_actuator) {
+				Adjust(0, 0, state);
+				bot.ActuatorDown(50);
+			} else {
+				Adjust(3, 0);
+				bot.ActuatorDown(50);
+				bot.ActuatorUp(32);
+			}
 		}
 	
-		public bool isUp () => (bot.AngleActuator() > 80);
+		public bool isUp () => (bot.AngleActuator() > 80 && bot.AngleActuator() < 300);
 	
 		public bool hasVictim () => (bot.HasVictim() && isUp());
 	

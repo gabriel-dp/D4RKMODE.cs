@@ -13,6 +13,7 @@ public class Actuator {
 		int angle_actuator = 0;
 		do {
 			angle_actuator = (int) bot.AngleActuator();
+			if (angle_actuator > 300) angle_actuator -= 360;
 			if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
 			else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
 		} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < max_time);
@@ -31,11 +32,17 @@ public class Actuator {
 	}
 
 	public void Down (string state = "open") {
-		if (open_actuator) Adjust(0, 0, state);
-		else Adjust(3, 0);
+		if (open_actuator) {
+			Adjust(0, 0, state);
+			bot.ActuatorDown(50);
+		} else {
+			Adjust(3, 0);
+			bot.ActuatorDown(50);
+			bot.ActuatorUp(32);
+		}
 	}
 
-	public bool isUp () => (bot.AngleActuator() > 80);
+	public bool isUp () => (bot.AngleActuator() > 80 && bot.AngleActuator() < 300);
 
 	public bool hasVictim () => (bot.HasVictim() && isUp());
 
