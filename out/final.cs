@@ -1363,7 +1363,10 @@ void Track () {
 							AliveVictimsRescued++;
 						}
 	
-						if (angleToRotate <= 135) rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
+						if (angleToRotate <= 135) {
+							if (angleToRotate > 130) rotate(500, 10*side_mod);
+							else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
+						}
 						CentralizeGyro();
 					//
 	
