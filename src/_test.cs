@@ -1,6 +1,7 @@
 void Tests () {
 	if (test) {
-		Dispatch();
-		stop(9999);
+		actuator.Up();
+		stop(500);
+		actuator.Down();
 	}
 }

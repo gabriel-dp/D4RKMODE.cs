@@ -73,12 +73,12 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					rotate(500, angleToRotate*side_mod);
 					while (!isFullBlack(5)) FollowerGyro(direction());
 
-					if (actuator.isAlive() || AliveVictimsRescued > 1|| actuator.hasKit()) {
+					if (actuator.isAlive() || AliveVictimsRescued > 1 || actuator.hasKit()) {
 						Dispatch();
 						AliveVictimsRescued++;
 					}
 
-					if (angleToRotate <= 135) {
+					if (angleToRotate <= 137) {
 						if (angleToRotate > 130) rotate(500, 10*side_mod);
 						else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
 					}
@@ -120,6 +120,10 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 				GoToDistance(95);
 				CentralizeGyro(90*side_mod);
 				reverse(300, 750);
+			}
+
+			if (AliveVictimsRescued >= 2) {
+				DispatchDeadVictim(side_mod);
 			}
 			actuator.Down();
 			timeToFind = time.millis();

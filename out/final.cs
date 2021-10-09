@@ -40,8 +40,9 @@ void Setup () {
 
 void Tests () {
 	if (test) {
-		Dispatch();
-		stop(9999);
+		actuator.Up();
+		stop(500);
+		actuator.Down();
 	}
 }
 
@@ -455,37 +456,44 @@ void Tests () {
 			if (operation == "open") bot.OpenActuator();
 			else bot.CloseActuator();
 	
-			int start = bot.Millis();
-			int max_time = 112500/vel;
-			int angle_actuator = 0;
 			do {
-				angle_actuator = (int) bot.AngleActuator();
+				int angle_actuator = (int) bot.AngleActuator();
 				if (angle_actuator > 300) angle_actuator -= 360;
-				if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
-				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
-			} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < max_time);
+				else if (angle_actuator > 86) angle_actuator = 90;
 	
-			int angle_scoop = 0;
+				if (vel == 150) {
+					int vel_actuator = 25*(Math.Abs(ideal_actuator-Math.Abs(angle_actuator)));
+					bot.ActuatorSpeed(vel_actuator);
+				}
+	
+				if (angle_actuator > ideal_actuator) bot.ActuatorDown(15);
+				else if (angle_actuator < ideal_actuator)bot.ActuatorUp(15);
+	
+				if (angle_actuator == ideal_actuator) break;
+			} while (true);
+	
+			bot.ActuatorSpeed(150);
 			do {
-				angle_scoop = (int) bot.AngleScoop();
-				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
-				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
-			} while ((!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2)) && bot.Millis() - start < max_time*2);
+				int angle_scoop = (int) bot.AngleScoop();
+				if (angle_scoop > 300) angle_scoop -= 360;
+	
+				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(15);
+				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(15);
+	
+				if (angle_scoop == ideal_scoop) break;
+			} while (true);
 	
 		}
 	
 		public void Up () {
-			Adjust(89, 0);
+			Adjust(90, 0, "closed");
 		}
 	
 		public void Down (string state = "open") {
 			if (open_actuator) {
 				Adjust(0, 0, state);
-				bot.ActuatorDown(50);
 			} else {
-				Adjust(3, 0);
-				bot.ActuatorDown(50);
-				bot.ActuatorUp(32);
+				Adjust(3, 0, "closed");
 			}
 		}
 	
@@ -1358,12 +1366,12 @@ void Track () {
 						rotate(500, angleToRotate*side_mod);
 						while (!isFullBlack(5)) FollowerGyro(direction());
 	
-						if (actuator.isAlive() || AliveVictimsRescued > 1|| actuator.hasKit()) {
+						if (actuator.isAlive() || AliveVictimsRescued > 1 || actuator.hasKit()) {
 							Dispatch();
 							AliveVictimsRescued++;
 						}
 	
-						if (angleToRotate <= 135) {
+						if (angleToRotate <= 137) {
 							if (angleToRotate > 130) rotate(500, 10*side_mod);
 							else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
 						}
@@ -1406,6 +1414,10 @@ void Track () {
 					CentralizeGyro(90*side_mod);
 					reverse(300, 750);
 				}
+	
+				if (AliveVictimsRescued >= 2) {
+					DispatchDeadVictim(side_mod);
+				}
 				actuator.Down();
 				timeToFind = time.millis();
 			//
@@ -1443,10 +1455,10 @@ void Track () {
 					FollowerGyro();
 					if (last_ultra - 2 > ultra(1)) return;
 				} while (time.timer() < 150);
-			//
 	
-			console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
-			sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
+				console_led(2, "$>Triângulo<$ detectado", color["gray"], color["black"]);
+				sbyte side_mod = (sbyte) (side_triangle == 'L' ? 1 : -1);
+			//
 	
 			//lifts the actuator and dispatches if it has a victim
 				stop();
@@ -1479,8 +1491,8 @@ void Track () {
 					FollowerGyro();
 					Ultras(true, false, "triangle");
 				}
-				int mid_arena = (int)((time.millis()-timeToFind)/1.7);
-				if (timeToFind > 9950) {
+				int mid_arena = (int)((time.millis()-timeToFind)/2.5);
+				if (time.millis() - timeToFind > 9950) {
 					mid_arena = (time.millis()-timeToFind)/4;
 				}
 	
@@ -1502,26 +1514,8 @@ void Track () {
 				console(2, $"{time.millis() - timeToFind} | {mid_arena}");
 	
 				if (DeadVictimReserved) { //rescue the remanescent dead victim
-					reverse(300, (time.millis() - timeToFind) - 250);
-					moveZm(95);
-					CentralizeGyro(-90 * side_mod);
-	
-					stop();
-					actuator.Down();
-					while (!DetectWall()) FollowerGyro();
-					stop();
-					actuator.Up();
-	
-					CentralizeGyro(-90 * side_mod);
-					GoToDistance(80);
-					Dispatch();
-	
-					CentralizeGyro(90 * side_mod);
-					GoToDistance(95);
-					CentralizeGyro(90 * side_mod);
-					reverse(300, 1250);
-	
-					moveTime(300, (int)(mid_arena*1.5));
+					DispatchDeadVictim(side_mod);
+					moveTime(300, mid_arena);
 				} else moveTime(-300, mid_arena);
 	
 				Exit(side_mod);
@@ -1540,7 +1534,7 @@ void Track () {
 		CentralizeGyro(-90 * side_mod);
 	
 		while (ultra(1) > 40) FollowerGyro();
-		stop();
+		stop(250);
 		open_actuator = false;
 		actuator.Down();
 		moveTime(200, 300);
@@ -1555,6 +1549,29 @@ void Track () {
 	
 		DeadVictimReserved = true;
 		open_actuator = true;
+	}
+	
+	void DispatchDeadVictim (sbyte side_mod) {
+		reverse(300, (time.millis() - timeToFind) - 250);
+		moveZm(95);
+		CentralizeGyro(-90 * side_mod);
+	
+		stop();
+		actuator.Down();
+		while (!DetectWall()) FollowerGyro();
+		stop();
+		actuator.Up();
+	
+		CentralizeGyro(-90 * side_mod);
+		GoToDistance(80);
+		Dispatch();
+	
+		CentralizeGyro(90 * side_mod);
+		GoToDistance(95);
+		CentralizeGyro(90 * side_mod);
+		reverse(300, 1250);
+	
+		DeadVictimReserved = false;
 	}
 //
 
