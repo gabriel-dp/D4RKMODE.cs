@@ -8,37 +8,44 @@ public class Actuator {
 		if (operation == "open") bot.OpenActuator();
 		else bot.CloseActuator();
 
-		int start = bot.Millis();
-		int max_time = 112500/vel;
-		int angle_actuator = 0;
 		do {
-			angle_actuator = (int) bot.AngleActuator();
+			int angle_actuator = (int) bot.AngleActuator();
 			if (angle_actuator > 300) angle_actuator -= 360;
-			if (angle_actuator > ideal_actuator) bot.ActuatorDown(16);
-			else if (angle_actuator < ideal_actuator)bot.ActuatorUp(16);
-		} while ((!(angle_actuator > ideal_actuator-2 && angle_actuator < ideal_actuator+2)) && bot.Millis() - start < max_time);
+			else if (angle_actuator > 86) angle_actuator = 90;
 
-		int angle_scoop = 0;
+			if (vel == 150) {
+				int vel_actuator = 25*(Math.Abs(ideal_actuator-Math.Abs(angle_actuator)));
+				bot.ActuatorSpeed(vel_actuator);
+			}
+
+			if (angle_actuator > ideal_actuator) bot.ActuatorDown(15);
+			else if (angle_actuator < ideal_actuator)bot.ActuatorUp(15);
+
+			if (angle_actuator == ideal_actuator) break;
+		} while (true);
+
+		bot.ActuatorSpeed(150);
 		do {
-			angle_scoop = (int) bot.AngleScoop();
-			if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(16);
-			else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(16);
-		} while ((!(angle_scoop > ideal_scoop-2 && angle_scoop < ideal_scoop+2)) && bot.Millis() - start < max_time*2);
+			int angle_scoop = (int) bot.AngleScoop();
+			if (angle_scoop > 300) angle_scoop -= 360;
+
+			if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(15);
+			else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(15);
+
+			if (angle_scoop == ideal_scoop) break;
+		} while (true);
 
 	}
 
 	public void Up () {
-		Adjust(89, 0);
+		Adjust(90, 0, "closed");
 	}
 
 	public void Down (string state = "open") {
 		if (open_actuator) {
 			Adjust(0, 0, state);
-			bot.ActuatorDown(50);
 		} else {
-			Adjust(3, 0);
-			bot.ActuatorDown(50);
-			bot.ActuatorUp(32);
+			Adjust(3, 0, "closed");
 		}
 	}
 
