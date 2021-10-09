@@ -810,7 +810,7 @@ void Tests () {
 			if (!actuator.hasKit()) actuator.Up();
 	
 			//after lifting the actuator, follows the line for a time to confirm that's a obstacle
-				const int timeObstacle = 1750;
+				const int timeObstacle = 2000;
 				time.reset();
 				while (time.timer() < timeObstacle && ultra(1) > 15) {
 					LineFollower();
