@@ -61,6 +61,16 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					moveZm(zmToMove);
 					actuator.Up();
 					stop(150);
+
+					//expel a victim of 2
+						if (bot.Heat() > 32) {
+							rotate(500, 30);
+							rotate(500, -60);
+							back(50);
+							actuator.Adjust(22, 0);
+							rotate(500, 30);
+						}
+					//
 				//
 
 				//if dont rescue
@@ -79,7 +89,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					}
 
 					if (angleToRotate <= 137) {
-						if (angleToRotate > 130) rotate(500, 10*side_mod);
+						if (scaleAngle(angleToRotate) > 41) rotate(500, -10*side_mod);
 						else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
 					}
 					CentralizeGyro();
@@ -122,7 +132,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 				reverse(300, 750);
 			}
 
-			if (AliveVictimsRescued >= 2) {
+			if (AliveVictimsRescued >= 2 && DeadVictimReserved) {
 				DispatchDeadVictim(side_mod);
 			}
 			actuator.Down();

@@ -41,8 +41,14 @@ void Setup () {
 void Tests () {
 	if (test) {
 		actuator.Up();
-		stop(500);
-		actuator.Down();
+		if (bot.Heat() > 32) {
+			rotate(500, 30);
+			rotate(500, -60);
+			back(50);
+			actuator.Adjust(22, 0);
+			rotate(500, 30);
+		}
+		stop(9999);
 	}
 }
 
@@ -922,7 +928,7 @@ void Tests () {
 				time_stuck = time.millis();
 				flag_stuck = true;
 			} else {
-				if (time.millis() - time_stuck > 7000) {
+				if (time.millis() - time_stuck > 8000) {
 					led(color["orange"]);
 					stop();
 					actuator.Up();
@@ -1241,7 +1247,7 @@ void Track () {
 	void Search (byte sensor) {
 		sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 	
-		if (ultra(sensor) < 265 && !actuator.hasVictim() && !actuator.hasKit()) {
+		if (ultra(sensor) < 265 && !actuator.isUp()) {
 			stop();
 			console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 	
@@ -1349,6 +1355,16 @@ void Track () {
 						moveZm(zmToMove);
 						actuator.Up();
 						stop(150);
+	
+						//expel a victim of 2
+							if (bot.Heat() > 32) {
+								rotate(500, 30);
+								rotate(500, -60);
+								back(50);
+								actuator.Adjust(22, 0);
+								rotate(500, 30);
+							}
+						//
 					//
 	
 					//if dont rescue
@@ -1367,7 +1383,7 @@ void Track () {
 						}
 	
 						if (angleToRotate <= 137) {
-							if (angleToRotate > 130) rotate(500, 10*side_mod);
+							if (scaleAngle(angleToRotate) > 41) rotate(500, -10*side_mod);
 							else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
 						}
 						CentralizeGyro();
@@ -1410,7 +1426,7 @@ void Track () {
 					reverse(300, 750);
 				}
 	
-				if (AliveVictimsRescued >= 2) {
+				if (AliveVictimsRescued >= 2 && DeadVictimReserved) {
 					DispatchDeadVictim(side_mod);
 				}
 				actuator.Down();

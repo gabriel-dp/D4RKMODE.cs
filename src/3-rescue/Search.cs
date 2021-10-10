@@ -1,7 +1,7 @@
 void Search (byte sensor) {
 	sbyte side_mod = (sbyte) (sensor == 2 ? 1 : -1);
 
-	if (ultra(sensor) < 265 && !actuator.hasVictim() && !actuator.hasKit()) {
+	if (ultra(sensor) < 265 && !actuator.isUp()) {
 		stop();
 		console_led(2, $"$>Vítima<$ detectada a $>{(int)ultra(sensor)}<$ zm", color["cyan"]);
 

@@ -9,7 +9,7 @@ void StuckObstacle () {
 			time_stuck = time.millis();
 			flag_stuck = true;
 		} else {
-			if (time.millis() - time_stuck > 7000) {
+			if (time.millis() - time_stuck > 8000) {
 				led(color["orange"]);
 				stop();
 				actuator.Up();
