@@ -646,6 +646,8 @@ void Tests () {
 		}
 	}
 
+	int last_ramp = 0;
+	
 	void CurveBlack () {
 		char curve_side = 'n';
 		if (!isWhite(1) && !isColorized(1)) {
@@ -681,9 +683,11 @@ void Tests () {
 			//
 	
 			//avoids lost the line in the seesaw
-				if (Math.Abs(inclination()) > 5) {
+				if (Math.Abs(inclination()) > 3) {
 					CentralizeGyro();
 					stop(500);
+					if (time.millis() - last_ramp < 1000) return;
+					last_ramp = time.millis();
 				}
 			//
 	
@@ -692,15 +696,6 @@ void Tests () {
 	
 				if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
 					moveTime(300, 315);
-	
-					//avoids lost the line in the seesaw
-						if (Math.Abs(inclination()) > 5) {
-							CentralizeGyro();
-							reverse(300, 300);
-							stop(200);
-							return;
-						}
-					//
 	
 					int maxTimeToRotate = 4400;
 					int timeBackward = 200;
@@ -916,6 +911,8 @@ void Tests () {
 		}
 	}
 
+	int start_ramp = 0;
+	
 	bool flag_stuck = false;
 	int time_stuck = 0;
 	
@@ -954,27 +951,26 @@ void Tests () {
 					LineFollower();
 				}
 				if (!actuator.hasKit()) {
+					stop();
 					actuator.Down();
-					stop(75);
-				} else {
-					moveTime(200, 150);
-					stop(75);
 				}
+	
+				start_ramp = time.millis();
 				int last_inclination = inclination();
 				while (inclination() < -2) {
 					LineFollower();
 					StuckObstacle();
 				}
+				stop(200);
 				int last_inclination2 = inclination();
 			//
 	
 			//if is a seesaw needs to wait that down
-				if (last_inclination - last_inclination2 > -12) {
-					stop(750);
+				console(3, $"{last_inclination} | {last_inclination2} | {last_inclination - last_inclination2}");
+				if (last_inclination - last_inclination2 < -11 && time.millis() - start_ramp < 4000) {
+					stop(500);
 					moveTime(-300, 250);
 					if (scaleAngle(direction()) > 20) CentralizeGyro();
-				} else {
-					stop(200);
 				}
 			//
 		}
@@ -985,7 +981,7 @@ void Tests () {
 					time_stuck = time.millis();
 					flag_stuck = true;
 				} else {
-					if (time.millis() - time_stuck > 3500) {
+					if (time.millis() - time_stuck > 4500) {
 						actuator.Up();
 						moveTime(300, 100);
 						actuator.Down();

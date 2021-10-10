@@ -1,3 +1,5 @@
+int start_ramp = 0;
+
 bool flag_stuck = false;
 int time_stuck = 0;
 
@@ -36,27 +38,26 @@ void Ramp () {
 				LineFollower();
 			}
 			if (!actuator.hasKit()) {
+				stop();
 				actuator.Down();
-				stop(75);
-			} else {
-				moveTime(200, 150);
-				stop(75);
 			}
+
+			start_ramp = time.millis();
 			int last_inclination = inclination();
 			while (inclination() < -2) {
 				LineFollower();
 				StuckObstacle();
 			}
+			stop(200);
 			int last_inclination2 = inclination();
 		//
 
 		//if is a seesaw needs to wait that down
-			if (last_inclination - last_inclination2 > -12) {
-				stop(750);
+			console(3, $"{last_inclination} | {last_inclination2} | {last_inclination - last_inclination2}");
+			if (last_inclination - last_inclination2 < -11 && time.millis() - start_ramp < 4000) {
+				stop(500);
 				moveTime(-300, 250);
 				if (scaleAngle(direction()) > 20) CentralizeGyro();
-			} else {
-				stop(200);
 			}
 		//
 	}
@@ -67,7 +68,7 @@ void Ramp () {
 				time_stuck = time.millis();
 				flag_stuck = true;
 			} else {
-				if (time.millis() - time_stuck > 3500) {
+				if (time.millis() - time_stuck > 4500) {
 					actuator.Up();
 					moveTime(300, 100);
 					actuator.Down();

@@ -1,3 +1,5 @@
+int last_ramp = 0;
+
 void CurveBlack () {
 	char curve_side = 'n';
 	if (!isWhite(1) && !isColorized(1)) {
@@ -33,9 +35,11 @@ void CurveBlack () {
 		//
 
 		//avoids lost the line in the seesaw
-			if (Math.Abs(inclination()) > 5) {
+			if (Math.Abs(inclination()) > 3) {
 				CentralizeGyro();
 				stop(500);
+				if (time.millis() - last_ramp < 1000) return;
+				last_ramp = time.millis();
 			}
 		//
 
@@ -44,15 +48,6 @@ void CurveBlack () {
 
 			if ((!isWhite(1) && !isColorized(1)) || (!isWhite(4) && !isColorized(4))) {
 				moveTime(300, 315);
-
-				//avoids lost the line in the seesaw
-					if (Math.Abs(inclination()) > 5) {
-						CentralizeGyro();
-						reverse(300, 300);
-						stop(200);
-						return;
-					}
-				//
 
 				int maxTimeToRotate = 4400;
 				int timeBackward = 200;
