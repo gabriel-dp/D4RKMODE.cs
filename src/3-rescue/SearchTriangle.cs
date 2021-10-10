@@ -63,12 +63,14 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					stop(150);
 
 					//expel a victim of 2
-						if (bot.Heat() > 32) {
+						if (bot.Heat() > 32 && !DeadVictimReserved) {
 							rotate(500, 30);
 							rotate(500, -60);
 							back(50);
 							actuator.Adjust(22, 0);
 							rotate(500, 30);
+							CentralizeGyro();
+							actuator.Up();
 						}
 					//
 				//
@@ -84,13 +86,13 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 					while (!isFullBlack(5)) FollowerGyro(direction());
 
 					if (actuator.isAlive() || AliveVictimsRescued > 1 || actuator.hasKit()) {
-						Dispatch();
+						Dispatch(false);
 						AliveVictimsRescued++;
 					}
 
-					if (angleToRotate <= 137) {
-						if (scaleAngle(angleToRotate) > 41) rotate(500, -10*side_mod);
-						else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
+					if (angleToRotate <= 136) {
+						if (angleToRotate >= 133) rotate(500, 10*side_mod);
+						else rotate(500, (int)(((180-Math.Abs(angleToRotate))*side_mod)+5));
 					}
 					CentralizeGyro();
 				//

@@ -64,7 +64,7 @@ public class Actuator {
 
 Actuator actuator = new Actuator();
 
-void Dispatch () {
+void Dispatch (bool centralize = true) {
 	Retry:
 
 	moveTime(-200, 600);
@@ -84,6 +84,6 @@ void Dispatch () {
 		actuator.Up();
 	}
 
-	CentralizeGyro();
+	if (centralize) CentralizeGyro();
 	if (actuator.hasVictim() || actuator.hasKit()) goto Retry;
 }

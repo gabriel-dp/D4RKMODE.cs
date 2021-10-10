@@ -518,7 +518,7 @@ void Tests () {
 	
 	Actuator actuator = new Actuator();
 	
-	void Dispatch () {
+	void Dispatch (bool centralize = true) {
 		Retry:
 	
 		moveTime(-200, 600);
@@ -538,7 +538,7 @@ void Tests () {
 			actuator.Up();
 		}
 	
-		CentralizeGyro();
+		if (centralize) CentralizeGyro();
 		if (actuator.hasVictim() || actuator.hasKit()) goto Retry;
 	}
 //
@@ -1361,12 +1361,14 @@ void Track () {
 						stop(150);
 	
 						//expel a victim of 2
-							if (bot.Heat() > 32) {
+							if (bot.Heat() > 32 && !DeadVictimReserved) {
 								rotate(500, 30);
 								rotate(500, -60);
 								back(50);
 								actuator.Adjust(22, 0);
 								rotate(500, 30);
+								CentralizeGyro();
+								actuator.Up();
 							}
 						//
 					//
@@ -1382,13 +1384,13 @@ void Track () {
 						while (!isFullBlack(5)) FollowerGyro(direction());
 	
 						if (actuator.isAlive() || AliveVictimsRescued > 1 || actuator.hasKit()) {
-							Dispatch();
+							Dispatch(false);
 							AliveVictimsRescued++;
 						}
 	
-						if (angleToRotate <= 137) {
-							if (scaleAngle(angleToRotate) > 41) rotate(500, -10*side_mod);
-							else rotate(500, (int)((180-Math.Abs(angleToRotate))*side_mod));
+						if (angleToRotate <= 136) {
+							if (angleToRotate >= 133) rotate(500, 10*side_mod);
+							else rotate(500, (int)(((180-Math.Abs(angleToRotate))*side_mod)+5));
 						}
 						CentralizeGyro();
 					//
