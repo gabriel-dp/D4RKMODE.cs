@@ -17,7 +17,7 @@ void CurveBlack () {
 		byte timesLost = 0;
 
 		//verifies if sensor misread green or blue
-			moveTime(200, 15);
+			moveTime(185, 15);
 			if (isWhite(1) && isWhite(4)) {
 				reverse(300, 100);
 				if (isColorized(1) || isColorized(4)) {
@@ -26,6 +26,7 @@ void CurveBlack () {
 						reverse(300, 200);
 					}
 				}
+				clear();
 				return;
 			}
 			GreenClassifier();
@@ -76,7 +77,10 @@ void CurveBlack () {
 						CentralizeGyro();
 					}
 				//
-			} else return;
+			} else  {
+				clear();
+				return;
+			}
 
 			Centralize();
 		//
