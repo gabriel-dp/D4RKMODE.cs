@@ -53,8 +53,7 @@ void Ramp () {
 		//
 
 		//if is a seesaw needs to wait that down
-			console(3, $"{last_inclination} | {last_inclination2} | {last_inclination - last_inclination2}");
-			if (last_inclination - last_inclination2 < -11 && time.millis() - start_ramp < 4000) {
+			if (last_inclination - last_inclination2 < -11 && time.millis() - start_ramp < 4000 && Math.Abs(last_inclination2) > 2) {
 				stop(500);
 				moveTime(-300, 250);
 				if (scaleAngle(direction()) > 20) CentralizeGyro();

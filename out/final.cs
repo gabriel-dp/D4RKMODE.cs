@@ -685,8 +685,8 @@ void Tests () {
 			//avoids lost the line in the seesaw
 				if (Math.Abs(inclination()) > 3) {
 					CentralizeGyro();
-					stop(500);
-					if (time.millis() - last_ramp < 1000) return;
+					stop(800);
+					if (time.millis() - last_ramp < 1250) return;
 					last_ramp = time.millis();
 				}
 			//
@@ -966,8 +966,7 @@ void Tests () {
 			//
 	
 			//if is a seesaw needs to wait that down
-				console(3, $"{last_inclination} | {last_inclination2} | {last_inclination - last_inclination2}");
-				if (last_inclination - last_inclination2 < -11 && time.millis() - start_ramp < 4000) {
+				if (last_inclination - last_inclination2 < -11 && time.millis() - start_ramp < 4000 && Math.Abs(last_inclination2) > 2) {
 					stop(500);
 					moveTime(-300, 250);
 					if (scaleAngle(direction()) > 20) CentralizeGyro();

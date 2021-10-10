@@ -37,8 +37,8 @@ void CurveBlack () {
 		//avoids lost the line in the seesaw
 			if (Math.Abs(inclination()) > 3) {
 				CentralizeGyro();
-				stop(500);
-				if (time.millis() - last_ramp < 1000) return;
+				stop(800);
+				if (time.millis() - last_ramp < 1250) return;
 				last_ramp = time.millis();
 			}
 		//
