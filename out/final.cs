@@ -1619,7 +1619,7 @@ void Rescue () {
 		moveTime(300, 300);
 
 		open_actuator = true;
-		if (!actuator.hasKit()) actuator.Down();
+		if (!actuator.isUp()) actuator.Down();
 	}
 
 	while (local == Local.rescue) {
