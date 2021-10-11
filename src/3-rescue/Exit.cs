@@ -19,6 +19,8 @@ void Exit (sbyte side_mod) {
 				for (byte i = 0; i < 4; i++) {
 					if (ultra(i) > 400) {
 						whichSensor = i;
+						while (ultra(whichSensor) > 360) left(1000*side_mod);
+						while (ultra(whichSensor) < 360) right(1000*side_mod);
 						break;
 					}
 				}
@@ -103,6 +105,7 @@ void Exit (sbyte side_mod) {
 				//returns to the line
 					rotate(500, -45);
 					while (!isWhite(4)) left(1000);
+					rotate(500, -5);
 					while (isWhite(new byte[] {2,3}) && !isOrtogonal()) left(1000);
 					if (scaleAngle(direction()) > 25) {
 						moveTime(300, 75);
