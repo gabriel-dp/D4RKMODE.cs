@@ -50,8 +50,14 @@ void Exit (sbyte side_mod) {
 
 		//goes to the empty space
 			time.reset();
-			while (isWhite(new byte[] {2,3})) FollowerGyro(direction());
+			while (isWhite(new byte[] {2,3}) && time.timer() < 8000) FollowerGyro(direction());
 			int timeToBack = time.timer();
+			if (time.timer() > 7950) {
+				timeToBack = 3500;
+				rotate(500, 30);
+				if (ultra(1) < 80) rotate(500, -60);
+				moveTime(300, 300);
+			}
 			moveTime(300, 50);
 		//
 
@@ -76,12 +82,11 @@ void Exit (sbyte side_mod) {
 			} else {
 				led(color["green_dark"]);
 
-				//goes forward until is in the line
+				//goes forward until be on the line
 					while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
 					while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN") || isThatColor(1, "CYAN") || isThatColor(2, "CYAN") || isThatColor(3, "CYAN") || isThatColor(4, "CYAN")) forward(200);
 					moveTime(300, 100);
 				//
-
 
 				//Centralize in the empty space
 					stop();

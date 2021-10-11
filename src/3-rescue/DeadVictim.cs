@@ -45,3 +45,15 @@ void DispatchDeadVictim (sbyte side_mod) {
 
 	DeadVictimReserved = false;
 }
+
+void ExpelVictim () {
+	if (bot.Heat() > 32 && !DeadVictimReserved) {
+		rotate(500, 30);
+		rotate(500, -60);
+		back(50);
+		actuator.Adjust(22, 0);
+		rotate(500, 30);
+		CentralizeGyro();
+		actuator.Up();
+	}
+}

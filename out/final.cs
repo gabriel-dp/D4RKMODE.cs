@@ -1118,8 +1118,14 @@ void Track () {
 	
 			//goes to the empty space
 				time.reset();
-				while (isWhite(new byte[] {2,3})) FollowerGyro(direction());
+				while (isWhite(new byte[] {2,3}) && time.timer() < 8000) FollowerGyro(direction());
 				int timeToBack = time.timer();
+				if (time.timer() > 7950) {
+					timeToBack = 3500;
+					rotate(500, 30);
+					if (ultra(1) < 80) rotate(500, -60);
+					moveTime(300, 300);
+				}
 				moveTime(300, 50);
 			//
 	
@@ -1144,12 +1150,11 @@ void Track () {
 				} else {
 					led(color["green_dark"]);
 	
-					//goes forward until is in the line
+					//goes forward until be on the line
 						while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
 						while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN") || isThatColor(1, "CYAN") || isThatColor(2, "CYAN") || isThatColor(3, "CYAN") || isThatColor(4, "CYAN")) forward(200);
 						moveTime(300, 100);
 					//
-	
 	
 					//Centralize in the empty space
 						stop();
@@ -1312,6 +1317,8 @@ void Track () {
 			if (actuator.hasVictim()) {
 	
 				//dispatches a victim that already was in the actuator
+					ExpelVictim();
+	
 					reverse(300, timeToFind);
 					CentralizeGyro(-90*side_mod);
 					if (actuator.isAlive() || AliveVictimsRescued > 1) {
@@ -1360,17 +1367,7 @@ void Track () {
 						actuator.Up();
 						stop(150);
 	
-						//expel a victim of 2
-							if (bot.Heat() > 32 && !DeadVictimReserved) {
-								rotate(500, 30);
-								rotate(500, -60);
-								back(50);
-								actuator.Adjust(22, 0);
-								rotate(500, 30);
-								CentralizeGyro();
-								actuator.Up();
-							}
-						//
+						ExpelVictim();
 					//
 	
 					//if dont rescue
@@ -1388,7 +1385,7 @@ void Track () {
 							AliveVictimsRescued++;
 						}
 	
-						if (angleToRotate <= 136) {
+						if (angleToRotate <= 137) {
 							if (angleToRotate >= 133) rotate(500, 10*side_mod);
 							else rotate(500, (int)(((180-Math.Abs(angleToRotate))*side_mod)+5));
 						}
@@ -1589,6 +1586,18 @@ void Track () {
 		reverse(300, 1250);
 	
 		DeadVictimReserved = false;
+	}
+	
+	void ExpelVictim () {
+		if (bot.Heat() > 32 && !DeadVictimReserved) {
+			rotate(500, 30);
+			rotate(500, -60);
+			back(50);
+			actuator.Adjust(22, 0);
+			rotate(500, 30);
+			CentralizeGyro();
+			actuator.Up();
+		}
 	}
 //
 
