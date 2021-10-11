@@ -45,7 +45,7 @@ public class Actuator {
 		if (open_actuator) {
 			Adjust(0, 0, state);
 		} else {
-			Adjust(3, 0, "closed");
+			Adjust(1, 5, "closed");
 		}
 	}
 

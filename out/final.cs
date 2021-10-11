@@ -499,7 +499,7 @@ void Tests () {
 			if (open_actuator) {
 				Adjust(0, 0, state);
 			} else {
-				Adjust(3, 0, "closed");
+				Adjust(1, 5, "closed");
 			}
 		}
 	
@@ -985,7 +985,7 @@ void Tests () {
 		}
 	
 		//avoids be stuck in a speed bump after ramp
-			if (inclination() > 8 && ultra(1) < 150 && !actuator.hasKit()) {
+			if (inclination() > 8 && ultra(1) < 175 && !actuator.hasKit()) {
 				if (!flag_stuck) {
 					time_stuck = time.millis();
 					flag_stuck = true;
