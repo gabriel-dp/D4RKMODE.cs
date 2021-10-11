@@ -1497,14 +1497,14 @@ void Track () {
 	
 			//search for victims
 				byte timesSearched = 0;
-	
 				VictimInEnd:
+	
 				bool wall_ahead = (ultra(1) < 400);
 				timeToFind = time.millis();
 				while (((wall_ahead && !DetectWall()) || (!wall_ahead && isWhite(new byte[] {1,2,3,4}))) && time.millis() - timeToFind < 10000) {
-					FollowerGyro();
 					Ultras(true, false, "triangle");
 				}
+	
 				int mid_arena = (int)((time.millis()-timeToFind)/2.5);
 				if (time.millis() - timeToFind > 9950) {
 					mid_arena = (time.millis()-timeToFind)/4;
@@ -1519,6 +1519,11 @@ void Track () {
 						SearchTriangle(2, true);
 						timesSearched++;
 						goto VictimInEnd;
+					} else {
+						time.reset();
+						while (time.timer() < 750) {
+							Ultras(true, false, "triangle");
+						}
 					}
 				//
 	
