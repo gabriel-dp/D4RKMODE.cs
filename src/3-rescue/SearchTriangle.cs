@@ -95,7 +95,7 @@ void SearchTriangle (byte sensor, bool alreadyInActuator = false) {
 
 					//go rescue
 						CentralizeGyro(-90*side_mod);
-						if (last_ultra < 30) {
+						if (last_ultra < 35) {
 							moveTime(-300, 500);
 							actuator.Down();
 							moveTime(300, 500);
