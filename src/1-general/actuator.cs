@@ -26,10 +26,12 @@ public class Actuator {
 			if (angle_actuator == ideal_actuator) break;
 		} while (bot.Millis() - start < 5000);
 
-		bot.ActuatorSpeed(150);
 		do {
 			int angle_scoop = (int) bot.AngleScoop();
 			if (angle_scoop > 300) angle_scoop -= 360;
+
+			int vel_actuator = 75*(Math.Abs(ideal_scoop-Math.Abs(angle_scoop)));
+			bot.ActuatorSpeed(vel_actuator);
 
 			if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(15);
 			else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(15);
@@ -37,6 +39,7 @@ public class Actuator {
 			if (angle_scoop == ideal_scoop) break;
 		} while (bot.Millis() - start < 6000);
 
+		bot.ActuatorSpeed(150);
 	}
 
 	public void Up () {
@@ -47,7 +50,7 @@ public class Actuator {
 		if (open_actuator) {
 			Adjust(0, 0, state);
 		} else {
-			Adjust(1, 5, "closed");
+			Adjust(2, 5, "closed");
 		}
 	}
 

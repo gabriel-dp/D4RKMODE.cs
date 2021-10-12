@@ -480,10 +480,12 @@ void Tests () {
 				if (angle_actuator == ideal_actuator) break;
 			} while (bot.Millis() - start < 5000);
 	
-			bot.ActuatorSpeed(150);
 			do {
 				int angle_scoop = (int) bot.AngleScoop();
 				if (angle_scoop > 300) angle_scoop -= 360;
+	
+				int vel_actuator = 75*(Math.Abs(ideal_scoop-Math.Abs(angle_scoop)));
+				bot.ActuatorSpeed(vel_actuator);
 	
 				if (angle_scoop < ideal_scoop) bot.TurnActuatorDown(15);
 				else if (angle_scoop > ideal_scoop) bot.TurnActuatorUp(15);
@@ -491,6 +493,7 @@ void Tests () {
 				if (angle_scoop == ideal_scoop) break;
 			} while (bot.Millis() - start < 6000);
 	
+			bot.ActuatorSpeed(150);
 		}
 	
 		public void Up () {
@@ -501,7 +504,7 @@ void Tests () {
 			if (open_actuator) {
 				Adjust(0, 0, state);
 			} else {
-				Adjust(1, 5, "closed");
+				Adjust(2, 5, "closed");
 			}
 		}
 	
@@ -1155,7 +1158,7 @@ void Track () {
 					led(color["green_dark"]);
 	
 					//goes forward until be on the line
-						while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
+						//while (!isFullBlack(1) && !isFullBlack(2) && !isFullBlack(3) && !isFullBlack(4)) forward(300);
 						while (isThatColor(1, "GREEN") || isThatColor(2, "GREEN") || isThatColor(3, "GREEN") || isThatColor(4, "GREEN") || isThatColor(1, "CYAN") || isThatColor(2, "CYAN") || isThatColor(3, "CYAN") || isThatColor(4, "CYAN")) forward(200);
 						moveTime(300, 100);
 					//
@@ -1168,6 +1171,9 @@ void Track () {
 	
 						if (ultra(1) > 60) {
 							rotate(500, -10);
+							if (ultra(1) > 60) {
+								rotate(500, 3);
+							}
 						}
 						GoToDistance(23);
 					//
