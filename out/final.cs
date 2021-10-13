@@ -1292,6 +1292,7 @@ void Track () {
 				moveZm(zmToMove);
 				actuator.Up();
 				stop(150);
+				ExpelVictim(false);
 				moveZm(-zmToMove);
 				rotate(500, -angleToRotate*side_mod);
 				centerQuadrant();
@@ -1599,14 +1600,14 @@ void Track () {
 		DeadVictimReserved = false;
 	}
 	
-	void ExpelVictim () {
+	void ExpelVictim (bool centralize = true) {
 		if (bot.Heat() > 32 && !DeadVictimReserved) {
 			rotate(500, 30);
 			rotate(500, -60);
 			back(50);
 			actuator.Adjust(22, 0);
 			rotate(500, 30);
-			CentralizeGyro();
+			if (centralize) CentralizeGyro();
 			actuator.Up();
 		}
 	}

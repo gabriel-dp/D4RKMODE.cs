@@ -34,6 +34,7 @@ void Search (byte sensor) {
 			moveZm(zmToMove);
 			actuator.Up();
 			stop(150);
+			ExpelVictim(false);
 			moveZm(-zmToMove);
 			rotate(500, -angleToRotate*side_mod);
 			centerQuadrant();
