@@ -13,7 +13,7 @@ void GoToDistance (int distance, bool timeout = false) {
 	do {
 		error = (int) (ultra(1) - distance);
 		forward(error*50);
-	} while (error != 0 || (time.millis() - start < 5000 && timeout));
+	} while (error != 0 || (time.millis() - start < 5000 && timeout && error != 0));
 }
 
 bool DetectWall () => (ultra(1) < (Math.Pow(scaleAngle(direction()), 2) * 0.006f + 28));
