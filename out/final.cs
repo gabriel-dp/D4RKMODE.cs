@@ -358,11 +358,12 @@ void Tests () {
 	
 	bool ultraInRange (byte sensor) => (ultra(sensor) < 400);
 	
-	void GoToDistance (int distance) {
+	void GoToDistance (int distance, bool timeout = false) {
+		int start = time.millis();
 		do {
 			error = (int) (ultra(1) - distance);
 			forward(error*50);
-		} while (error != 0);
+		} while (error != 0 && (time.millis() - start > 5000 && timeout));
 	}
 	
 	bool DetectWall () => (ultra(1) < (Math.Pow(scaleAngle(direction()), 2) * 0.006f + 28));
@@ -1167,7 +1168,7 @@ void Track () {
 								rotate(500, 3);
 							}
 						}
-						GoToDistance(23);
+						GoToDistance(23, true);
 					//
 	
 					//returns to the line

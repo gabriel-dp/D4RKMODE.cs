@@ -102,7 +102,7 @@ void Exit (sbyte side_mod) {
 							rotate(500, 3);
 						}
 					}
-					GoToDistance(23);
+					GoToDistance(23, true);
 				//
 
 				//returns to the line
