@@ -58,7 +58,7 @@ void Exit (sbyte side_mod) {
 				timeToBack = 3500;
 				rotate(500, 30);
 				if (ultra(1) < 80) rotate(500, -60);
-				moveTime(300, 300);
+				while (isWhite(new byte[] {2,3})) FollowerGyro(direction());
 			}
 			moveTime(300, 50);
 		//
