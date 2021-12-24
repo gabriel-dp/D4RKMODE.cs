@@ -1,6 +1,6 @@
 # **Código da equipe D4RKMODE - OBR Nacional**
 
-Não é permitida de nenhuma forma a cópia do contéudo aqui presente.
+Não é permitida de nenhuma forma a cópia do contéudo aqui presente para uso em competição. Esteja avisado.
 
 <br/>
 
