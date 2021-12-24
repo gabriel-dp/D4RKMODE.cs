@@ -2,8 +2,6 @@
 
 Não é permitida de nenhuma forma a cópia do contéudo aqui presente.
 
-Caso não seja um membro da equipe e conseguiu acesso a esse repósitório, saiba que ficamos muito tristes com você.
-
 <br/>
 
 ## **Organização**
