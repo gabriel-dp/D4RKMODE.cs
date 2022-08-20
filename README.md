@@ -16,7 +16,7 @@ A pasta `./out` contém o resultado da junção dos arquivos que é executado na
 
 <div align="center">
 <br/>
-<img width=225 src="./images/robot.png" align="center"/>
+<img width=225 src="./docs/robot.png" align="center"/>
 
 &nbsp;
 
@@ -47,14 +47,14 @@ O Console também é usado para indicar o que o robô está fazendo. Algumas inf
 
 <div align="center">
 	Indicação de local <b>(Pista)</b> e Informação extra <b>(Velocidade dos motores)</b>
-	<img width=750 src="./images/console1.png"/>
+	<img width=750 src="./docs/console1.png"/>
 	<br/>
 	Indicação de local <b>(Pista)</b> e Ação <b>(Intersecção)</b>
-	<img width=750 src="./images/console2.png"/>
+	<img width=750 src="./docs/console2.png"/>
 	<br/>
 	Indicação de local <b>(Resgate)</b>, Ação <b>(Vítima detectada)</b> e Informação extra <b>(Carregando vítima)</b>
-	<img width=750 src="./images/console3.png"/>
+	<img width=750 src="./docs/console3.png"/>
 	<br/>
 	E um pouco de diversão haha
-	<img width=750 src="./images/console4.png"/>
+	<img width=750 src="./docs/console4.png"/>
 </div>
